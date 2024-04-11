@@ -1,19 +1,19 @@
 const Project = require("../models/project");
 const createError = require("http-errors");
 //create project
-const createProject = async (req, res) => {
+module.exports.createProject = async function(req, res) {
   const data = new Project(req.body);
   console.log(data);
   await data.save();
   res.status(201).json({ status: true, message: "ok" });
 };
 //get all project
-const getAll = async (req, res) => {
+module.exports.getAll = async function(req, res) {
   const projects = await Project.find();
   res.status(200).json({ status: true, message: "OK", data: projects });
 };
 //get project by id
-const getProject = async (req, res) => {
+module.exports.getProject = async function(req, res) {
   const projectId = req.params.id;
   const project = await Project.findById(projectId);
 
@@ -24,19 +24,18 @@ const getProject = async (req, res) => {
   res.json({ status: true, data: project });
 };
 //update project
-const updateProject = async (req, res) => {
+module.exports.updateProject = async function(req, res) {
   const projectId = req.params.id;
-  let project = await Project.findById(projectId);
+  const update = req.body; 
+  const project = await Project.findByIdAndUpdate(projectId, update, { new: true });
 
   if (!project) {
     throw createError(404, "Project not found");
   }
-  project.set(req.body);
-  await project.save();
-  res.status(201).json({ status: true, message: "ok" });
+  res.status(200).json({ status: true, message: "ok" });
 };
 //delete project
-const deleteProject = async (req, res) => {
+module.exports.deleteProject = async function(req, res) {
   const projectId = req.params.id;
   const deletedProject = await Project.findByIdAndDelete(projectId);
 
@@ -44,13 +43,7 @@ const deleteProject = async (req, res) => {
     throw createError(404, "Project not found");
   }
 
-  res.status(201).json({ status: true, message: "ok" });
+  res.status(200).json({ status: true, message: "ok" });
 };
 
-module.exports = {
-  createProject,
-  getProject,
-  getAll,
-  updateProject,
-  deleteProject,
-};
+

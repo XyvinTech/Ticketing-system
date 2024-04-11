@@ -2,19 +2,19 @@ const Notification=require("../models/notification")
 const createError = require("http-errors");
 
 //create Notification
-const createNotification = async (req, res) => {
+module.exports.createNotification = async function (req, res) {
   const data = new Notification(req.body);
   console.log(data);
   await data.save();
   res.status(201).json({ status: true, message: "ok" });
 };
 // get All Notification 
-const getAll = async (req, res) => {
+module.exports.getAll = async function (req, res){
   const notifications = await Notification.find();
   res.status(200).json({ status: true, message: "OK", data: notifications });
 };
 //get notification by id
-const getNotification = async (req, res) => {
+module.exports.getNotification = async function(req, res){
   const notificationId = req.params.id;
   const notification = await Notification.findById(notificationId);
 
@@ -25,19 +25,18 @@ const getNotification = async (req, res) => {
   res.json({ status: true, data: notification });
 };
 //update conversation
-const updateNotification = async (req, res) => {
+module.exports.updateNotification = async function(req, res)  {
   const notificationId = req.params.id;
-  let notification = await Notification.findById(notificationId);
+  const update = req.body; 
+  const notification = await Notification.findByIdAndUpdate(notificationId,update,{new:true});
 
   if (!notification) {
     throw createError(404, "Notification not found");
   }
-  notification.set(req.body);
-  await notification.save();
-  res.status(201).json({ status: true, message: "ok" });
+  res.status(200).json({ status: true, message: "ok" });
 };
  //delete conversation
-const deleteNotification = async (req, res) => {
+ module.exports.deleteNotification = async function(req, res) {
   const notificationId = req.params.id;
   const deletedNotification = await Notification.findByIdAndDelete(notificationId);
 
@@ -45,6 +44,5 @@ const deleteNotification = async (req, res) => {
     throw createError(404, "Notification not found");
   }
 
-  res.status(201).json({ status: true, message: "ok" });
+  res.status(200).json({ status: true, message: "ok" });
 };
-module.exports = { createNotification ,getAll,getNotification,updateNotification,deleteNotification};

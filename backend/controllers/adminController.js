@@ -2,14 +2,14 @@
 const Admin = require("../models/admin");
 const createError = require("http-errors")
 //create New Admin
-const addAdmin = async (req, res) => {
+module.exports.addAdmin = async function(req, res) {
   const data = new Admin(req.body);
   console.log(data);
   await data.save();
   res.status(201).json({ status: true, message: "ok" });
 };
 //get Admin by id
-const getAdmin = async (req, res) => {
+module.exports.getAdmin = async function (req, res){
   const adminId = req.params.id;
   const admin = await Admin.findById(adminId);
 
@@ -20,19 +20,21 @@ const getAdmin = async (req, res) => {
   res.json({ status: true, data: admin});
 };
 //update Admin
-const updateAdmin = async (req, res) => {
+module.exports.updateAdmin = async function (req, res) {
   const adminId = req.params.id;
-  let admin = await Admin.findById(adminId);
+  const update = req.body; 
 
-  if (!admin) {
+  const updatedAdmin = await Admin.findByIdAndUpdate(adminId, update, { new: true });
+
+  if (!updatedAdmin) {
     throw createError(404, "Admin not found");
   }
-  admin.set(req.body);
-  await admin.save();
-  res.status(201).json({ status: true, message: "ok" });
+
+  res.status(200).json({ status: true, message: "ok" });
 };
+
 //delete Admin
-const deleteAdmin = async (req, res) => {
+module.exports.deleteAdmin = async function(req, res) {
   const adminId = req.params.id;
   const deletedAdmin = await Admin.findByIdAndDelete(adminId);
 
@@ -40,12 +42,7 @@ const deleteAdmin = async (req, res) => {
     throw createError(404, "Admin not found");
   }
 
-  res.status(201).json({ status: true, message: "ok" });
+  res.status(200).json({ status: true, message: "ok" });
 };
 
-module.exports = {
-  addAdmin,
-  getAdmin,
-  updateAdmin,
-  deleteAdmin
-};
+

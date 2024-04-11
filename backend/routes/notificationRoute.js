@@ -1,10 +1,10 @@
 const express = require("express");
-const { createNotification, getAll, getNotification, updateNotification, deleteNotification } = require("../controllers/notificationController");
 const router = express.Router();
 const asyncHandler = require("../utils/asyncHandler")
-router.post("/add",asyncHandler(createNotification))
-router.get("/get/:id",asyncHandler(getNotification))
-router.get("/get",asyncHandler(getAll))
-router.put("/update/:id",asyncHandler(updateNotification))
-router.delete("/delete/:id",asyncHandler(deleteNotification))
+const notificationController=require("../controllers/notificationController")
+router.post("/add",asyncHandler(notificationController.createNotification))
+router.get("/get/:id",asyncHandler(notificationController.getNotification))
+router.get("/get",asyncHandler(notificationController.getAll))
+router.put("/update/:id",asyncHandler(notificationController.updateNotification))
+router.delete("/delete/:id",asyncHandler(notificationController.deleteNotification))
 module.exports = router;

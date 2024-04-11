@@ -1,10 +1,10 @@
 const express = require("express");
-const { createTicket, getTicket, updateTicket, deleteTicket, getAll } = require("../controllers/ticketController");
 const router = express.Router();
 const asyncHandler = require("../utils/asyncHandler")
-router.post("/add",asyncHandler(createTicket))
-router.get("/get",asyncHandler(getAll))
-router.get("/get/:id",asyncHandler(getTicket))
-router.put("/update/:id",asyncHandler(updateTicket))
-router.delete("/delete/:id",asyncHandler(deleteTicket))
+const ticketController=require("../controllers/ticketController")
+router.post("/add",asyncHandler(ticketController.createTicket))
+router.get("/get",asyncHandler(ticketController.getAll))
+router.get("/get/:id",asyncHandler(ticketController.getTicket))
+router.put("/update/:id",asyncHandler(ticketController.updateTicket))
+router.delete("/delete/:id",asyncHandler(ticketController.deleteTicket))
 module.exports = router;

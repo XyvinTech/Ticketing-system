@@ -1,8 +1,8 @@
 const User = require("../models/user");
-const bcrypt = require("bcrypt");
 const createError = require("http-errors");
+const bcryptUtils = require("../utils/bcrypt");
 //get conversation by id
-const getUser = async (req, res) => {
+module.exports.getUser = async function (req, res) {
   const userId = req.params.id;
   const user = await User.findById(userId);
 
@@ -12,57 +12,61 @@ const getUser = async (req, res) => {
 
   res.json({ status: true, data: user });
 };
-const profileUpdate = async (req, res) => {
-  try {
-    const userId = req.authUser.id;
-    const user = await User.findById(userId);
 
-    if (!user) {
-      throw new Error("User not found");
-    }
-    if (req.body.userName) {
-      user.userName = req.body.userName;
-    }
-    if (req.body.phoneNumber) {
-      user.phoneNumber = req.body.phoneNumber;
-    }
-    if (req.body.email) {
-      user.email = req.body.email;
-    }
-
-    if (req.file && req.file.buffer) {
-      user.profilePicture = req.file.buffer;
-    }
-
-    await user.save();
-    res.json({ message: "Profile updated successfully" });
-  } catch (error) {
-    console.error("Error occurred while updating profile:", error);
-    res.status(500).json({ message: error.message });
+//profile Updation
+module.exports.profileUpdate = async function (req, res) {
+  const userId = req.params.id;
+  
+  const updateObj = {};
+  if (req.body.userName) {
+    updateObj.userName = req.body.userName;
   }
+  if (req.body.phoneNumber) {
+    updateObj.phoneNumber = req.body.phoneNumber;
+  }
+  if (req.body.email) {
+    updateObj.email = req.body.email;
+  }
+  if (req.file && req.file.buffer) {
+    updateObj.profilePicture = req.file.buffer;
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(userId, updateObj, { new: true });
+
+  if (!updatedUser) {
+    throw new Error("User not found");
+  }
+
+  res.json({ message: "Profile updated successfully", user: updatedUser });
 };
 
-const passwordupdate = async (req, res) => {
+//password Updation
+module.exports.passwordupdate = async function (req, res) {
+  const userId = req.params.id;
   const { currentPassword, newPassword, confirmPassword } = req.body;
 
   if (newPassword !== confirmPassword) {
     return res.status(400).json({ message: "Passwords do not match" });
   }
 
-  const userId = req.authUser.id;
-  const user = await User.findById(userId);
-  const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+  const updatedUser = await User.findByIdAndUpdate(userId, {}, { new: true });
+
+  if (!updatedUser) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const isPasswordValid = await bcryptUtils.comparePasswords(
+    currentPassword,
+    updatedUser.password
+  );
   if (!isPasswordValid) {
     return res.status(401).json({ message: "Invalid current password" });
   }
 
-  // Hash the new password
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  const hashedPassword = await bcryptUtils.hashPassword(newPassword);
 
-  user.password = hashedPassword;
-  await user.save();
+  updatedUser.password = hashedPassword;
+  await updatedUser.save();
 
   res.status(200).json({ message: "Password updated successfully" });
 };
-
-module.exports = { getUser, profileUpdate, passwordupdate };
