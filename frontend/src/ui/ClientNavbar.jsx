@@ -5,9 +5,9 @@ import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
 import { ReactComponent as SearchIcon } from "../assets/icons/SearchIcon.svg";
 import { Link, useLocation } from "react-router-dom";
 
-const navigation = [{ name: "Tickets", to: "Ticket", current: true }];
+const navigation = [{ name: "Tickets", to: "Client/Ticket", current: true }];
 
-const Navbar = () => {
+const ClientNavbar = () => {
   const location = useLocation();
   return (
     <Disclosure as="nav" className="bg-white">
@@ -67,7 +67,7 @@ const Navbar = () => {
                     <SearchIcon className="h-6 w-6" />
                   </Link>
                   <Link
-                    to={"/Ticket/ClientNotifications"}
+                    to={"/Client/Ticket/ClientNotifications"}
                     className="mr-4 block rounded-full p-1 text-gray-400 hover:text-purple-500 "
                   >
                     <span className="sr-only">View Notification</span>
@@ -97,13 +97,26 @@ const Navbar = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              to={"/Ticket/ClientProfile"}
+                              to={"/Client/Ticket/ClientProfile"}
                               className={
                                 "block px-4 py-2 text-sm text-gray-700" +
                                 (active ? " bg-gray-100" : "")
                               }
                             >
                               Profile
+                            </Link>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link
+                              to={"/Client/Ticket/ClientPassword"}
+                              className={
+                                "block px-4 py-2 text-sm text-gray-700" +
+                                (active ? " bg-gray-100" : "")
+                              }
+                            >
+                              Change Password
                             </Link>
                           )}
                         </Menu.Item>
@@ -166,17 +179,36 @@ const Navbar = () => {
                 </div>
 
                 <span className="sr-only">View notifications</span>
-                <BellIcon className="h-6 w-6" />
+                <Link to={"/Client/Ticket/ClientNotifications"}>
+                  {" "}
+                  <BellIcon className="h-6 w-6" />
+                </Link>
               </div>
 
               <div className="space-y-1">
-                <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
-                  Profile
-                </Disclosure.Button>
-
+                <Link
+                  to={"/Client/Ticket/ClientProfile"}
+                  className="block  py-2 text-sm text-gray-700"
+                >
+                  <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
+                    Profile
+                  </Disclosure.Button>
+                </Link>
+                <Link
+                  to={"/Client/Ticket/ClientPassword"}
+                  className="block  py-2 text-sm text-gray-700"
+                >
+                  <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
+                   Change Password
+                  </Disclosure.Button>
+                </Link>
+                <Link
+                  to={"/"}
+                  className="block  py-2 text-sm text-gray-700"
+                >
                 <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
                   Logout
-                </Disclosure.Button>
+                </Disclosure.Button></Link>
               </div>
             </div>
           </Disclosure.Panel>
@@ -186,4 +218,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default ClientNavbar;

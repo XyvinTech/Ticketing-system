@@ -1,8 +1,8 @@
 const User = require("../models/user");
 const createError = require("http-errors");
 const bcryptUtils = require("../utils/bcrypt");
-//get conversation by id
-module.exports.getUser = async function (req, res) {
+//get user
+exports.getUser = async function (req, res) {
   const userId = req.params.id;
   const user = await User.findById(userId);
 
@@ -14,7 +14,7 @@ module.exports.getUser = async function (req, res) {
 };
 
 //profile Updation
-module.exports.profileUpdate = async function (req, res) {
+exports.profileUpdate = async function (req, res) {
   const userId = req.params.id;
   
   const updateObj = {};
@@ -41,7 +41,7 @@ module.exports.profileUpdate = async function (req, res) {
 };
 
 //password Updation
-module.exports.passwordupdate = async function (req, res) {
+exports.passwordupdate = async function (req, res) {
   const userId = req.params.id;
   const { currentPassword, newPassword, confirmPassword } = req.body;
 

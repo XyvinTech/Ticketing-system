@@ -4,8 +4,8 @@ import { ReactComponent as ProfileIcon } from "../assets/icons/ProfileIcon.svg";
 import { ReactComponent as PasswordIcon } from "../assets/icons/PasswordIcon.svg";
 import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
 import { Link, useLocation } from "react-router-dom";
-import Navbar from "../ui/Navbar";
 import Footer from "../ui/Footer";
+import MemberNavbar from "../ui/MemberNavbar";
 
 const SubNavigation = () => {
   const location = useLocation();
@@ -50,7 +50,7 @@ const SubNavigation = () => {
 const MemberLayout = ({ children }) => {
   return (
     <div className="flex min-h-screen flex-col bg-gray-100">
-      <Navbar />
+      <MemberNavbar/>
       <div className="my-6 flex-1">
         <div className="mx-auto max-w-7xl px-3">
           <div className="rounded-lg border bg-white shadow">

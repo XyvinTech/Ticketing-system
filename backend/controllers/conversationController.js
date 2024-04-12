@@ -2,7 +2,7 @@ const Conversation = require("../models/conversation");
 const createError = require("http-errors");
 
 //create conversation
-module.exports.createConversation = async function (req, res) {
+exports.createConversation = async function (req, res) {
   const data = new Conversation(req.body);
   console.log(data);
   await data.save();
@@ -10,13 +10,13 @@ module.exports.createConversation = async function (req, res) {
 };
 
 // get All Conversation 
-module.exports.getAll = async function (req, res)  {
+exports.getAll = async function (req, res)  {
   const conversations = await Conversation.find();
   res.status(200).json({ status: true, message: "OK", data: conversations });
 };
 
 //get conversation by id
-module.exports.getConversation = async function (req, res) {
+exports.getConversation = async function (req, res) {
   const conversationId = req.params.id;
   const conversation = await Conversation.findById(conversationId);
 
@@ -27,7 +27,7 @@ module.exports.getConversation = async function (req, res) {
   res.json({ status: true, data: conversation });
 };
 //update conversation
-module.exports.updateConversation = async function(req, res) {
+exports.updateConversation = async function(req, res) {
   const conversationId = req.params.id;
   const update=req.body;
   const conversation = await Conversation.findByIdAndUpdate(conversationId,update,{new:true});
@@ -38,7 +38,7 @@ module.exports.updateConversation = async function(req, res) {
   res.status(200).json({ status: true, message: "ok" });
 };
 //delete conversation
-module.exports.deleteConversation = async function(req, res) {
+exports.deleteConversation = async function(req, res) {
   const conversationId = req.params.id;
   const deletedConversation = await Conversation.findByIdAndDelete(conversationId);
 

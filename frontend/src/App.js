@@ -31,146 +31,47 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/Register" element={<RegisterForm />} />
           <Route
-            path="/Client/Ticket"
+            path="/Client/Ticket/*"
             element={
               <ClientLayout>
-                <ClientTicket />
+                <Routes>
+                  <Route path="/" element={<ClientTicket />} />
+                  <Route path="ClientNewTicket" element={<ClientNewTicket />} />
+                  <Route path="SingleTicket" element={<SingleTicket />} />
+                  <Route path="ClientProfile" element={<ClientProfile />} />
+                  <Route path="ClientPassword" element={<ClientPassword />} />
+                  <Route path="ClientNotifications" element={<ClientNotification />} />
+                </Routes>
               </ClientLayout>
             }
           />
           <Route
-            path="/Client/Ticket/ClientNewTicket"
-            element={
-              <ClientLayout>
-                <ClientNewTicket />
-              </ClientLayout>
-            }
-          />
-          <Route
-            path="/Client/Ticket/SingleTicket"
-            element={
-              <ClientLayout>
-                <SingleTicket />
-              </ClientLayout>
-            }
-          />
-          <Route
-            path="/Client/Ticket/ClientProfile"
-            element={
-              <ClientLayout>
-                <ClientProfile />
-              </ClientLayout>
-            }
-          />
-          <Route
-            path="/Client/Ticket/ClientPassword"
-            element={
-              <ClientLayout>
-                <ClientPassword />
-              </ClientLayout>
-            }
-          />
-          <Route
-            path="/Client/Ticket/ClientNotifications"
-            element={
-              <ClientLayout>
-                <ClientNotification />
-              </ClientLayout>
-            }
-          />
-          <Route
-            path="/ProjectManager/Ticket"
+            path="/ProjectManager/*"
             element={
               <ManagerLayout>
-                <ManagerTicket />
+                <Routes>
+                  <Route path="/Ticket" element={<ManagerTicket />} />
+                  <Route path="/ManagerPassword" element={<ManagerPassword />} />
+                  <Route path="/AddPeople" element={<AddPeople />} />
+                  <Route path="/ManagerProfile" element={<ManagerProfile />} />
+                  <Route path="/ManagerNotification" element={<ManagerNotification />} />
+                  <Route path="/ManagerSingleTicket" element={<ManagerSingleTicket />} />
+                  <Route path="/ManagerNewTicket" element={<ManagerNewTicket />} />
+                </Routes>
               </ManagerLayout>
             }
           />
           <Route
-            path="/ProjectManager/ManagerPassword"
-            element={
-              <ManagerLayout>
-                <ManagerPassword />
-              </ManagerLayout>
-            }
-          />
-          <Route
-            path="/ProjectManager/AddPeople"
-            element={
-              <ManagerLayout>
-                <AddPeople />
-              </ManagerLayout>
-            }
-          />
-          <Route
-            path="/ProjectManager/ManagerProfile"
-            element={
-              <ManagerLayout>
-                <ManagerProfile />
-              </ManagerLayout>
-            }
-          />
-          <Route
-            path="/ProjectManager/ManagerNotification"
-            element={
-              <ManagerLayout>
-                <ManagerNotification />
-              </ManagerLayout>
-            }
-          />
-          <Route
-            path="/ProjectManager/SingleTicket"
-            element={
-              <ManagerLayout>
-                <ManagerSingleTicket />
-              </ManagerLayout>
-            }
-          />
-          <Route
-            path="/ProjectManager/ManagerNewTicket"
-            element={
-              <ManagerLayout>
-                <ManagerNewTicket />
-              </ManagerLayout>
-            }
-          />
-          <Route
-            path="/Member/Ticket"
+            path="/Member/*"
             element={
               <MemberLayout>
-                <MemberTicket />
-              </MemberLayout>
-            }
-          />
-          <Route
-            path="/Member/Profile"
-            element={
-              <MemberLayout>
-                <MemberProfile />
-              </MemberLayout>
-            }
-          />
-          <Route
-            path="/Member/Notification"
-            element={
-              <MemberLayout>
-                <MemberNotification />
-              </MemberLayout>
-            }
-          />
-          <Route
-            path="/Member/Password"
-            element={
-              <MemberLayout>
-                <MemberPassword />
-              </MemberLayout>
-            }
-          />
-          <Route
-            path="/Member/SingleTicket"
-            element={
-              <MemberLayout>
-                <MemberSingleTicket />
+                <Routes>
+                  <Route path="/Ticket" element={<MemberTicket />} />
+                  <Route path="/Profile" element={<MemberProfile />} />
+                  <Route path="/Notification" element={<MemberNotification />} />
+                  <Route path="/Password" element={<MemberPassword />} />
+                  <Route path="/SingleTicket" element={<MemberSingleTicket />} />
+                </Routes>
               </MemberLayout>
             }
           />

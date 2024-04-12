@@ -6,16 +6,16 @@ import { ReactComponent as PasswordIcon } from "../assets/icons/PasswordIcon.svg
 import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
 import { ReactComponent as UsersIcon } from "../assets/icons/UsersIcon.svg";
 import { Link, useLocation } from "react-router-dom";
-import Navbar from "../ui/Navbar";
+import ManagerNavbar from "../ui/ManagerNavbar";
 
 const SubNavigation = () => {
   const location = useLocation();
   const subNavigation = [
     { name: "Tickets", to: "ProjectManager/Ticket", icon: TicketIcon },
     { name: "New Ticket", to: "ProjectManager/ManagerNewTicket", icon: PlusIcon },
-    { name: "Profile", to: "ProjectManager/ManagerProfile", icon: ProfileIcon },
-    { name: "Password", to: "ProjectManager/ManagerPassword", icon: PasswordIcon },
-    { name: "Notifications",to: "ProjectManager/ManagerNotification",icon: BellIcon,},
+    // { name: "Profile", to: "ProjectManager/ManagerProfile", icon: ProfileIcon },
+    // { name: "Password", to: "ProjectManager/ManagerPassword", icon: PasswordIcon },
+    // { name: "Notifications",to: "ProjectManager/ManagerNotification",icon: BellIcon,},
     { name: "Add Member",to: "ProjectManager/AddPeople",icon: UsersIcon,},
   ];
 
@@ -53,7 +53,7 @@ const SubNavigation = () => {
 const ManagerLayout = ({ children }) => {
   return (
     <div className="flex min-h-screen flex-col bg-gray-100">
-      <Navbar />
+      <ManagerNavbar/>
       <div className="my-6 flex-1">
         <div className="mx-auto max-w-7xl px-3">
           <div className="rounded-lg border bg-white shadow">

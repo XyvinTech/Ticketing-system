@@ -2,7 +2,7 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcryptUtils = require("../utils/bcrypt");
 
-module.exports.signup = async function(req, res, next)  {
+exports.signup = async function(req, res, next)  {
     const { userName, phoneNumber, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
@@ -24,7 +24,7 @@ module.exports.signup = async function(req, res, next)  {
    
 };
 
-module.exports.signin = async function(req, res, next)  {
+exports.signin = async function(req, res, next)  {
   const { email, password } = req.body;
 
     const validUser = await User.findOne({ email });
@@ -58,8 +58,7 @@ module.exports.signin = async function(req, res, next)  {
       .json({ token, ...rest });
 
 };
-
-module.exports.google = async function(req, res, next) {
+exports.google = async function(req, res, next) {
 
     const user = await User.findOne({ email: req.body.email });
     if (user) {

@@ -2,14 +2,14 @@
 const Admin = require("../models/admin");
 const createError = require("http-errors")
 //create New Admin
-module.exports.addAdmin = async function(req, res) {
+exports.addAdmin = async function(req, res) {
   const data = new Admin(req.body);
   console.log(data);
   await data.save();
   res.status(201).json({ status: true, message: "ok" });
 };
 //get Admin by id
-module.exports.getAdmin = async function (req, res){
+exports.getAdmin = async function (req, res){
   const adminId = req.params.id;
   const admin = await Admin.findById(adminId);
 
@@ -20,7 +20,7 @@ module.exports.getAdmin = async function (req, res){
   res.json({ status: true, data: admin});
 };
 //update Admin
-module.exports.updateAdmin = async function (req, res) {
+exports.updateAdmin = async function (req, res) {
   const adminId = req.params.id;
   const update = req.body; 
 
@@ -34,7 +34,7 @@ module.exports.updateAdmin = async function (req, res) {
 };
 
 //delete Admin
-module.exports.deleteAdmin = async function(req, res) {
+exports.deleteAdmin = async function(req, res) {
   const adminId = req.params.id;
   const deletedAdmin = await Admin.findByIdAndDelete(adminId);
 
