@@ -26,7 +26,6 @@ import ClientLayout from "./Layout/ClientLayout";
 function App() {
   return (
     <>
-      <div class="flex min-h-screen flex-col bg-gray-100">
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/Register" element={<RegisterForm />} />
@@ -76,7 +75,6 @@ function App() {
             }
           />
         </Routes>
-      </div>{" "}
     </>
   );
 }

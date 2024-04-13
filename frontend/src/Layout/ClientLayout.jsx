@@ -54,13 +54,13 @@ const ClientLayout = ({ children }) => {
     <div className="flex min-h-screen flex-col bg-gray-100">
       <ClientNavbar />
       <div className="my-6 flex-1">
-        <div className="mx-auto max-w-7xl px-3">
+        <div className="mx-auto max-w-8xl px-9">
           <div className="rounded-lg border bg-white shadow">
             <div className="divide-y divide-gray-200 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x ">
-              <aside className="py-6 lg:col-span-3">
+              <aside className="py-6 lg:col-span-2">
                 <SubNavigation />
               </aside>
-              <div className="divide-y divide-gray-200 lg:col-span-9">
+              <div className="divide-y divide-gray-200 lg:col-span-10">
                 {children}
               </div>
             </div>
