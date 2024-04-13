@@ -24,7 +24,7 @@ const ClientNavbar = () => {
                   />
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
-                  <div className="hidden lg:ml- lg:flex lg:space-x-8">
+                  <div className="hidden lg:ml-6 lg:flex lg:space-x-8">
                     {navigation.map((item) => (
                       <Link
                         key={item.name}

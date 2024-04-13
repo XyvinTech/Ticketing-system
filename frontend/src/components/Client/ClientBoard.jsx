@@ -13,6 +13,19 @@ const Card = ({ card }) => {
 };
 
 const Column = ({ column, onAddCard }) => {
+  const [addingCard, setAddingCard] = useState(false);
+  const [newCardTitle, setNewCardTitle] = useState("");
+
+  const handleAddCardClick = () => {
+    setAddingCard(true);
+  };
+
+  const handleAddCardSubmit = () => {
+    onAddCard(column.id, newCardTitle);
+    setAddingCard(false);
+    setNewCardTitle("");
+  };
+
   return (
     <div className="w-1/4 p-1 ml-1">
       <h2
@@ -31,22 +44,40 @@ const Column = ({ column, onAddCard }) => {
       >
         {column.title}
       </h2>
-      <div className="bg-slate-100 text-white pl-1 pr-4 pt-1 pb-3">
+      <div className="bg-slate-100 text-black pl-1 pr-4 pt-1 pb-3">
         {column.cards.map((card) => (
           <Card key={card.id} card={card} />
         ))}
-        <button className=" flex gap-1.5  text-blue-400 text-xs py-2 px-4 mt-2" onClick={() => onAddCard(column.id)}>
-          <PlusIcon />
-         <div className="mt-1"> New</div>
-        </button>
-         
+        {addingCard ? (
+          <div className="flex items-center mt-2">
+            <input
+              type="text"
+              value={newCardTitle}
+              onChange={(e) => setNewCardTitle(e.target.value)}
+              placeholder="Enter card title"
+              className="px-2 py-1.5 mr-2 border border-gray-300 rounded"
+            />
+            <button
+              className="text-blue-400 text-xs py-2 px-4"
+              onClick={handleAddCardSubmit}
+            >
+              Add
+            </button>
+          </div>
+        ) : (
+          <button
+            className="flex gap-1.5  text-blue-400 text-xs py-2 px-4 mt-2"
+            onClick={handleAddCardClick}
+          >
+            <PlusIcon />
+            <div className="mt-1">New</div>
+          </button>
+        )}
       </div>
     </div>
   );
 };
-
-// Board component
-const Board = ({ board, onAddCard  }) => {
+const Board = ({ board, onAddCard }) => {
   return (
     <div className="flex">
       {board.columns.map((column) => (
@@ -56,7 +87,6 @@ const Board = ({ board, onAddCard  }) => {
   );
 };
 
-// App component
 const ClientBoard = () => {
   const [board, setBoard] = useState({
     columns: [
@@ -106,8 +136,9 @@ const ClientBoard = () => {
       },
     ],
   });
-  const handleAddCard = (columnId) => {
-    const newCard = { id: Math.random(), title: "DOUBLLEHOUSE", description: "High" };
+
+  const handleAddCard = (columnId, title) => {
+    const newCard = { id: Math.random(), title, description: "High" };
     const updatedColumns = board.columns.map((column) => {
       if (column.id === columnId) {
         return {
