@@ -2,16 +2,12 @@ import React, { useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { ReactComponent as UpDownIcon } from "../assets/icons/UpDownIcon.svg";
 
-const StyledSelectionList = ({ options, label, name, setFormData, formData }) => {
+const StyledSelectionList = ({ options, label, onChange }) => {
   const [selected, setSelected] = useState(options[0]);
 
   const handleChange = (value) => {
     setSelected(value);
-    // Update formData
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value.name,
-    }));
+    onChange(value); // Pass selected value to parent component
   };
 
   return (

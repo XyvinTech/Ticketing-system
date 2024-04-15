@@ -1,21 +1,28 @@
-import React from 'react'
+import React from 'react';
+import { Controller } from 'react-hook-form'; // Add this line
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-const StyledText = ({label}) => {
+
+const StyledText = ({ label, control, name }) => {
   return (
     <div>
-         <label   class="mb-1 block text-sm font- text-gray-900">
+      <label className="mb-1 block text-sm font-semibold text-gray-900">
         {label}
       </label>
-       <ReactQuill
-        theme="snow" 
-        placeholder='Describe Your Issue......'
-       
-      >
-
-      </ReactQuill>
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <ReactQuill
+            theme="snow" 
+            value={field.value}
+            onChange={field.onChange}
+            placeholder='Describe Your Issue...'
+          />
+        )}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default StyledText
+export default StyledText;
