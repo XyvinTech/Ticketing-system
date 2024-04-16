@@ -7,7 +7,7 @@ const StyledSelectionList = ({ options, label, onChange }) => {
 
   const handleChange = (value) => {
     setSelected(value);
-    onChange(value); // Pass selected value to parent component
+    onChange(value.name); // Pass selected value to parent component
   };
 
   return (

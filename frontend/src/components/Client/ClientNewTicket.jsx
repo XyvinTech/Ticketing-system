@@ -5,10 +5,10 @@ import StyledInput from "../../ui/StyledInput";
 import StyledText from "../../ui/StyledText";
 import FileUpload from "../../ui/FileUpload";
 import StyledButton from "../../ui/StyledButton";
-
+import { useStore } from "../../store/Store";
 const ClientNewTicket = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
-
+  const addTicket = useStore((state) => state.addTicket);
   const Priority = [
     { name: "Select a priority" },
     { name: "Low" },
@@ -22,8 +22,13 @@ const ClientNewTicket = () => {
     { name: "Other" },
   ];
 
-  const onSubmit = (data) => {
-    console.log(data); // Ensure data is logged properly
+  const onSubmit = async (data) => {
+    try {
+      await addTicket(data);
+      console.log(data); 
+    } catch (error) {
+      console.error("Error adding ticket:", error);
+    }
   };
 
   return (
@@ -87,19 +92,20 @@ const ClientNewTicket = () => {
                 render={({ field }) => (
                   <StyledText
                     label="Description"
-                    control={control} // pass control prop
-                    name="description" // pass name prop
+                    field={field} 
                   />
                 )}
                 rules={{ required: "Description is required" }}
               />
               {errors.description && <span className="text-red-500">{errors.description.message}</span>}
-              <FileUpload control={control} name="files" />
-            </div>
+             
+              
+            </div><div className="mt-14"> <FileUpload/></div>
+           
           </div>
           <div className="flex justify-end bg-gray-50 pb-4 sm:px-6">
             <StyledButton text="Create" type="submit" />
-          </div>
+          </div> 
         </form>
       </div>
     </>

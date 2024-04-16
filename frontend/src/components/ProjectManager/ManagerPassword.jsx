@@ -16,7 +16,7 @@ const ManagerPassword = () => {
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const onSubmit = (data) => {
-    console.log(data); // Handle form submission here
+    console.log(data); 
   };
 
   return (

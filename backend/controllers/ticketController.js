@@ -3,19 +3,31 @@ const createError = require("http-errors");
 
 //create New Ticket
 exports.createTicket = async function(req, res) {
-  const data = new Ticket(req.body);
-  console.log(data);
-  await data.save();
-  res.status(201).json({ status: true, message: "ok" });
+  let attachmentData = null;
+    
+    // Check if a file was uploaded
+    if (req.file) {
+      // Access the uploaded file data
+      attachmentData = req.file.buffer
+      
+    }
+
+    const ticketData = {
+      ...req.body,
+      attachment: attachmentData // Add attachment data to the ticket data
+    };
+
+    const ticket = new Ticket(ticketData);
+    await ticket.save();
+
+    res.status(201).json({ status: true, message: "Ticket created successfully" });
 };
 //get all tickets
 exports.getAll = async function(req, res) {
-    try {
+    
       const tickets = await Ticket.find();
       res.json(tickets);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+  
   };
 
   //get ticket by id
@@ -27,7 +39,7 @@ exports.getAll = async function(req, res) {
       throw createError(404, "Ticket not found");
     }
   
-    res.json({ status: true, data: ticket });
+    res.json(ticket );
   };
 //update ticket
 exports.updateTicket = async function(req, res) {

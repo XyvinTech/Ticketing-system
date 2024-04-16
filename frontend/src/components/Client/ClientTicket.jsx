@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StyledTable from "../../ui/StyledTable";
 import { Link } from "react-router-dom";
 import TableInfo from "../../ui/TableInfo";
@@ -8,44 +8,24 @@ import StyledButton from "../../ui/StyledButton";
 import StyledInput from "../../ui/StyledInput";
 import Pagination from "../../ui/Pagination";
 import ClientBoard from "./ClientBoard";
-
+import { useStore } from "../../store/Store";
 const ClientTicket = () => {
   
   const [showClientBoard, setShowClientBoard] = useState(false);
   const handleBoardButtonClick = () => {
     setShowClientBoard(true); 
   };
-  const items = [
-    { name: "Total", count: 7 },
-    { name: "Assigned", count: 7 },
-    { name: "Unassigned", count: 0 },
-    { name: "Resolved", count: 0 },
-    { name: "Closed", count: 0 },
-  ];
+  
 
-  const dummyTickets = [
-    {
-      id: 1,
-      reference: "REF001",
-      subject: "Dummy Ticket 1",
-      priority: "High",
-      created_at: "2024-03-11T08:00:00Z",
-      category: { name: "Category A" },
-      replies: [{ created_at: "2024-03-11T08:30:00Z" }],
-      status: "assigned",
-    },
-    {
-      id: 2,
-      reference: "REF002",
-      subject: "Dummy Ticket 2",
-      priority: "Medium",
-      created_at: "2024-03-10T09:00:00Z",
-      category: { name: "Category B" },
-      replies: [{ created_at: "2024-03-10T09:30:00Z" }],
-      status: "unassigned",
-    },
-    // Add more dummy tickets as needed
-  ];
+  const { tickets, fetchTickets } = useStore();
+
+  useEffect(() => {
+    console.log("Fetching tickets...");
+    fetchTickets();
+  }, [fetchTickets]); 
+  
+  
+  
 
   const headers = ["Ticket", "Status"];
 
@@ -56,7 +36,7 @@ const ClientTicket = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = dummyTickets.slice(indexOfFirstItem, indexOfLastItem);
+  const item = tickets.slice(indexOfFirstItem, indexOfLastItem);
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -70,11 +50,18 @@ const ClientTicket = () => {
 
   // Go to next page
   const goToNextPage = () => {
-    if (currentPage < Math.ceil(dummyTickets.length / itemsPerPage)) {
+    if (currentPage < Math.ceil(tickets.length / itemsPerPage)) {
       setCurrentPage(currentPage + 1);
     }
   };
-
+  console.log("Tickets:", tickets);
+  const items = [
+    { name: "Total", count: tickets.length },
+    { name: "Assigned", count: 7 },
+    { name: "Unassigned", count: 0 },
+    { name: "Resolved", count: 0 },
+    { name: "Closed", count: 0 },
+  ];
   return (
     <div>
       <section className="py-6 px-4 sm:p-6 lg:pb-8">
@@ -96,7 +83,7 @@ const ClientTicket = () => {
               {" "}
               <button
                 className="relative shrink-0 bg-gray-50 rounded-md border border-gray-300 border-solid h-[42px]"
-                onClick={handleBoardButtonClick} // Call handleBoardButtonClick when the button is clicked
+                onClick={handleBoardButtonClick} 
               >
                 Board
               </button>
@@ -111,23 +98,24 @@ const ClientTicket = () => {
         {showClientBoard && <ClientBoard />}{" "}
         {!showClientBoard && (
         <StyledTable header={headers}>
-          {currentItems.map((i) => (
-            <tr key={i.id}>
+          
+          {item.map((tickets) => (
+            <tr key={tickets._id}>
               <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
                 <input type="checkbox" className="mr-2 checkbox-purple" />
-                <Link to={"/Client/Ticket/SingleTicket"} className="text-lg font-semibold text-purple-600 hover:text-purple-800">
-                  {i.subject}
+                <Link to={`/Client/Ticket/SingleTicket/${tickets._id}`}  className="text-lg font-semibold text-purple-600 hover:text-purple-800">
+                  {tickets.subject}
                 </Link>
                 <TableInfo
-                  reference={i.reference}
-                  priority={i.priority}
-                  createdAt={i.created_at}
-                  category={i.category.name}
-                  last_reply_on={i.replies[0]?.created_at}
+                  reference={tickets.reference}
+                  priority={tickets.priority}
+                  createdAt={tickets.createdAt}
+                  category={tickets.category}
+                  // last_reply_on={tickets.replies[0]?.created_at}
                 />
               </td>
               <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                <span
+                {/* <span
                   className={`rounded-full px-3 py-px text-sm
                   ${
                     i.status === "assigned"
@@ -142,7 +130,7 @@ const ClientTicket = () => {
                   }`}
                 >
                   {i.status}
-                </span>
+                </span> */}
               </td>
             </tr>
           ))}
@@ -150,7 +138,7 @@ const ClientTicket = () => {
             <td colSpan="2" className="px-4 py-2">
               <Pagination
                 currentPage={currentPage}
-                totalItems={dummyTickets.length}
+                totalItems={tickets.length}
                 itemsPerPage={itemsPerPage}
                 paginate={paginate}
                 goToPreviousPage={goToPreviousPage}

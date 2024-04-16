@@ -14,6 +14,17 @@ exports.getAll = async function (req, res)  {
   const conversations = await Conversation.find();
   res.status(200).json({ status: true, message: "OK", data: conversations });
 };
+//get all conversations by ticketId
+exports.getAllByTicketId = async function (req, res) {
+  const ticketId = req.params.id;
+  const conversations = await Conversation.find({ ticketId: ticketId }).populate("ticketId");
+
+  if (!conversations || conversations.length === 0) {
+    return res.status(404).json({ status: false, message: "Conversations not found" });
+  }
+
+  res.status(200).json( conversations );
+};
 
 //get conversation by id
 exports.getConversation = async function (req, res) {

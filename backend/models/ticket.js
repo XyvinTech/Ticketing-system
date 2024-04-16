@@ -4,8 +4,7 @@ const Schema = mongoose.Schema;
 const ticketSchema = new Schema(
   {
     ticket_Id: {
-      type: String,
-      required: true
+      type: String
     },
     priority: {
       type: String,
@@ -24,8 +23,7 @@ const ticketSchema = new Schema(
       required: true,
     },
     status: {
-      type: String,
-      required: true,
+      type: String
     },
     attachment: {
       type: [String],
@@ -36,8 +34,7 @@ const ticketSchema = new Schema(
       ref: "projects",
     }],
     assignedTo: {
-      type: String,
-      required: true,
+      type: String
     }
   },
   { timestamps: true }

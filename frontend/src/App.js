@@ -22,12 +22,14 @@ import MemberNotification from "./components/Member/MemberNotification";
 import MemberPassword from "./components/Member/MemberPassword";
 import MemberSingleTicket from "./components/Member/MemberSingleTicket";
 import ClientLayout from "./Layout/ClientLayout";
+import Text from "./Text";
 
 function App() {
   return (
     <>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/text" element={<Text/>} />
           <Route path="/Register" element={<RegisterForm />} />
           <Route
             path="/Client/Ticket/*"
@@ -36,7 +38,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<ClientTicket />} />
                   <Route path="ClientNewTicket" element={<ClientNewTicket />} />
-                  <Route path="SingleTicket" element={<SingleTicket />} />
+                  <Route path="SingleTicket/:id" element={<SingleTicket />} />
                   <Route path="ClientProfile" element={<ClientProfile />} />
                   <Route path="ClientPassword" element={<ClientPassword />} />
                   <Route path="ClientNotifications" element={<ClientNotification />} />

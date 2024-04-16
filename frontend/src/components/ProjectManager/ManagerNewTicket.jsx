@@ -23,7 +23,7 @@ const ManagerNewTicket = () => {
   ];
 
   const onSubmit = (data) => {
-    console.log(data); // Ensure data is logged properly
+    console.log(data); 
   };
 
   return (
@@ -87,8 +87,8 @@ const ManagerNewTicket = () => {
                 render={({ field }) => (
                   <StyledText
                     label="Description"
-                    control={control} // pass control prop
-                    name="description" // pass name prop
+                    control={control}
+                    name="description"
                   />
                 )}
                 rules={{ required: "Description is required" }}
