@@ -3,7 +3,13 @@ const createError = require("http-errors");
 
 //create conversation
 exports.createConversation = async function (req, res) {
-  const data = new Conversation(req.body);
+  const attachmentFilenames = req.files.map(file => file.filename);
+  console.log("fkke",attachmentFilenames)
+  const data = new Conversation({
+    ...req.body,
+    attachment: attachmentFilenames
+  });
+  
   console.log(data);
   await data.save();
   res.status(201).json({ status: true, message: "ok" });
@@ -17,6 +23,9 @@ exports.getAll = async function (req, res)  {
 //get all conversations by ticketId
 exports.getAllByTicketId = async function (req, res) {
   const ticketId = req.params.id;
+  if (!ticketId) {
+    return res.status(400).json({ error: "Ticket ID is required" });
+  }
   const conversations = await Conversation.find({ ticketId: ticketId }).populate("ticketId");
 
   if (!conversations || conversations.length === 0) {

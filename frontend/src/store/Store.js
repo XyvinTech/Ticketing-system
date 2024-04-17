@@ -42,15 +42,18 @@ const useStore = create((set) => ({
       console.error("Error adding ticket:", error);
     }
   },
-  fetchConversationById: async (ConversationId) => {
+  conversations:[],
+  fetchConversationById: async (conversationId) => {
     try {
-      const response = await axios.get(`http://localhost:4000/conversation/fetch/${ConversationId}`);
-      console.log("Response from fetchTickets:", response.data); // Log response data
-      set({ conversation: response.data });
+      set({ conversations: [] });
+      const response = await axios.get(`http://localhost:4000/conversation/fetch/${conversationId}`);
+      console.log("Response from fetchConversationById:", response.data);
+      set({ conversations: response.data });
     } catch (error) {
-      console.error("Error fetching ticket by ID:", error);
+      console.error("Error fetching conversations by ID:", error);
     }
   },
+  
 }));
 
 export { useStore };

@@ -12,6 +12,7 @@ connectDB();
 app.use("/", AllRoutes);
 
 app.use(errorHandler);
+app.use('/uploads', express.static('uploads'));
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

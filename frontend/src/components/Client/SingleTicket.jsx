@@ -9,7 +9,7 @@ const SingleTicket = () => {
 
 
   const { id } = useParams(); 
-  const { fetchTicketById, ticket ,fetchConversationById,conversation} = useStore();
+  const { fetchTicketById, ticket ,fetchConversationById,conversations} = useStore();
   console.log("Ticket:", id);
   useEffect(() => {
     fetchTicketById(id);
@@ -17,8 +17,8 @@ const SingleTicket = () => {
   }, [fetchTicketById, fetchConversationById, id]);
   
   
-  console.log("Ticket:", ticket);
-  console.log("Ti", conversation); 
+  console.log("Ticket zz:", ticket.attachment);
+  console.log("Ti", conversations); 
  
   return (
     <>
@@ -71,20 +71,22 @@ const SingleTicket = () => {
           <h2>Attachments</h2>
         </div>
             <div className="px-4 mt-3 flex flex-wrap gap-3">
-              {/* {item.attachments.map((attachment) => (
-                <img
-                  key={attachment.id}
-                  src={attachment.url}
-                  alt={`Attachment ${attachment.id}`}
-                  className="h-20 w-20 rounded-lg border object-cover"
-                />
-              ))} */}
+             
+            {ticket.attachment &&ticket.attachment.map((attachment, index) => (
+          <img
+            key={index}
+            src={`http://localhost:4000/uploads/${attachment}`}
+            alt={` ${attachment}`}
+            className="h-20 w-20 rounded-lg border object-cover"
+          />
+        ))}
+            
             </div></div>
             
           </div>
       )}
       
-      {conversation && conversation.map((item) => (
+      {conversations&& conversations.map((item) => (
         
         <div key={item._id} className="divide-y rounded-lg border shadow">
             <div className="p-3">
@@ -132,16 +134,16 @@ const SingleTicket = () => {
           <PaperIcon className="h-4 w-4" />
           <h2>Attachments</h2>
         </div>
-            {/* <div className="px-4 mt-3 flex flex-wrap gap-3">
-              {item.attachments.map((attachment) => (
-                <img
-                  key={attachment.id}
-                  src={attachment.url}
-                  alt={`Attachment ${attachment.id}`}
-                  className="h-20 w-20 rounded-lg border object-cover"
-                />
-              ))}
-            </div> */}
+            <div className="px-4 mt-3 flex flex-wrap gap-3">
+            {item.attachment &&item.attachment.map((attachment, index) => (
+          <img
+            key={index}
+            src={`http://localhost:4000/uploads/${attachment}`}
+            alt={` ${attachment}`}
+            className="h-20 w-20 rounded-lg border object-cover"
+          />
+        ))}
+            </div>
             </div>
             
           </div>

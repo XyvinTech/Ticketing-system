@@ -7,20 +7,27 @@ import FileUpload from "../ui/FileUpload";
 import StyledButton from "./StyledButton";
 import { useStore } from "../store/Store";
 const Reply = ({ ticketId }) => {
-  const { control, handleSubmit } = useForm(); // Initialize form state
+  const { control, handleSubmit } = useForm();
   const addConversation = useStore((state) => state.addConversation);
   const onSubmit = async (data) => {
     try {
-   
-      const newData = { ...data, ticketId: ticketId };
-      
-      await addConversation(newData);
+      const newData = { ...data, ticketId: ticketId }; 
+      const formData = new FormData();
+      formData.append("ticketId", newData.ticketId);
+      formData.append("message", newData.message);
+      newData.attachment.forEach((file) => {
+        formData.append("attachment", file);
+      });
+  
+      await addConversation(formData);
       console.log("Form data:", newData);
       window.location.reload(); 
     } catch (error) {
       console.error("Error adding ticket:", error);
     }
   };
+  
+  
   
 
   return (
@@ -41,8 +48,8 @@ const Reply = ({ ticketId }) => {
               />
             </Disclosure.Button>
             <Disclosure.Panel className="divide-y rounded-b-lg border shadow">
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="space-y-3 px-3 pb-3 pt-6">
+              <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+                <div className="px-3 pb-3 pt-6">
                  
                   <Controller
                     name="message"
@@ -51,7 +58,14 @@ const Reply = ({ ticketId }) => {
                       <StyledText field={field} />
                     )}
                   />
-                    <FileUpload />
+                 <div className="mt-12">  <Controller
+              name="attachment"
+              control={control}
+              defaultValue={[]}
+              render={({ field: { onChange } }) => <FileUpload onChange={onChange} />}
+            /></div>   
+                    
+                 
                   
                   <div className="flex justify-end">
                     <StyledButton text="Add" type="submit" />
