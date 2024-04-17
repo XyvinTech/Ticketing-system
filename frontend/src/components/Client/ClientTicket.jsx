@@ -20,7 +20,6 @@ const ClientTicket = () => {
   const { tickets, fetchTickets } = useStore();
 
   useEffect(() => {
-    console.log("Fetching tickets...");
     fetchTickets();
   }, [fetchTickets]); 
   
@@ -31,7 +30,7 @@ const ClientTicket = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
+  const itemsPerPage = 2;
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -54,7 +53,7 @@ const ClientTicket = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-  console.log("Tickets:", tickets);
+  
   const items = [
     { name: "Total", count: tickets.length },
     { name: "Assigned", count: 7 },

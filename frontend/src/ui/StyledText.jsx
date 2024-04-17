@@ -1,4 +1,4 @@
-// StyledText.js
+
 import React from 'react';
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -19,7 +19,7 @@ const StyledText = ({ label, field }) => {
         value={field.value}
         onChange={handleQuillChange}
         placeholder='Describe Your Issue...'
-        style={{ height: '150px' }} // Set the height of the editor
+        style={{ height: '150px' }} 
       />
     </div>
   );

@@ -7,7 +7,7 @@ const useStore = create((set) => ({
   fetchTickets: async () => {
     try {
       const response = await axios.get("http://localhost:4000/ticket/get");
-      console.log("Response from fetchTickets:", response.data); // Log response data
+      // console.log("Response from fetchTickets:", response.data); // Log response data
       set({ tickets: response.data });
       
     } catch (error) {
@@ -17,7 +17,7 @@ const useStore = create((set) => ({
   fetchTicketById: async (ticketId) => {
     try {
       const response = await axios.get(`http://localhost:4000/ticket/get/${ticketId}`);
-      console.log("Response from fetchTickets:", response.data); // Log response data
+      // console.log("Response from fetchTickets:", response.data); // Log response data
       set({ ticket: response.data });
     } catch (error) {
       console.error("Error fetching ticket by ID:", error);
@@ -47,7 +47,7 @@ const useStore = create((set) => ({
     try {
       set({ conversations: [] });
       const response = await axios.get(`http://localhost:4000/conversation/fetch/${conversationId}`);
-      console.log("Response from fetchConversationById:", response.data);
+      // console.log("Response from fetchConversationById:", response.data);
       set({ conversations: response.data });
     } catch (error) {
       console.error("Error fetching conversations by ID:", error);

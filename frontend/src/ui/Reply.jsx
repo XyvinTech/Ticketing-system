@@ -20,7 +20,7 @@ const Reply = ({ ticketId }) => {
       });
   
       await addConversation(formData);
-      console.log("Form data:", newData);
+      // console.log("Form data:", newData);
       window.location.reload(); 
     } catch (error) {
       console.error("Error adding ticket:", error);

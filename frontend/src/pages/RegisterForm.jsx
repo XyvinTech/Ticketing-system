@@ -37,7 +37,7 @@ const RegisterForm = () => {
     if (Object.keys(newErrors).length === 0) {
       try {
         const response = await axios.post('http://localhost:4000/auth/signup', formData);
-        console.log("msg :" + response.data);
+        
         if (response.status===200) {
           console.log("success",response.data) 
           navigate('/'); 
