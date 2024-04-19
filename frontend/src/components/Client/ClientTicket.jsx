@@ -8,7 +8,7 @@ import StyledButton from "../../ui/StyledButton";
 import StyledInput from "../../ui/StyledInput";
 import Pagination from "../../ui/Pagination";
 import ClientBoard from "./ClientBoard";
-import { useStore } from "../../store/Store";
+import { useTicketStore } from "../../store/TicketStore";
 const ClientTicket = () => {
   
   const [showClientBoard, setShowClientBoard] = useState(false);
@@ -17,7 +17,7 @@ const ClientTicket = () => {
   };
   
 
-  const { tickets, fetchTickets } = useStore();
+  const { tickets, fetchTickets } = useTicketStore();
 
   useEffect(() => {
     fetchTickets();
@@ -101,7 +101,7 @@ const ClientTicket = () => {
           {item.map((tickets) => (
             <tr key={tickets._id}>
               <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
-                <input type="checkbox" className="mr-2 checkbox-purple" />
+              <input type="checkbox" class="mr-2  accent-purple-500" />
                 <Link to={`/Client/Ticket/SingleTicket/${tickets._id}`}  className="text-lg font-semibold text-purple-600 hover:text-purple-800">
                   {tickets.subject}
                 </Link>

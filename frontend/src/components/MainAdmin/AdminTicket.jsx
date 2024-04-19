@@ -6,14 +6,17 @@ import StyledButton from "../../ui/StyledButton";
 import TableInfo from "../../ui/TableInfo";
 import { Link } from "react-router-dom";
 import Pagination from "../../ui/Pagination";
-
-import { ReactComponent as SearcIcon } from "../../assets/icons/SearchIcon.svg";
-import AnotherBoard from "./ManagerBoard";
+import { ReactComponent as GoogleIcon } from "../../assets/icons/GoogleIcon.svg";
+import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
+import AdminBoard from "./AdminBoard";
 import StyledSelectionList from "../../ui/StyledSelectionList";
 import Modal from "../../ui/Modal";
+import DropDown from "../../ui/DropDown";
 
-const ManagerTicket = () => {
-  const [showAnotherBoard, setShowAnotherBoard] = useState(false);
+const AdminTicket = () => {
+  const [showAdminBoard, setShowAdminBoard] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const items = [
     { name: "Total", count: 7 },
     { name: "Assigned", count: 7 },
@@ -76,18 +79,25 @@ const ManagerTicket = () => {
     }
   };
   const handleBoardButtonClick = () => {
-    setShowAnotherBoard(true); // Show AnotherBoard when the button is clicked
+    setShowAdminBoard(true);
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
-  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const Manager = [
+    { name: "My Tickets" },
+    { name: "Project Manager" },
+    { name: "Project Lead" },
+  ];
   const Role = [
     { name: "Member" },
     { name: "Designer" },
     { name: "Developer" },
   ];
- const statuses = ["assigned", "unassigned", "closed", "resolved"]; 
- 
+  const Status = [
+    { name: "assigned" },
+    { name: "In progress" },
+    { name: "completed" },
+    { name: "Archived" },
+  ];
   return (
     <div>
       <section className="py-6 px-4 sm:p-6 lg:pb-8">
@@ -95,39 +105,75 @@ const ManagerTicket = () => {
         <div className="mb-6 grid grid-cols-2 gap-6 md:grid-cols-5">
           <TicketGrid item={items} />
         </div>
-        <div className="flex gap-0 justify-between max-md:flex-wrap">
-          <div className="flex flex-auto gap-3 pr-20 max-md:flex-wrap">
-            <div className="flex flex-col grow shrink-0 justify-center text-sm text-gray-500 whitespace-nowrap rounded-md shadow-sm basis-0 bg-white bg-opacity-0 w-fit">
-              <StyledInput placeholder="Search" Icon={SearcIcon} />
+        <div className="flex flex-col md:flex-row justify-between gap-3 pb-4 max-md:flex-wrap">
+  <div className="mt-4 flex flex-col md:flex-row items-center gap-3 md:items-center md:flex">
+    <StyledInput placeholder="Search" Icon={SearchIcon} />
+    <DropDown label="Category" options={Role} />
+    <DropDown label="Status" options={Status} />
+    <DropDown label="Manager" options={Manager} />
+    <button
+      className="mt-1 cursor-default rounded-md border bg-white py-2 pl-3 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500"
+      onClick={handleBoardButtonClick}
+    >
+      Board
+    </button>
+  </div>
+  <div className="flex items-center">
+    <StyledButton
+      text="Assign Ticket"
+      onClick={() => setIsModalOpen(true)}
+    />
+  </div>
+</div>
+
+
+
+        {showAdminBoard && <AdminBoard />}{" "}
+        {isModalOpen && (
+          <Modal closeModal={() => setIsModalOpen(false)}>
+            <h1 className="flex-auto font-semibold">
+              Add People to My Project
+            </h1>
+
+            <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
+              Names or emails
+            </h1>
+            <StyledInput placeholder="eg:Maria, maria@gmail.com" />
+            <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
+              or add from
+            </h1>
+            <button className="py-1 px-3 mt-2 leading-8 text-center whitespace-nowrap bg-white rounded border border-solid border-sky-950 border-opacity-10 flex items-center justify-center w-full text-blue-950 text-lg">
+              <GoogleIcon className="w-4 h-4 mr-2" />
+              Google
+            </button>
+
+            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
+              Role
+            </h1>
+            <StyledSelectionList listname="Role " options={Role} />
+
+            <div className="mt-4 text-xs leading-4 text-slate-500">
+              This site is protected by reCAPTCHA and the Google
+              <br></br>
+              Privacy Policy and Terms of Service apply.
             </div>
-            <div className="flex overflow-hidden relative flex-col justify-center w-24 aspect-[2.53]">
-              <button className="relative shrink-0 bg-gray-50 rounded-md border border-gray-300 border-solid h-[42px]">
-                Filter
-              </button>
-            </div>{" "}
-            <div className="flex overflow-hidden relative flex-col justify-center w-24 aspect-[2.53]">
-              {" "}
+            <div className="flex  justify-end gap-4">
               <button
-                className="relative shrink-0 bg-gray-50 rounded-md border border-gray-300 border-solid h-[42px]"
-                onClick={handleBoardButtonClick} // Call handleBoardButtonClick when the button is clicked
+                className="font-semibold  mt-3"
+                onClick={() => setIsModalOpen(false)}
               >
-                Board
+                Cancel
               </button>
+              <StyledButton text="Add" />
             </div>
-          </div>
-          <div className="flex gap-0 justify-center pb-4 text-sm font-medium leading-5 text-white whitespace-nowrap rounded-md shadow-sm">
-            <Link to={"/ProjectManager/ManagerNewTicket"}>
-              <StyledButton text="New Ticket" />
-            </Link>
-          </div>
-        </div>
-        {showAnotherBoard && <AnotherBoard />}{" "}
-        {!showAnotherBoard && (
+          </Modal>
+        )}
+        {!showAdminBoard && (
           <StyledTable header={headers}>
             {currentItems.map((i) => (
               <tr key={i.id}>
                 <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
-                  <input type="checkbox" className="mr-2 checkbox-purple" />
+                  <input type="checkbox" class="mr-2  accent-purple-500" />
                   <Link
                     to={"/ProjectManager/SingleTicket"}
                     className="text-lg font-semibold text-purple-600 hover:text-purple-800"
@@ -143,63 +189,61 @@ const ManagerTicket = () => {
                   />
                 </td>
                 <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                  <button onClick={() => setIsModalOpen(true)}>
+                  <button onClick={() => setIsNotifyOpen(true)}>
                     {" "}
                     <span
                       className={`rounded-full px-3 py-px text-sm
                       ${
                         i.assignedto === "Assign a member Now"
                           ? "bg-indigo-100 text-indigo-800"
-                          // : i.status === "unassigned"
-                          // ? "bg-gray-100 text-gray-800"
-                          // : i.status === "closed"
-                          // ? "bg-red-100 text-red-800"
-                          // : i.status === "resolved"
-                          // ? "bg-green-100 text-green-800"
-                          : ""
+                          : // : i.status === "unassigned"
+                            // ? "bg-gray-100 text-gray-800"
+                            // : i.status === "closed"
+                            // ? "bg-red-100 text-red-800"
+                            // : i.status === "resolved"
+                            // ? "bg-green-100 text-green-800"
+                            ""
                       }`}
                     >
                       {i.assignedto}
                     </span>
                   </button>{" "}
-                  {isModalOpen && (
-                    <Modal  closeModal={() => setIsModalOpen(false)}>
-                      <h1 className="flex-auto font-semibold">
-                        Add People to My Project
+                  {isNotifyOpen && (
+                    <Modal closeModal={() => setIsNotifyOpen(false)}>
+                      <h1 className="flex-auto font-semibold text-black">
+                        Notify Project Manager
                       </h1>
 
                       <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                        Names or emails
+                        To
                       </h1>
-                      <StyledInput />
+                      <StyledInput placeholder="eg:Maria, maria@gmail.com" />
                       <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                        or add from
+                        Sub
                       </h1>
-                      <button className="py-1 px-3 mt-2 leading-8 text-center whitespace-nowrap bg-white rounded border border-solid border-sky-950 border-opacity-10 w-full text-blue-950 text-lg">
-                   
-                        Google
-                      </button>
+                      <StyledInput placeholder="Notify admin about new ticket" />
 
                       <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-                        Role
+                        Notes
                       </h1>
-                      <StyledSelectionList listname="Role "options={Role} />
 
-                      <div className="mt-4 text-xs leading-4 text-slate-500">
-                        This site is protected by reCAPTCHA and the Google<br></br>
-                        Privacy Policy and Terms of Service apply.
-                      </div>
+                      <StyledInput placeholder="Enter Your Notes" />
+
                       <div className="flex  justify-end gap-4">
-                        <button className="font-semibold  mt-3">Cancel</button>
-                        <StyledButton text="Add" />
+                        <button
+                          className="font-semibold  mt-3 text-black"
+                          onClick={() => setIsNotifyOpen(false)}
+                        >
+                          Cancel
+                        </button>
+                        <StyledButton text="Notify" />
                       </div>
                     </Modal>
                   )}
                 </td>
                 <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                  <button onClick={() => setIsStatusOpen(true)} >
-                    <span
-                      className={`rounded-full px-3 py-px text-sm
+                  <span
+                    className={`rounded-full px-3 py-px text-sm
                       ${
                         i.status === "assigned"
                           ? "bg-indigo-100 text-indigo-800"
@@ -211,39 +255,9 @@ const ManagerTicket = () => {
                           ? "bg-green-100 text-green-800"
                           : ""
                       }`}
-                    >
-                      {i.status}
-                    </span>
-                  </button>
-                  {isStatusOpen && (
-                    <Modal  closeModal={() => setIsStatusOpen(false)}>
-                         <div className="grid gap-2">
-          {statuses.map((status) => (
-            <button
-              key={status}
-              className={`rounded-full px-4 py-2 text-sm
-                          ${
-                            status === "assigned"
-                              ? "bg-indigo-100 text-indigo-800"
-                              : status === "unassigned"
-                              ? "bg-gray-100 text-gray-800"
-                              : status === "closed"
-                              ? "bg-red-100 text-red-800"
-                              : status === "resolved"
-                              ? "bg-green-100 text-green-800"
-                              : ""
-                          }`}
-              onClick={() => {
-                // Handle status selection here
-                console.log("Selected status:", status);
-              }}
-            >
-              {status}
-            </button>
-          ))}
-        </div>
-                    </Modal>
-                  )}
+                  >
+                    {i.status}
+                  </span>
                 </td>
               </tr>
             ))}
@@ -266,4 +280,4 @@ const ManagerTicket = () => {
   );
 };
 
-export default ManagerTicket;
+export default AdminTicket;

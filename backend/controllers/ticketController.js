@@ -8,8 +8,6 @@ exports.createTicket = async function(req, res) {
   // Extract filenames 
   const attachmentFilenames = req.files.map(file => file.filename);
 
- 
-    // Create new ticket instance
     const ticket = new Ticket({
       priority,
       category,

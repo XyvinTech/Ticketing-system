@@ -7,22 +7,20 @@ import StyledInput from "../../ui/StyledInput";
 import StyledText from "../../ui/StyledText";
 import FileUpload from "../../ui/FileUpload";
 import StyledButton from "../../ui/StyledButton";
-import { useStore } from "../../store/Store";
+import { useTicketStore } from "../../store/TicketStore";
 const ClientNewTicket = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const addTicket = useStore((state) => state.addTicket);
+  const addTicket = useTicketStore((state) => state.addTicket);
   const Priority = [
-    { name: "Select a priority" },
     { name: "Low" },
     { name: "Medium" },
     { name: "High" },
   ];
   const Category = [
-    { name: "Select a category" },
     { name: "Hardware Issue" },
     { name: "Software Issue" },
     { name: "Other" },

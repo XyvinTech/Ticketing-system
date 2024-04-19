@@ -4,11 +4,12 @@ import TableInfo from "../../ui/TableInfo";
 import { ReactComponent as PaperIcon } from "../../assets/icons/PaperIcon.svg";
 import Reply from "../../ui/Reply";
 import { useParams } from "react-router-dom";
-import { useStore } from "../../store/Store";
+import { useTicketStore } from "../../store/TicketStore";
+import { useConversationStore } from "../../store/ConversationStore";
 const SingleTicket = () => {
   const { id } = useParams();
-  const { fetchTicketById, ticket, fetchConversationById, conversations } =
-    useStore();
+  const { fetchTicketById, ticket } = useTicketStore();
+  const { fetchConversationById, conversations } = useConversationStore();
   useEffect(() => {
     fetchTicketById(id);
     fetchConversationById(id);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { ReactComponent as PlusIcon } from "../../assets/icons/PlusIcon.svg";
 const Card = ({ card }) => {
@@ -12,20 +12,7 @@ const Card = ({ card }) => {
   );
 };
 
-const Column = ({ column, onAddCard }) => {
-  const [addingCard, setAddingCard] = useState(false);
-  const [newCardTitle, setNewCardTitle] = useState("");
-
-  const handleAddCardClick = () => {
-    setAddingCard(true);
-  };
-
-  const handleAddCardSubmit = () => {
-    onAddCard(column.id, newCardTitle);
-    setAddingCard(false);
-    setNewCardTitle("");
-  };
-
+const Column = ({ column }) => {
   return (
     <div className="w-1/4 p-1 ml-1">
       <h2
@@ -44,51 +31,34 @@ const Column = ({ column, onAddCard }) => {
       >
         {column.title}
       </h2>
-      <div className="bg-slate-100 text-black pl-1 pr-4 pt-1 pb-3">
+      <div className="bg-slate-100 text-white pl-1 pr-4 pt-1 pb-3">
         {column.cards.map((card) => (
           <Card key={card.id} card={card} />
         ))}
-        {addingCard ? (
-          <div className="flex items-center mt-2">
-            <input
-              type="text"
-              value={newCardTitle}
-              onChange={(e) => setNewCardTitle(e.target.value)}
-              placeholder="Enter card title"
-              className="px-2 py-1.5 mr-2 border border-gray-300 rounded"
-            />
-            <button
-              className="text-blue-400 text-xs py-2 px-4"
-              onClick={handleAddCardSubmit}
-            >
-              Add
-            </button>
-          </div>
-        ) : (
-          <button
-            className="flex gap-1.5  text-blue-400 text-xs py-2 px-4 mt-2"
-            onClick={handleAddCardClick}
-          >
-            <PlusIcon />
-            <div className="mt-1">New</div>
-          </button>
-        )}
+        <button className=" flex gap-1.5  text-blue-400 text-xs py-2 px-4 mt-2">
+          <PlusIcon />
+         <div className="mt-1"> New</div>
+        </button>
+         
       </div>
     </div>
   );
 };
-const Board = ({ board, onAddCard }) => {
+
+// Board component
+const Board = ({ board }) => {
   return (
     <div className="flex">
       {board.columns.map((column) => (
-        <Column key={column.id} column={column} onAddCard={onAddCard} />
+        <Column key={column.id} column={column} />
       ))}
     </div>
   );
 };
 
+// App component
 const ClientBoard = () => {
-  const [board, setBoard] = useState({
+  const board = {
     columns: [
       {
         id: 1,
@@ -135,29 +105,12 @@ const ClientBoard = () => {
         ],
       },
     ],
-  });
-
-  const handleAddCard = (columnId, title) => {
-    const newCard = { id: Math.random(), title, description: "High" };
-    const updatedColumns = board.columns.map((column) => {
-      if (column.id === columnId) {
-        return {
-          ...column,
-          cards: [...column.cards, newCard],
-        };
-      }
-      return column;
-    });
-    setBoard({
-      ...board,
-      columns: updatedColumns,
-    });
   };
 
   return (
     <div className="overflow-x-auto rounded-lg border shadow py-7 pr-4">
       <div className="inline-block min-w-full align-middle">
-        <Board board={board} onAddCard={handleAddCard} />
+        <Board board={board} />
       </div>
     </div>
   );

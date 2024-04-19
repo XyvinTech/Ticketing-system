@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { ReactComponent as UpDownIcon } from "../assets/icons/UpDownIcon.svg";
+import { ReactComponent as FilterIcon } from "../assets/icons/FilterIcon.svg";
 
-const StyledSelectionList = ({ options, label, onChange = () => {},listname }) => {
+const DropDown= ({ options, label, onChange = () => {}}) => {
   const [selected, setSelected] = useState(null);
 
   const handleChange = (value) => {
@@ -13,16 +13,14 @@ const StyledSelectionList = ({ options, label, onChange = () => {},listname }) =
   return (
     <Listbox value={selected} onChange={handleChange}>
       <div className="flex flex-col">
-        <Listbox.Label className="text-sm font-medium text-gray-700">
-          {label}
-        </Listbox.Label>
         <div className="relative mt-1">
-          <Listbox.Button className="relative w-full cursor-default rounded-md border bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500">
-            <span className="block truncate">{selected ? selected.name : label ? `Select ${label}` : `Select ${listname}`}</span>
-            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-              <UpDownIcon className="h-5 w-5 text-gray-400" />
-            </span>
-          </Listbox.Button>
+        <Listbox.Button className="relative w-44 cursor-default rounded-md border bg-white py-2 pl-10 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500">
+  <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
+    <FilterIcon className="h-5 w-5 text-gray-400" />
+  </span>
+  <span className="block truncate">{selected ? selected.name :  ` ${label}` }</span>
+</Listbox.Button>
+
           <Transition
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100"
@@ -48,11 +46,7 @@ const StyledSelectionList = ({ options, label, onChange = () => {},listname }) =
                       >
                         {option.name}
                       </span>
-                      {selected ? (
-                        <span className="absolute inset-y-0 right-0 flex items-center pr-4 ">
-                          <UpDownIcon className="h-5 w-5" />
-                        </span>
-                      ) : null}
+                    
                     </>
                   )}
                 </Listbox.Option>
@@ -65,4 +59,4 @@ const StyledSelectionList = ({ options, label, onChange = () => {},listname }) =
   );
 };
 
-export default StyledSelectionList;
+export default DropDown;

@@ -5,10 +5,10 @@ import { ReactComponent as UpIcon } from "../assets/icons/Upicon.svg";
 import StyledText from "../ui/StyledText";
 import FileUpload from "../ui/FileUpload";
 import StyledButton from "./StyledButton";
-import { useStore } from "../store/Store";
+import { useConversationStore } from "../store/ConversationStore";
 const Reply = ({ ticketId }) => {
   const { control, handleSubmit } = useForm();
-  const addConversation = useStore((state) => state.addConversation);
+  const addConversation = useConversationStore((state) => state.addConversation);
   const onSubmit = async (data) => {
     try {
       const newData = { ...data, ticketId: ticketId }; 

@@ -22,15 +22,36 @@ import MemberNotification from "./components/Member/MemberNotification";
 import MemberPassword from "./components/Member/MemberPassword";
 import MemberSingleTicket from "./components/Member/MemberSingleTicket";
 import ClientLayout from "./Layout/ClientLayout";
-import Text from "./Text";
+import AdminLayout from "./Layout/AdminLayout";
+import AdminTicket from "./components/MainAdmin/AdminTicket";
+import AdminProfile from "./components/MainAdmin/AdminProfile";
+import AdminPassword from "./components/MainAdmin/AdminPassword";
+import AdminNotification from "./components/MainAdmin/AdminNotification";
+import AdminAddPeople from "./components/MainAdmin/AdminAddPeople";
+
 
 function App() {
   return (
     <>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/text" element={<Text/>} />
           <Route path="/Register" element={<RegisterForm />} />
+          <Route
+            path="/Admin/*"
+            element={
+              <AdminLayout>
+                <Routes>
+                  <Route path="/Ticket" element={<AdminTicket />} />
+                  {/* <Route path="ClientNewTicket" element={<ClientNewTicket />} />
+                  <Route path="SingleTicket/:id" element={<SingleTicket />} /> */}
+                  <Route path="AdminProfile" element={<AdminProfile />} />
+                  <Route path="AdminPassword" element={<AdminPassword />} />
+                  <Route path="AdminNotifications" element={<AdminNotification />} />
+                  <Route path="Addpeople" element={<AdminAddPeople/>} />
+                </Routes>
+              </AdminLayout>
+            }
+          />
           <Route
             path="/Client/Ticket/*"
             element={
