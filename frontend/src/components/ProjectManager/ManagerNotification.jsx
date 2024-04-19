@@ -22,7 +22,6 @@ const ManagerNotification = () => {
       created_at: "2024-03-11",
       read_at: "2024-03-11", // This indicates read
     },
-    // Add more notifications as needed
   ];
 
   // Pagination state for all notifications

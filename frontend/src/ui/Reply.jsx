@@ -1,6 +1,6 @@
 import { Disclosure } from "@headlessui/react";
 import React from "react";
-import { useForm, Controller } from "react-hook-form"; // Import useForm and Controller
+import { useForm, Controller } from "react-hook-form"; 
 import { ReactComponent as UpIcon } from "../assets/icons/Upicon.svg";
 import StyledText from "../ui/StyledText";
 import FileUpload from "../ui/FileUpload";

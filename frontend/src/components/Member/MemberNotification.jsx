@@ -14,15 +14,14 @@ const MemberNotification = () => {
       id: 1,
       message: "Notification 1",
       created_at: "2024-03-12",
-      read_at: null, // This indicates unread
+      read_at: null, 
     },
     {
       id: 2,
       message: "Notification 2",
       created_at: "2024-03-11",
-      read_at: "2024-03-11", // This indicates read
+      read_at: "2024-03-11", 
     },
-    // Add more notifications as needed
   ];
 
   // Pagination state for all notifications

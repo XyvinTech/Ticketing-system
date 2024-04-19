@@ -14,7 +14,6 @@ const AdminAddPeople = () => {
   const [people, setPeople] = useState([
     { id: 1, name: "John Doe", email: "john@example.com" },
     { id: 2, name: "Jane Smith", email: "jane@example.com" },
-    // Add more sample data as needed
   ]);
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
 
