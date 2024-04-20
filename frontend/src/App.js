@@ -28,6 +28,10 @@ import AdminProfile from "./components/MainAdmin/AdminProfile";
 import AdminPassword from "./components/MainAdmin/AdminPassword";
 import AdminNotification from "./components/MainAdmin/AdminNotification";
 import AdminAddPeople from "./components/MainAdmin/AdminAddPeople";
+import AdminDepartment from "./components/MainAdmin/AdminDepartment";
+import Text from "./Text";
+import AdminNewTicket from "./components/MainAdmin/AdminNewTicket";
+import AdminSingleTicket from "./components/MainAdmin/AdminSingleTicket";
 
 
 function App() {
@@ -36,14 +40,16 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/Register" element={<RegisterForm />} />
+          <Route path="/text" element={<Text />} />
           <Route
             path="/Admin/*"
             element={
               <AdminLayout>
                 <Routes>
-                  <Route path="/Ticket" element={<AdminTicket />} />
-                  {/* <Route path="ClientNewTicket" element={<ClientNewTicket />} />
-                  <Route path="SingleTicket/:id" element={<SingleTicket />} /> */}
+                  <Route path="Ticket" element={<AdminTicket />} />
+                  <Route path="AdminNewTicket" element={<AdminNewTicket />} />
+                  <Route path="SingleTicket" element={<AdminSingleTicket/>} />
+                  <Route path="Department" element={<AdminDepartment />} />
                   <Route path="AdminProfile" element={<AdminProfile />} />
                   <Route path="AdminPassword" element={<AdminPassword />} />
                   <Route path="AdminNotifications" element={<AdminNotification />} />

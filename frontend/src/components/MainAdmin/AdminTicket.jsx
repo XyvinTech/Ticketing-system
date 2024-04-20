@@ -35,7 +35,7 @@ const AdminTicket = () => {
       category: { name: "Category A" },
       replies: [{ created_at: "--" }],
       status: "assigned",
-      assignedto: "Assign a member Now",
+      assignedto: "Notify ProjectManager",
     },
     {
       id: 2,
@@ -175,7 +175,7 @@ const AdminTicket = () => {
                 <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
                   <input type="checkbox" class="mr-2  accent-purple-500" />
                   <Link
-                    to={"/ProjectManager/SingleTicket"}
+                    to={"/Admin/SingleTicket"}
                     className="text-lg font-semibold text-purple-600 hover:text-purple-800"
                   >
                     {i.subject}
@@ -196,13 +196,9 @@ const AdminTicket = () => {
                       ${
                         i.assignedto === "Assign a member Now"
                           ? "bg-indigo-100 text-indigo-800"
-                          : // : i.status === "unassigned"
-                            // ? "bg-gray-100 text-gray-800"
-                            // : i.status === "closed"
-                            // ? "bg-red-100 text-red-800"
-                            // : i.status === "resolved"
-                            // ? "bg-green-100 text-green-800"
-                            ""
+                           : i.assignedto === "Notify ProjectManager"
+                             ? "bg-red-100 text-red-800"
+                            :""
                       }`}
                     >
                       {i.assignedto}
@@ -258,6 +254,7 @@ const AdminTicket = () => {
                   >
                     {i.status}
                   </span>
+                 
                 </td>
               </tr>
             ))}

@@ -10,7 +10,7 @@ import StyledButton from "../../ui/StyledButton";
 const AdminAddPeople = () => {
   const [enabled, setEnabled] = useState(false);
 
-  const [showUnread, setShowUnread] = useState(false);
+  
   const [people, setPeople] = useState([
     { id: 1, name: "John Doe", email: "john@example.com" },
     { id: 2, name: "Jane Smith", email: "jane@example.com" },
@@ -37,7 +37,7 @@ const AdminAddPeople = () => {
 
       <div className="mb-4 pr-5 flex justify-between items-center">
         <div className="flex mt-5 gap-3 divide-x divide-dashed text-sm text-gray-500">
-          <div className={` ${showUnread ? "" : "font-semibold"}`}>All(2)</div>
+          <div className="font-semibold">All(2)</div>
         </div>
         <StyledButton text="Add People" onClick={openModal} />
       </div>

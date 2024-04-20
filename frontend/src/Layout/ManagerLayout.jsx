@@ -1,9 +1,6 @@
 import React from "react";
 import { ReactComponent as TicketIcon } from "../assets/icons/TicketIcon.svg";
 import { ReactComponent as PlusIcon } from "../assets/icons/PlusIcon.svg";
-import { ReactComponent as ProfileIcon } from "../assets/icons/ProfileIcon.svg";
-import { ReactComponent as PasswordIcon } from "../assets/icons/PasswordIcon.svg";
-import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
 import { ReactComponent as UsersIcon } from "../assets/icons/UsersIcon.svg";
 import { Link, useLocation } from "react-router-dom";
 import ManagerNavbar from "../ui/ManagerNavbar";
@@ -13,9 +10,6 @@ const SubNavigation = () => {
   const subNavigation = [
     { name: "Tickets", to: "ProjectManager/Ticket", icon: TicketIcon },
     { name: "New Ticket", to: "ProjectManager/ManagerNewTicket", icon: PlusIcon },
-    // { name: "Profile", to: "ProjectManager/ManagerProfile", icon: ProfileIcon },
-    // { name: "Password", to: "ProjectManager/ManagerPassword", icon: PasswordIcon },
-    // { name: "Notifications",to: "ProjectManager/ManagerNotification",icon: BellIcon,},
     { name: "Add Member",to: "ProjectManager/AddPeople",icon: UsersIcon,},
   ];
 

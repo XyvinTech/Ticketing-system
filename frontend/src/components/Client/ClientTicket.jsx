@@ -30,7 +30,7 @@ const ClientTicket = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 7;
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -113,28 +113,28 @@ const ClientTicket = () => {
                   // last_reply_on={tickets.replies[0]?.created_at}
                 />
               </td>
-              <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                {/* <span
+              <td className="whitespace-nowrap text-sm  text-gray-500 px-3 py-4">
+                <span
                   className={`rounded-full px-3 py-px text-sm
                   ${
-                    i.status === "assigned"
+                      tickets.status === "In Progress"
                       ? "bg-indigo-100 text-indigo-800"
-                      : i.status === "unassigned"
+                      : tickets.status === "Archived"
                       ? "bg-gray-100 text-gray-800"
-                      : i.status === "closed"
+                      : tickets.status === "Not Started"
                       ? "bg-red-100 text-red-800"
-                      : i.status === "resolved"
+                      : tickets.status === "Done"
                       ? "bg-green-100 text-green-800"
                       : ""
                   }`}
                 >
-                  {i.status}
-                </span> */}
+                  {tickets.status}
+                </span>
               </td>
             </tr>
           ))}
           <tr>
-            <td colSpan="2" className="px-4 py-2">
+            <td colSpan="2" className="px-3 py-4">
               <Pagination
                 currentPage={currentPage}
                 totalItems={tickets.length}

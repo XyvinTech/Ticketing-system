@@ -1,116 +1,93 @@
-import React from "react";
-
+import React, { useEffect } from "react";
 import { ReactComponent as PlusIcon } from "../../assets/icons/PlusIcon.svg";
+import { Link } from "react-router-dom";
+import { useTicketStore } from "../../store/TicketStore";
+
 const Card = ({ card }) => {
   return (
     <div className="flex flex-col p-2 mt-1.5 w-full text-black bg-white rounded shadow-sm">
-      <h3 className="text-sm text-stone-700 mb-2">{card.title}</h3>
+      <h3 className="text-sm text-stone-700 mb-2">{card.subject}</h3>
       <p className="justify-center self-start px-1.5 mt-1.5  text-xs leading-5 bg-red-100 rounded text-rose-950">
-        {card.description}
+        {card.priority}
       </p>
     </div>
   );
 };
 
-const Column = ({ column }) => {
+const Column = ({ title, cards }) => {
+  const totalCount = cards.length;
+
   return (
     <div className="w-1/4 p-1 ml-1">
-      <h2
-        className={`flex flex-col flex-1 justify-center self-start px-1 py-.5 text-xs  rounded-xl leading-[186%] max-w-[100px]  mb-2
-      ${
-        column.title === "Not started"
-          ? "bg-red-100 text-cyan-950"
-          : column.title === "Archived"
-          ? "bg-gray-300 text-zinc-500"
-          : column.title === "In progress"
-          ? "bg-slate-300 text-cyan-950"
-          : column.title === "Done"
-          ? "bg-emerald-100 text-emerald-900"
-          : ""
-      }`}
-      >
-        {column.title}
-      </h2>
+      <div className="flex justify-start gap-2 items-center mb-2">
+      
+        <div>
+          <h2
+            className={`flex flex-col flex-1 justify-center self-start px-1 pr-3 pl-3 text-xs rounded-xl leading-[186%] max-w-[100px]
+            ${
+              title === "Not Started"
+                ? "bg-red-100 text-cyan-950"
+                : title === "Archived"
+                ? "bg-gray-300 text-zinc-500"
+                : title === "In Progress"
+                ? "bg-slate-300 text-cyan-950"
+                : title === "Done"
+                ? "bg-emerald-100 text-emerald-900"
+                : ""
+            }`}
+          >
+            {title}
+          </h2>
+        </div>  <div className="flex items-center">
+          <span className="text-xs text-cyan-500 mr-1">{totalCount}</span>
+        </div>
+      </div>
       <div className="bg-slate-100 text-white pl-1 pr-4 pt-1 pb-3">
-        {column.cards.map((card) => (
+        {cards.map((card) => (
           <Card key={card.id} card={card} />
         ))}
-        <button className=" flex gap-1.5  text-blue-400 text-xs py-2 px-4 mt-2">
-          <PlusIcon />
-         <div className="mt-1"> New</div>
-        </button>
-         
+         {title === "Not Started" && (
+          <Link to={"/Client/Ticket/ClientNewTicket"}>
+            <button className="flex gap-1.5 text-blue-400 text-xs py-2 px-4 mt-2">
+              <PlusIcon />
+              <div className="mt-1">New</div>
+            </button>
+          </Link>
+        )}
       </div>
     </div>
   );
 };
 
-// Board component
-const Board = ({ board }) => {
+
+const Board = ({ columns }) => {
   return (
     <div className="flex">
-      {board.columns.map((column) => (
-        <Column key={column.id} column={column} />
+      {columns.map((column) => (
+        <Column key={column.title} title={column.title} cards={column.cards} />
       ))}
     </div>
   );
 };
 
-// App component
 const ClientBoard = () => {
-  const board = {
-    columns: [
-      {
-        id: 1,
-        title: "Not started",
-        cards: [
-          { id: 43, title: "DOUBLEHOUSE", description: "High" },
-          { id: 50, title: "DOUBLEHOUSE", description: "High" },
-          { id: 51, title: "DOUBLEHOUSE", description: "High" },
-          { id: 52, title: "DOUBLEHOUSE", description: "High" },
-          { id: 53, title: "DOUBLEHOUSE", description: "High" },
-        ],
-      },
-      {
-        id: 2,
-        title: "In progress",
-        cards: [
-          { id: 9, title: "DOUBLEHOUSE", description: "High" },
-          { id: 10, title: "DOUBLEHOUSE", description: "High" },
-          { id: 11, title: "DOUBLEHOUSE", description: "High" },
-          { id: 12, title: "DOUBLEHOUSE", description: "High" },
-          { id: 13, title: "DOUBLEHOUSE", description: "High" },
-        ],
-      },
-      {
-        id: 3,
-        title: "Done",
-        cards: [
-          { id: 14, title: "DOUBLEHOUSE", description: "High" },
-          { id: 15, title: "DOUBLEHOUSE", description: "High" },
-          { id: 16, title: "DOUBLEHOUSE", description: "High" },
-          { id: 17, title: "DOUBLEHOUSE", description: "High" },
-          { id: 18, title: "DOUBLEHOUSE", description: "High" },
-        ],
-      },
-      {
-        id: 4,
-        title: "Archived",
-        cards: [
-          { id: 19, title: "DOUBLEHOUSE", description: "High" },
-          { id: 20, title: "DOUBLEHOUSE", description: "High" },
-          { id: 21, title: "DOUBLEHOUSE", description: "High" },
-          { id: 22, title: "DOUBLEHOUSE", description: "High" },
-          { id: 23, title: "DOUBLEHOUSE", description: "High" },
-        ],
-      },
-    ],
-  };
+  const { tickets, fetchTickets } = useTicketStore();
+
+  useEffect(() => {
+    fetchTickets();
+  }, [fetchTickets]);
+
+  const columns = [
+    { title: "Not Started", cards: tickets.filter(ticket => ticket.status === "Not Started") },
+    { title: "In Progress", cards: tickets.filter(ticket => ticket.status === "In Progress") },
+    { title: "Done", cards: tickets.filter(ticket => ticket.status === "Done") },
+    { title: "Archived", cards: tickets.filter(ticket => ticket.status === "Archived") }
+  ];
 
   return (
     <div className="overflow-x-auto rounded-lg border shadow py-7 pr-4">
       <div className="inline-block min-w-full align-middle">
-        <Board board={board} />
+        <Board columns={columns} />
       </div>
     </div>
   );

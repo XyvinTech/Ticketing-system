@@ -13,7 +13,8 @@ exports.createTicket = async function(req, res) {
       category,
       subject,
       description,
-      attachment: attachmentFilenames 
+      attachment: attachmentFilenames ,
+      status: "Not Started" 
     });
 
     await ticket.save();

@@ -3,6 +3,11 @@ import { ReactComponent as CalendarIcon } from "../assets/icons/CalendarIcon.svg
 import { ReactComponent as SquareIcon } from "../assets/icons/SquareIcon.svg";
 import { ReactComponent as ClockIcon} from "../assets/icons/ClockIcon.svg";
 const TableInfo = ({ reference,createdAt, priority, category, last_reply_on }) => {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { month: "short", day: "numeric", year: "numeric" };
+    return date.toLocaleDateString("en-US", options);
+  };
   return (
     <div className="mt-1 flex space-x-2 divide-x text-xs">
       <div className="tooltip" data-tooltip="Reference">
@@ -11,7 +16,7 @@ const TableInfo = ({ reference,createdAt, priority, category, last_reply_on }) =
 
       <div className="flex items-center gap-1 pl-2 tooltip" data-tooltip="Date">
         <CalendarIcon className="h-4 w-4 text-gray-400" />
-        <span>{createdAt}</span>
+        <span>  {formatDate(createdAt)}</span>
       </div>
 
       <div className={`flex items-center gap-1 pl-2 tooltip ${priority === 'high' ? 'text-red-500' : priority === 'medium' ? 'text-orange-500' : ''}`} data-tooltip="Priority">
@@ -26,7 +31,8 @@ const TableInfo = ({ reference,createdAt, priority, category, last_reply_on }) =
 
       <div className="flex items-center gap-1 pl-2 tooltip" data-tooltip="Last reply">
         <ClockIcon className="h-4 w-4 text-gray-400" />
-        <span>{last_reply_on ?? '--'}</span>
+        <span>{last_reply_on ? formatDate(last_reply_on) : '--'}</span>
+
       </div>
     </div>
   )

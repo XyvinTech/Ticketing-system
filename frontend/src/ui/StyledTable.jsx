@@ -11,12 +11,12 @@ const StyledTable = (props) => {
             <tr >
             {header.map((i, index) => (
               <th
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                className="px-3 py-4 text-left text-sm font-semibold text-gray-900"
               >
                 { i }
               </th>
             ))}</tr></thead>
-             <tbody className="divide-y divide-gray-200 bg-white">
+             <tbody className="divide-y px-3 py-4 divide-gray-200 bg-white">
              {props.children}
           </tbody></table></div></div></div>
   )

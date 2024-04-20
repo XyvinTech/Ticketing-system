@@ -1,8 +1,5 @@
 import React from "react";
 import { ReactComponent as TicketIcon } from "../assets/icons/TicketIcon.svg";
-import { ReactComponent as ProfileIcon } from "../assets/icons/ProfileIcon.svg";
-import { ReactComponent as PasswordIcon } from "../assets/icons/PasswordIcon.svg";
-import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
 import { Link, useLocation } from "react-router-dom";
 import Footer from "../ui/Footer";
 import MemberNavbar from "../ui/MemberNavbar";
@@ -10,10 +7,7 @@ import MemberNavbar from "../ui/MemberNavbar";
 const SubNavigation = () => {
   const location = useLocation();
   const subNavigation = [
-    { name: "Tickets", to: "Member/Ticket", icon: TicketIcon },
-    // { name: "Profile", to: "Member/Profile", icon: ProfileIcon },
-    // { name: "Password", to: "Member/Password", icon: PasswordIcon },
-    // { name: "Notifications",to: "Member/Notification",icon: BellIcon,},
+    { name: "Tickets", to: "Member/Ticket", icon: TicketIcon }
   ];
 
   return (

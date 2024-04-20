@@ -1,9 +1,6 @@
 import React from "react";
 import { ReactComponent as TicketIcon } from "../assets/icons/TicketIcon.svg";
 import { ReactComponent as PlusIcon } from "../assets/icons/PlusIcon.svg";
-import { ReactComponent as ProfileIcon } from "../assets/icons/ProfileIcon.svg";
-import { ReactComponent as PasswordIcon } from "../assets/icons/PasswordIcon.svg";
-import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
 import { Link, useLocation } from "react-router-dom";
 import Footer from "../ui/Footer";
 import ClientNavbar from "../ui/ClientNavbar";
@@ -12,10 +9,7 @@ const SubNavigation = () => {
   const location = useLocation();
   const subNavigation = [
     { name: "Tickets", to: "Client/Ticket", icon: TicketIcon },
-    { name: "New Ticket", to: "Client/Ticket/ClientNewTicket", icon: PlusIcon },
-    // { name: "Profile", to: "Client/Ticket/ClientProfile", icon: ProfileIcon },
-    // { name: "Password", to: "Client/Ticket/ClientPassword", icon: PasswordIcon },
-    // { name: "Notifications",to: "Client/Ticket/ClientNotifications",icon: BellIcon,},
+    { name: "New Ticket", to: "Client/Ticket/ClientNewTicket", icon: PlusIcon }
   ];
 
   return (
