@@ -57,7 +57,7 @@ const Column = ({ column }) => {
   );
 };
 
-const ManagerBoard = () => {
+const ProjectLeadBoard = () => {
   const [board, setBoard] = useState({
     columns: [
       {
@@ -175,4 +175,4 @@ const ManagerBoard = () => {
   );
 };
 
-export default ManagerBoard;
+export default ProjectLeadBoard;

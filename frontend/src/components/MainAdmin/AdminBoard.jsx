@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { ReactComponent as PlusIcon } from "../../assets/icons/PlusIcon.svg";
 
 const Card = ({ card }) => {
   return (

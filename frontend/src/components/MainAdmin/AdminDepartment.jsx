@@ -144,9 +144,7 @@ const AdminDepartment = () => {
                                   enabled ? "bg-purple-600" : "bg-gray-200"
                                 } relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none`}
                               >
-                                <span className="sr-only">
-                                  Enable notifications
-                                </span>
+                              
                                 <span
                                   className={`${
                                     enabled ? "translate-x-6" : "translate-x-1"

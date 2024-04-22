@@ -4,7 +4,8 @@ import TableInfo from "../../ui/TableInfo";
 import { ReactComponent as PaperIcon } from "../../assets/icons/PaperIcon.svg";
 import Reply from "../../ui/Reply";
 
-const ManagerSingleTicket = () => {
+const ProjectLeadSingleTicket = () => {
+  // Dummy array with mock data
   const dummyArray = [
     {
       id: 1,
@@ -83,6 +84,7 @@ const ManagerSingleTicket = () => {
                 {item.description}
               </div>
             </div>
+            {/* Render attachments */}
             <div className="py-3 pr-3 pl-3"> 
             <div className="flex items-center gap-1 font-semibold text-gray-500">
           <PaperIcon className="h-4 w-4" />
@@ -109,7 +111,7 @@ const ManagerSingleTicket = () => {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="overflow-hidden">
                   <h1 className="mb-6 text-xl font-semibold text-purple-600">{item.subject}</h1>
-                 
+                  {/* Pass item properties to TableInfo component */}
                   <TableInfo
                     className="overflow-x-auto whitespace-nowrap"
                     reference={item.reference}
@@ -143,6 +145,7 @@ const ManagerSingleTicket = () => {
                 {item.description}
               </div>
             </div>
+            {/* Render attachments */}
             <div className="py-3 pr-3 pl-3"> 
             <div className="flex items-center gap-1 font-semibold text-gray-500">
           <PaperIcon className="h-4 w-4" />
@@ -168,4 +171,4 @@ const ManagerSingleTicket = () => {
   );
 };
 
-export default ManagerSingleTicket;
+export default ProjectLeadSingleTicket;

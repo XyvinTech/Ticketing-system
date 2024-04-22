@@ -8,15 +8,16 @@ import { Link } from "react-router-dom";
 import Pagination from "../../ui/Pagination";
 import { ReactComponent as GoogleIcon } from "../../assets/icons/GoogleIcon.svg";
 import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
-import AdminBoard from "./AdminBoard";
 import StyledSelectionList from "../../ui/StyledSelectionList";
 import Modal from "../../ui/Modal";
 import DropDown from "../../ui/DropDown";
+import { Switch } from "@headlessui/react";
+import ProjectLeadBoard from "./ProjectLeadBoard";
 
-const AdminTicket = () => {
+const ProjectLeadTicket = () => {
   const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isNotifyOpen, setIsNotifyOpen] = useState(false);
+  const [enabled, setEnabled] = useState(false);
   const items = [
     { name: "Total", count: 7 },
     { name: "Assigned", count: 7 },
@@ -35,7 +36,7 @@ const AdminTicket = () => {
       category: { name: "Category A" },
       replies: [{ created_at: "--" }],
       status: "assigned",
-      assignedto: "Notify ProjectManager",
+      assignedto: "Assign a member Now",
     },
     {
       id: 2,
@@ -108,15 +109,37 @@ const AdminTicket = () => {
         <div className="flex flex-col md:flex-row justify-between gap-3 pb-4 max-md:flex-wrap">
           <div className="mt-4 flex flex-col md:flex-row items-center gap-3 md:items-center md:flex">
             <StyledInput placeholder="Search" Icon={SearchIcon} />
-            <DropDown label="Category" options={Role} />
+            <DropDown label="Project Lead" options={Role} />
             <DropDown label="Status" options={Status} />
-            <DropDown label="Manager" options={Manager} />
             <button
               className="mt-1 cursor-default rounded-md border bg-white py-2 pl-3 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500"
               onClick={handleBoardButtonClick}
             >
               Board
             </button>
+            <div className="flex items-center space-x-2 ">
+                          <Switch.Group>
+                            <div className="flex items-center">
+                              <Switch.Label className="mr-2 font-semibold ">
+                                My Tickets
+                              </Switch.Label>
+                              <Switch
+                                checked={enabled}
+                                onChange={setEnabled}
+                                className={`${
+                                  enabled ? "bg-purple-600" : "bg-gray-200"
+                                } relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none`}
+                              >
+                              
+                                <span
+                                  className={`${
+                                    enabled ? "translate-x-6" : "translate-x-1"
+                                  } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
+                                />
+                              </Switch>
+                            </div>
+                          </Switch.Group>
+                        </div>
           </div>
           <div className="flex items-center">
             <StyledButton
@@ -125,7 +148,7 @@ const AdminTicket = () => {
             />
           </div>
         </div>
-        {showAdminBoard && <AdminBoard />}{" "}
+        {showAdminBoard && <ProjectLeadBoard />}{" "}
         {isModalOpen && (
           <Modal closeModal={() => setIsModalOpen(false)}>
             <h1 className="flex-auto font-semibold">
@@ -172,7 +195,7 @@ const AdminTicket = () => {
                 <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
                   <input type="checkbox" class="mr-2  accent-purple-500" />
                   <Link
-                    to={"/Admin/SingleTicket"}
+                    to={"/ProjectLead/SingleTicket"}
                     className="text-lg font-semibold text-purple-600 hover:text-purple-800"
                   >
                     {i.subject}
@@ -186,7 +209,7 @@ const AdminTicket = () => {
                   />
                 </td>
                 <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                  <button onClick={() => setIsNotifyOpen(true)}>
+              
                     {" "}
                     <span
                       className={`rounded-full px-3 py-px text-sm
@@ -200,39 +223,6 @@ const AdminTicket = () => {
                     >
                       {i.assignedto}
                     </span>
-                  </button>{" "}
-                  {isNotifyOpen && (
-                    <Modal closeModal={() => setIsNotifyOpen(false)}>
-                      <h1 className="flex-auto font-semibold text-black">
-                        Notify Project Manager
-                      </h1>
-
-                      <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                        To
-                      </h1>
-                      <StyledInput placeholder="eg:Maria, maria@gmail.com" />
-                      <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                        Sub
-                      </h1>
-                      <StyledInput placeholder="Notify admin about new ticket" />
-
-                      <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-                        Notes
-                      </h1>
-
-                      <StyledInput placeholder="Enter Your Notes" />
-
-                      <div className="flex  justify-end gap-4">
-                        <button
-                          className="font-semibold  mt-3 text-black"
-                          onClick={() => setIsNotifyOpen(false)}
-                        >
-                          Cancel
-                        </button>
-                        <StyledButton text="Notify" />
-                      </div>
-                    </Modal>
-                  )}
                 </td>
                 <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
                   <span
@@ -273,4 +263,4 @@ const AdminTicket = () => {
   );
 };
 
-export default AdminTicket;
+export default ProjectLeadTicket;

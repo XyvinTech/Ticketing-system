@@ -1,109 +1,24 @@
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
-import ClientTicket from "./components/Client/ClientTicket";
-import ClientNewTicket from "./components/Client/ClientNewTicket";
-import ClientProfile from "./components/Client/ClientProfile";
-import ClientPassword from "./components/Client/ClientPassword";
-import ClientNotification from "./components/Client/ClientNotification";
 import RegisterForm from "./pages/RegisterForm";
-import SingleTicket from "./components/Client/SingleTicket";
-import ManagerLayout from "./Layout/ManagerLayout";
-import ManagerTicket from "./components/ProjectManager/ManagerTicket";
-import ManagerPassword from "./components/ProjectManager/ManagerPassword";
-import ManagerProfile from "./components/ProjectManager/ManagerProfile";
-import AddPeople from "./components/ProjectManager/AddPeople";
-import ManagerNewTicket from "./components/ProjectManager/ManagerNewTicket";
-import ManagerNotification from "./components/ProjectManager/ManagerNotification";
-import ManagerSingleTicket from "./components/ProjectManager/ManagerSingleTicket";
-import MemberLayout from "./Layout/MemberLayout";
-import MemberTicket from "./components/Member/MemberTicket";
-import MemberProfile from "./components/Member/MemberProfile";
-import MemberNotification from "./components/Member/MemberNotification";
-import MemberPassword from "./components/Member/MemberPassword";
-import MemberSingleTicket from "./components/Member/MemberSingleTicket";
-import ClientLayout from "./Layout/ClientLayout";
-import AdminLayout from "./Layout/AdminLayout";
-import AdminTicket from "./components/MainAdmin/AdminTicket";
-import AdminProfile from "./components/MainAdmin/AdminProfile";
-import AdminPassword from "./components/MainAdmin/AdminPassword";
-import AdminNotification from "./components/MainAdmin/AdminNotification";
-import AdminAddPeople from "./components/MainAdmin/AdminAddPeople";
-import AdminDepartment from "./components/MainAdmin/AdminDepartment";
-import Text from "./Text";
-import AdminNewTicket from "./components/MainAdmin/AdminNewTicket";
-import AdminSingleTicket from "./components/MainAdmin/AdminSingleTicket";
-
+import AdminRoutes from "./routes/AdminRoutes";
+import MemberRoutes from "./routes/MemberRoutes";
+import ProjectManagerRoutes from "./routes/ProjectManagerRoutes";
+import ProjectLead from "./routes/ProjectLead";
+import ClientRoutes from "./routes/ClientRoutes";
 
 function App() {
   return (
     <>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/Register" element={<RegisterForm />} />
-          <Route path="/text" element={<Text />} />
-          <Route
-            path="/Admin/*"
-            element={
-              <AdminLayout>
-                <Routes>
-                  <Route path="Ticket" element={<AdminTicket />} />
-                  <Route path="AdminNewTicket" element={<AdminNewTicket />} />
-                  <Route path="SingleTicket" element={<AdminSingleTicket/>} />
-                  <Route path="Department" element={<AdminDepartment />} />
-                  <Route path="AdminProfile" element={<AdminProfile />} />
-                  <Route path="AdminPassword" element={<AdminPassword />} />
-                  <Route path="AdminNotifications" element={<AdminNotification />} />
-                  <Route path="Addpeople" element={<AdminAddPeople/>} />
-                </Routes>
-              </AdminLayout>
-            }
-          />
-          <Route
-            path="/Client/Ticket/*"
-            element={
-              <ClientLayout>
-                <Routes>
-                  <Route path="/" element={<ClientTicket />} />
-                  <Route path="ClientNewTicket" element={<ClientNewTicket />} />
-                  <Route path="SingleTicket/:id" element={<SingleTicket />} />
-                  <Route path="ClientProfile" element={<ClientProfile />} />
-                  <Route path="ClientPassword" element={<ClientPassword />} />
-                  <Route path="ClientNotifications" element={<ClientNotification />} />
-                </Routes>
-              </ClientLayout>
-            }
-          />
-          <Route
-            path="/ProjectManager/*"
-            element={
-              <ManagerLayout>
-                <Routes>
-                  <Route path="/Ticket" element={<ManagerTicket />} />
-                  <Route path="/ManagerPassword" element={<ManagerPassword />} />
-                  <Route path="/AddPeople" element={<AddPeople />} />
-                  <Route path="/ManagerProfile" element={<ManagerProfile />} />
-                  <Route path="/ManagerNotification" element={<ManagerNotification />} />
-                  <Route path="/ManagerSingleTicket" element={<ManagerSingleTicket />} />
-                  <Route path="/ManagerNewTicket" element={<ManagerNewTicket />} />
-                </Routes>
-              </ManagerLayout>
-            }
-          />
-          <Route
-            path="/Member/*"
-            element={
-              <MemberLayout>
-                <Routes>
-                  <Route path="/Ticket" element={<MemberTicket />} />
-                  <Route path="/Profile" element={<MemberProfile />} />
-                  <Route path="/Notification" element={<MemberNotification />} />
-                  <Route path="/Password" element={<MemberPassword />} />
-                  <Route path="/SingleTicket" element={<MemberSingleTicket />} />
-                </Routes>
-              </MemberLayout>
-            }
-          />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/Register" element={<RegisterForm />} />
+        <Route path="/Admin/*" element={<AdminRoutes />} />
+        <Route path="/Client/Ticket/*" element={<ClientRoutes />} />
+        <Route path="/ProjectManager/*" element={<ProjectManagerRoutes />} />
+        <Route path="/ProjectLead/*" element={<ProjectLead />} />
+        <Route path="/Member/*" element={<MemberRoutes />} />
+      </Routes>
     </>
   );
 }

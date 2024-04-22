@@ -7,7 +7,7 @@ import StyledInput from "../../ui/StyledInput";
 import StyledText from "../../ui/StyledText";
 import FileUpload from "../../ui/FileUpload";
 import StyledButton from "../../ui/StyledButton";
-const ManagerNewTicket = () => {
+const ProjectLeadNewTicket = () => {
   const {
     control,
     handleSubmit,
@@ -133,4 +133,4 @@ const ManagerNewTicket = () => {
   );
 };
 
-export default ManagerNewTicket;
+export default ProjectLeadNewTicket;
