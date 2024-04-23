@@ -9,12 +9,11 @@ import { useConversationStore } from "../../store/ConversationStore";
 const SingleTicket = () => {
   const { id } = useParams();
   const { fetchTicketById, ticket } = useTicketStore();
-  const { fetchConversationById, conversations } = useConversationStore();
-  useEffect(() => {
-    fetchTicketById(id);
-    fetchConversationById(id);
-  }, [id]);
-
+  const { fetchConversationById, conversation } = useConversationStore();
+useEffect(() => {
+  fetchTicketById(id);
+  fetchConversationById(id);
+}, [fetchTicketById, fetchConversationById, id]);
 
   return (
     <>
@@ -84,8 +83,8 @@ const SingleTicket = () => {
           </div>
         )}
 
-        {conversations &&
-          conversations.map((item) => (
+        {conversation &&
+          conversation.map((item) => (
             <div key={item._id} className="divide-y rounded-lg border shadow">
               <div className="p-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
