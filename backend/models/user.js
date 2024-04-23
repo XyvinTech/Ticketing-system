@@ -29,7 +29,7 @@ const userSchema = new Schema(
       },
       usertype: {
         type: String,
-        enum: ['projectManager', 'client', 'member'] 
+        enum: ['projectManager','projectLead', 'client', 'member'] 
       },
       projectId: [{
         type: Schema.Types.ObjectId,

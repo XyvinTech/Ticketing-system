@@ -8,11 +8,15 @@ import StyledText from "../../ui/StyledText";
 import FileUpload from "../../ui/FileUpload";
 import StyledButton from "../../ui/StyledButton";
 import { useTicketStore } from "../../store/TicketStore";
+import {useNavigate } from "react-router-dom";
+
 const ClientNewTicket = () => {
+  const navigate = useNavigate()
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm();
   const addTicket = useTicketStore((state) => state.addTicket);
   const Priority = [
@@ -39,9 +43,11 @@ const ClientNewTicket = () => {
   
       await addTicket(formData);
       toast.success("Ticket created successfully!");
-      console.log(data);
+      reset();
+      navigate('/client/ticket')
     } catch (error) {
       console.error("Error adding ticket:", error);
+      toast.error("Error!");
     }
   };
   
