@@ -12,7 +12,7 @@ const useConversationStore = create((set) => ({
   fetchConversationById: async (conversationId) => {
 
     let conversationById = await fetchConversationById(conversationId)
-    set({ conversation:conversationById })
+    set((state)=>({ conversation:conversationById }))
   }
 }));
 
