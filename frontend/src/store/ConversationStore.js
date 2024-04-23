@@ -4,9 +4,16 @@ import { addConversation, fetchConversationById } from "../api/conversationapi";
 
 const useConversationStore = create((set) => ({
   conversations: [],
-  addConversation: (conversationData) => addConversation(set, conversationData),
+  addConversation: async (conversationData) => {
+    let newConversation = await addConversation(conversationData)
+    set((state) => ({ conversations: [...state.conversations, newConversation] }));
+  },
   conversation: null,
-  fetchConversationById: (conversationId) => fetchConversationById(set, conversationId),
+  fetchConversationById: async (conversationId) => {
+
+    let conversationById = await fetchConversationById(conversationId)
+    set({ conversation:conversationById })
+  }
 }));
 
 export { useConversationStore };

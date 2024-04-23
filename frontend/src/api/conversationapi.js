@@ -1,13 +1,16 @@
 import axiosInstance from "./axiosintercepter";
 import asyncHandler from "../utils/asyncHandler";
-export const addConversation = asyncHandler(async (set, conversationData) => {
+
+
+
+export const addConversation = asyncHandler(async ( conversationData) => {
     const response = await axiosInstance.post("/conversation/add", conversationData);
-    const newConversation = response.data;
-    set((state) => ({ conversation: [...state.conversation, newConversation] }));
+    return response.data;
+    
   });
   
-  export const fetchConversationById = asyncHandler(async (set, conversationId) => {
-    set({ conversations: [] });
+  export const fetchConversationById = asyncHandler(async ( conversationId) => {
+    
     const response = await axiosInstance.get(`/conversation/fetch/${conversationId}`);
-    set({ conversations: response.data });
+    return response.data;
   });
