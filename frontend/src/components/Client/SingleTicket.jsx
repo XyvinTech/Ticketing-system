@@ -13,7 +13,7 @@ const SingleTicket = () => {
   useEffect(() => {
     fetchTicketById(id);
     fetchConversationById(id);
-  }, [fetchTicketById, fetchConversationById, id]);
+  }, [id]);
 
 
   return (

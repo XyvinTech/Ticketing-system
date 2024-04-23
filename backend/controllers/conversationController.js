@@ -31,8 +31,9 @@ exports.getAllByTicketId = async function (req, res) {
   if (!conversations || conversations.length === 0) {
     return res.status(404).json({ status: false, message: "Conversations not found" });
   }
+  res.status(200).send({ status: true, data: conversations });
 
-  res.status(200).json( conversations );
+  
 };
 
 //get conversation by id
@@ -44,7 +45,7 @@ exports.getConversation = async function (req, res) {
     throw createError(404, "Conversation not found");
   }
 
-  res.json({ status: true, data: conversation });
+  res.status(200).send({ status: true, data: conversation });
 };
 //update conversation
 exports.updateConversation = async function(req, res) {
