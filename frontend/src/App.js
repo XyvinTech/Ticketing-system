@@ -6,7 +6,6 @@ import MemberRoutes from "./routes/MemberRoutes";
 import ProjectManagerRoutes from "./routes/ProjectManagerRoutes";
 import ProjectLead from "./routes/ProjectLead";
 import ClientRoutes from "./routes/ClientRoutes";
-
 function App() {
   return (
     <>
