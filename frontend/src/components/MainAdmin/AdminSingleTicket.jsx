@@ -2,7 +2,8 @@ import React from "react";
 import TableInfo from "../../ui/TableInfo";
 
 import { ReactComponent as PaperIcon } from "../../assets/icons/PaperIcon.svg";
-import Reply from "../../ui/Reply";
+
+import AdminConversation from "./AdminConversation";
 
 const AdminSingleTicket = () => {
   // Dummy array with mock data
@@ -165,7 +166,7 @@ const AdminSingleTicket = () => {
           </div>
          ))} 
         
-        <Reply/>
+        <AdminConversation/>
       </div>
     </>
   );

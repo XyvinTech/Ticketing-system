@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import TableInfo from "../../ui/TableInfo";
 
 import { ReactComponent as PaperIcon } from "../../assets/icons/PaperIcon.svg";
-import Reply from "../../ui/Reply";
+
 import { useParams } from "react-router-dom";
 import { useTicketStore } from "../../store/TicketStore";
 import { useConversationStore } from "../../store/ConversationStore";
+import ConversationReply from "./ConversationReply";
 const SingleTicket = () => {
   const { id } = useParams();
   const { fetchTicketById, ticket } = useTicketStore();
@@ -155,7 +156,7 @@ useEffect(() => {
             </div>
           ))}
 
-        <Reply ticketId={id} />
+        <ConversationReply ticketId={id} />
       </div>
     </>
   );

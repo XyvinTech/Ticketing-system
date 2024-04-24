@@ -1,12 +1,12 @@
 import { Disclosure } from "@headlessui/react";
 import React from "react";
 import { useForm, Controller } from "react-hook-form"; 
-import { ReactComponent as UpIcon } from "../assets/icons/Upicon.svg";
-import StyledText from "../ui/StyledText";
-import FileUpload from "../ui/FileUpload";
-import StyledButton from "./StyledButton";
-import { useConversationStore } from "../store/ConversationStore";
-const Reply = ({ ticketId }) => {
+import { ReactComponent as UpIcon } from "../../assets/icons/Upicon.svg";
+import StyledText from "../../ui/StyledText";
+import FileUpload from "../../ui/FileUpload";
+import StyledButton from "../../ui/StyledButton";
+import { useConversationStore } from "../../store/ConversationStore";
+const ConversationReply = ({ ticketId }) => {
   const { control, handleSubmit } = useForm();
   const addConversation = useConversationStore((state) => state.addConversation);
   const onSubmit = async (data) => {
@@ -80,4 +80,4 @@ const Reply = ({ ticketId }) => {
   );
 };
 
-export default Reply;
+export default ConversationReply;
