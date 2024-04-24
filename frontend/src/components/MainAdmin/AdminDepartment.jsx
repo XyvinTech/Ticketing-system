@@ -162,7 +162,7 @@ const AdminDepartment = () => {
                 {isAssignOpen && (
                   <Modal closeModal={() => setisAssignOpen(false)}>
                     <h1 className="flex-auto font-semibold">
-                      Add People to My Project
+                      Assign to Project Manager
                     </h1>
 
                     <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
@@ -176,11 +176,6 @@ const AdminDepartment = () => {
                       <GoogleIcon className="w-4 h-4 mr-2" />
                       Google
                     </button>
-
-                    <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-                      Role
-                    </h1>
-                    <StyledSelectionList listname="Role" options={Role} />
 
                     <div className="mt-4 text-xs leading-4 text-slate-500">
                       This site is protected by reCAPTCHA and the Google Privacy
