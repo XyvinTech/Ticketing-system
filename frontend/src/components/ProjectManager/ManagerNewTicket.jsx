@@ -18,10 +18,13 @@ const ManagerNewTicket = () => {
     { name: "Medium" },
     { name: "High" },
   ];
-  const Category = [
-    { name: "Hardware Issue" },
-    { name: "Software Issue" },
-    { name: "Other" },
+  const Project = [
+    { name: "Project 1" },
+    { name: "Project 2" },
+  ];
+  const Department= [
+    { name: "Tech & Development" },
+    { name: "UI/UX Product Designing" },
   ];
 
   const onSubmit = async (data) => {
@@ -62,28 +65,50 @@ const ManagerNewTicket = () => {
                 />
               </div>
               <div>
+              <Controller
+                    name="department"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <>
+                        <StyledSelectionList
+                          label="Department"
+                          options={Department}
+                          {...field}
+                        />
+                        {errors.department && (
+                          <span className="text-red-500">
+                            {errors.department.message}
+                          </span>
+                        )}
+                      </>
+                    )}
+                    rules={{ required: "Department is required" }}
+                  />
+              </div>
+            </div>
+            <div>
                 <Controller
-                  name="category"
+                  name="project"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
                     <>
                       <StyledSelectionList
-                        label="Category"
-                        options={Category}
+                        label="Project"
+                        options={Project}
                         {...field}
                       />
-                      {errors.category && (
+                      {errors.project && (
                         <span className="text-red-500">
-                          {errors.category.message}
+                          {errors.project.message}
                         </span>
                       )}
                     </>
                   )}
-                  rules={{ required: "Category is required" }}
+                  rules={{ required: "Project is required" }}
                 />
               </div>
-            </div>
             <div>
               <Controller
                 name="subject"

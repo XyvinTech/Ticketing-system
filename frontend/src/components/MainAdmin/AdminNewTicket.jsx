@@ -13,122 +13,146 @@ const AdminNewTicket = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const Priority = [
-    { name: "Low" },
-    { name: "Medium" },
-    { name: "High" },
+  const Priority = [{ name: "Low" }, { name: "Medium" }, { name: "High" }];
+  const Project = [
+    { name: "Project 1" },
+    { name: "Project 2" },
   ];
-  const Category = [
-    { name: "Hardware Issue" },
-    { name: "Software Issue" },
-    { name: "Other" },
+  const Department= [
+    { name: "Tech & Development" },
+    { name: "UI/UX Product Designing" },
   ];
-
   const onSubmit = async (data) => {
-   console.log(data)
+    console.log(data);
   };
-  
 
   return (
     <>
-    <div className="divide-y divide-gray-200">
-    <ToastContainer />
-      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-        <div className="py-6 px-4 sm:p-6 lg:pb-8">
-          <h1 className="mb-6 text-xl font-semibold">New Ticket</h1>
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div className="divide-y divide-gray-200">
+        <ToastContainer />
+        <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+          <div className="py-6 px-4 sm:p-6 lg:pb-8">
+            <h1 className="mb-6 text-xl font-semibold">New Ticket</h1>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                  <Controller
+                    name="priority"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <>
+                        <StyledSelectionList
+                          label="Priority"
+                          options={Priority}
+                          {...field}
+                        />
+                        {errors.priority && (
+                          <span className="text-red-500">
+                            {errors.priority.message}
+                          </span>
+                        )}
+                      </>
+                    )}
+                    rules={{ required: "Priority is required" }}
+                  />
+                </div>
+                <div>
+                  <Controller
+                    name="department"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <>
+                        <StyledSelectionList
+                          label="Department"
+                          options={Department}
+                          {...field}
+                        />
+                        {errors.department && (
+                          <span className="text-red-500">
+                            {errors.department.message}
+                          </span>
+                        )}
+                      </>
+                    )}
+                    rules={{ required: "Department is required" }}
+                  />
+                </div>
+              </div>
               <div>
                 <Controller
-                  name="priority"
+                  name="project"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
                     <>
                       <StyledSelectionList
-                        label="Priority"
-                        options={Priority}
+                        label="Project"
+                        options={Project}
                         {...field}
                       />
-                      {errors.priority && (
+                      {errors.project && (
                         <span className="text-red-500">
-                          {errors.priority.message}
+                          {errors.project.message}
                         </span>
                       )}
                     </>
                   )}
-                  rules={{ required: "Priority is required" }}
+                  rules={{ required: "Project is required" }}
                 />
               </div>
               <div>
                 <Controller
-                  name="category"
+                  name="subject"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <>
-                      <StyledSelectionList
-                        label="Category"
-                        options={Category}
-                        {...field}
-                      />
-                      {errors.category && (
-                        <span className="text-red-500">
-                          {errors.category.message}
-                        </span>
-                      )}
-                    </>
+                    <StyledInput
+                      type="text"
+                      label="Subject"
+                      placeholder="Subject"
+                      {...field}
+                    />
                   )}
-                  rules={{ required: "Category is required" }}
+                  rules={{ required: "Subject is required" }}
                 />
+                {errors.subject && (
+                  <span className="text-red-500">{errors.subject.message}</span>
+                )}
               </div>
-            </div>
-            <div>
               <Controller
-                name="subject"
+                name="description"
                 control={control}
                 defaultValue=""
                 render={({ field }) => (
-                  <StyledInput
-                    type="text"
-                    label="Subject"
-                    placeholder="Subject"
-                    {...field}
-                  />
+                  <StyledText label="Description" field={field} />
                 )}
-                rules={{ required: "Subject is required" }}
+                rules={{ required: "Description is required" }}
               />
-              {errors.subject && (
-                <span className="text-red-500">{errors.subject.message}</span>
-              )}
             </div>
-            <Controller
-              name="description"
-              control={control}
-              defaultValue=""
-              render={({ field }) => <StyledText label="Description" field={field} />}
-              rules={{ required: "Description is required" }}
-            />
-           
-          </div> 
-          <div className="mt-14">{errors.description && (
-              <span className="text-red-500">{errors.description.message}</span>
-            )}
-            <Controller
-              name="attachment"
-              control={control}
-              defaultValue={[]}
-              render={({ field: { onChange } }) => <FileUpload onChange={onChange} />}
-            />
+            <div className="mt-14">
+              {errors.description && (
+                <span className="text-red-500">
+                  {errors.description.message}
+                </span>
+              )}
+              <Controller
+                name="attachment"
+                control={control}
+                defaultValue={[]}
+                render={({ field: { onChange } }) => (
+                  <FileUpload onChange={onChange} />
+                )}
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex justify-end bg-gray-50 pb-4 sm:px-6">
-          <StyledButton text="Create" type="submit" />
-        </div>
-      </form>
-    </div>
-  </>
-  
+          <div className="flex justify-end bg-gray-50 pb-4 sm:px-6">
+            <StyledButton text="Create" type="submit" />
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 

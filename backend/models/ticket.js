@@ -10,7 +10,7 @@ const ticketSchema = new Schema(
       type: String,
       required: true,
     },
-    category: {
+    department: {
       type: String,
       required: true,
     },
