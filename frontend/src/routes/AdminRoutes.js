@@ -8,6 +8,8 @@ import AdminAddPeople from "../components/MainAdmin/AdminAddPeople";
 import AdminDepartment from "../components/MainAdmin/AdminDepartment";
 import AdminNewTicket from "../components/MainAdmin/AdminNewTicket";
 import AdminSingleTicket from "../components/MainAdmin/AdminSingleTicket";
+import AdminAddProject from "../components/MainAdmin/AdminAddProject";
+import AdminAddUser from "../components/MainAdmin/AdminAddUser";
 
 const AdminRoutes = () => {
   return (
@@ -20,7 +22,9 @@ const AdminRoutes = () => {
         <Route path="AdminProfile" element={<AdminProfile />} />
         <Route path="AdminPassword" element={<AdminPassword />} />
         <Route path="AdminNotifications" element={<AdminNotification />} />
-        <Route path="Addpeople" element={<AdminAddPeople />} />
+        <Route path="AddPeople" element={<AdminAddPeople />} />
+        <Route path="AddProject" element={<AdminAddProject />} />
+        <Route path="AddUser" element={<AdminAddUser />} />
       </Routes>
     </AdminLayout>
   );

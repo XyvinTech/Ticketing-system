@@ -13,6 +13,8 @@ const SubNavigation = () => {
     { name: "New Ticket", to: "Admin/AdminNewTicket", icon: PlusIcon },
     { name: "Department",to: "Admin/Department",icon: UsersIcon,},
     { name: "Add Member",to: "Admin/AddPeople",icon: UsersIcon,},
+    { name: "Add Project",to: "Admin/AddProject",icon: UsersIcon,},
+    { name: "Add User",to: "Admin/AddUser",icon: UsersIcon,},
     
   ];
 
