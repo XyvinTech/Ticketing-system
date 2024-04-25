@@ -6,7 +6,6 @@ import StyledButton from "../../ui/StyledButton";
 import TableInfo from "../../ui/TableInfo";
 import { Link } from "react-router-dom";
 import Pagination from "../../ui/Pagination";
-import { ReactComponent as GoogleIcon } from "../../assets/icons/GoogleIcon.svg";
 import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
 import StyledSelectionList from "../../ui/StyledSelectionList";
 import Modal from "../../ui/Modal";
@@ -52,11 +51,11 @@ const ProjectLeadTicket = () => {
     // Add more dummy tickets as needed
   ];
 
-  const headers = ["Ticket", "Assigned To", "Status"];
+  const headers = ["Ticket", "Assigned To", "Status","Assign"];
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
+  const itemsPerPage = 7;
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -83,11 +82,6 @@ const ProjectLeadTicket = () => {
     setShowAdminBoard(true);
   };
 
-  const Manager = [
-    { name: "My Tickets" },
-    { name: "Project Manager" },
-    { name: "Project Lead" },
-  ];
   const Role = [
     { name: "Member" },
     { name: "Designer" },
@@ -141,12 +135,6 @@ const ProjectLeadTicket = () => {
                           </Switch.Group>
                         </div>
           </div>
-          <div className="flex items-center">
-            <StyledButton
-              text="Assign Ticket"
-              onClick={() => setIsModalOpen(true)}
-            />
-          </div>
         </div>
         {showAdminBoard && <ProjectLeadBoard />}{" "}
         {isModalOpen && (
@@ -159,24 +147,12 @@ const ProjectLeadTicket = () => {
               Names or emails
             </h1>
             <StyledInput placeholder="eg:Maria, maria@gmail.com" />
-            <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-              or add from
-            </h1>
-            <button className="py-1 px-3 mt-2 leading-8 text-center whitespace-nowrap bg-white rounded border border-solid border-sky-950 border-opacity-10 flex items-center justify-center w-full text-blue-950 text-lg">
-              <GoogleIcon className="w-4 h-4 mr-2" />
-              Google
-            </button>
 
             <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
               Role
             </h1>
             <StyledSelectionList listname="Role " options={Role} />
 
-            <div className="mt-4 text-xs leading-4 text-slate-500">
-              This site is protected by reCAPTCHA and the Google
-              <br></br>
-              Privacy Policy and Terms of Service apply.
-            </div>
             <div className="flex  justify-end gap-4">
               <button
                 className="font-semibold  mt-3"
@@ -241,6 +217,12 @@ const ProjectLeadTicket = () => {
                   >
                     {i.status}
                   </span>
+                </td>
+                <td>
+                <StyledButton
+              text="Assign Ticket"
+              onClick={() => setIsModalOpen(true)}
+            />
                 </td>
               </tr>
             ))}

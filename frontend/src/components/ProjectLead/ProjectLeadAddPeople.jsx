@@ -1,8 +1,5 @@
 
 import React, { useState } from "react";
-
-
-import { ReactComponent as GoogleIcon } from "../../assets/icons/GoogleIcon.svg";
 import StyledSelectionList from "../../ui/StyledSelectionList";
 import Modal from "../../ui/Modal";
 import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
@@ -12,11 +9,10 @@ import { Switch } from "@headlessui/react";
 
 const ProjectLeadAddPeople = () => {
   
-  const [people, setPeople] = useState([
+  const people = [
     { id: 1, name: "John Doe", email: "john@example.com" },
     { id: 2, name: "Jane Smith", email: "jane@example.com" },
-    // Add more sample data as needed
-  ]);
+  ];
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
 
   const Role = [
@@ -41,23 +37,12 @@ const ProjectLeadAddPeople = () => {
             Names or emails
           </h1>
           <StyledInput />
-          <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-            or add from
-          </h1>
-          <button className="py-1 px-3 mt-2 leading-8 text-center whitespace-nowrap bg-white rounded border border-solid border-sky-950 border-opacity-10 flex items-center justify-center w-full text-blue-950 text-lg">
-              <GoogleIcon className="w-4 h-4 mr-2" />
-              Google
-            </button>
 
           <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
             Role
           </h1>
           <StyledSelectionList options={Role} listname="Roles" />
 
-          <div className="mt-4 text-xs leading-4 text-slate-500">
-            This site is protected by reCAPTCHA and the Google Privacy Policy
-            and Terms of Service apply.
-          </div>
           <div className="flex  justify-end gap-4">
           <button
                 className="font-semibold  mt-3"

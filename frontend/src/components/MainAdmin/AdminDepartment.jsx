@@ -4,11 +4,9 @@ import React, { useState } from "react";
 import Modal from "../../ui/Modal";
 import StyledInput from "../../ui/StyledInput";
 import StyledButton from "../../ui/StyledButton";
-import { ReactComponent as GoogleIcon } from "../../assets/icons/GoogleIcon.svg";
 import { ReactComponent as CloseIcon } from "../../assets/icons/CloseIcon.svg";
 import { ReactComponent as UpDownIcon } from "../../assets/icons/UpDownIcon.svg";
 import StyledText from "../../ui/StyledText";
-import StyledSelectionList from "../../ui/StyledSelectionList";
 
 const AdminDepartment = () => {
   const [enabled, setEnabled] = useState(false);
@@ -46,11 +44,7 @@ const AdminDepartment = () => {
       emails: ["john@example.com", "annu@gmail.com"],
     },
   ];
-  const Role = [
-    { name: "Member" },
-    { name: "Designer" },
-    { name: "Developer" },
-  ];
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAssignOpen, setisAssignOpen] = useState(false);
@@ -144,7 +138,6 @@ const AdminDepartment = () => {
                                   enabled ? "bg-purple-600" : "bg-gray-200"
                                 } relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none`}
                               >
-                              
                                 <span
                                   className={`${
                                     enabled ? "translate-x-6" : "translate-x-1"
@@ -169,18 +162,6 @@ const AdminDepartment = () => {
                       Names or emails
                     </h1>
                     <StyledInput />
-                    <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                      or add from
-                    </h1>
-                    <button className="py-1 px-3 mt-2 leading-8 text-center whitespace-nowrap bg-white rounded border border-solid border-sky-950 border-opacity-10 flex items-center justify-center w-full text-blue-950 text-lg">
-                      <GoogleIcon className="w-4 h-4 mr-2" />
-                      Google
-                    </button>
-
-                    <div className="mt-4 text-xs leading-4 text-slate-500">
-                      This site is protected by reCAPTCHA and the Google Privacy
-                      Policy and Terms of Service apply.
-                    </div>
                     <div className="flex  justify-end gap-4">
                       <button
                         className="font-semibold  mt-3"
