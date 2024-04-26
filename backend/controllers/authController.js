@@ -1,15 +1,15 @@
-const User = require("../models/user");
+const Admin = require("../models/admin");
 const generateToken = require("../utils/generateToken");
 
 exports.signUp = async function (req, res) {
   const { email, userName } = req.body;
 
-  const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
+  const existingUser = await Admin.findOne({ $or: [{ email }, { userName }] });
   if (existingUser) {
     return res.status(409).json({ message: "User already exists with this email or username" });
   }
 
-  const newUser = await User.create(req.body);
+  await Admin.create(req.body);
 
   res.status(201).json({ status: true, message: "Signup successfully" });
 };
@@ -17,7 +17,7 @@ exports.signUp = async function (req, res) {
 exports.logIn = async function (req, res) {
   const { email, password } = req.body;
 
-  const findUser = await User.findOne({ email });
+  const findUser = await Admin.findOne({ email });
 
   if (!findUser) return res.status(400).json({ message: "User not found" });
 
