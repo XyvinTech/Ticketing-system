@@ -74,3 +74,24 @@ exports.deleteUser = async function (req, res) {
 
   res.status(200).json({ status: true, message: "User deleted successfully" });
 };
+
+exports.getUsers = async function (req, res) {
+  const { usertype, searchQuery } = req.query;
+
+  const query = {};
+
+  if (usertype) {
+    query.usertype = usertype;
+  }
+
+  if (searchQuery) {
+    query.$or = [
+      { name: { $regex: searchQuery, $options: "i" } },
+      { email: { $regex: searchQuery, $options: "i" } },
+    ];
+  }
+
+  const data = await User.find(query).select("-password");
+
+  res.status(200).json({ status: true, message: "Users list", data });
+};

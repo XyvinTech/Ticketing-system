@@ -23,3 +23,18 @@ exports.editDepartment = async function (req, res) {
 
   res.status(200).json({ status: true, message: "Department updated", department });
 };
+
+exports.getDepartments = async function (req, res) {
+  const query = {};
+
+  const data = await Department.find(query).populate({
+    path: "members",
+    select: "-password",
+    populate: {
+      path: "projectId",
+      select: "projectName",
+    },
+  });
+
+  res.status(200).json({ status: true, message: "Departments list", data });
+};

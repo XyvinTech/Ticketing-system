@@ -4,4 +4,5 @@ const departmentController = require("../controllers/departmentController");
 const asyncHandler = require("../utils/asyncHandler");
 router.post("/create", asyncHandler(departmentController.createDepartment));
 router.put("/edit/:departmentId", asyncHandler(departmentController.editDepartment));
+router.get("/get", asyncHandler(departmentController.getDepartments));
 module.exports = router;
