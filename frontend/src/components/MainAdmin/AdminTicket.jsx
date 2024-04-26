@@ -241,7 +241,8 @@ const AdminTicket = () => {
                 <td>
                   {" "}
                   <StyledButton
-                    text="Assign Ticket"
+                    text="Assign Ticket" 
+                    
                     onClick={() => setIsModalOpen(true)}
                   />
                 </td>

@@ -6,6 +6,7 @@ import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg"
 import { ReactComponent as PhoneIcon } from "../../assets/icons/PhoneIcon.svg";
 import { ReactComponent as LockClosedIcon } from "../../assets/icons/LockClosedIcon.svg";
 import { ReactComponent as EnvelopeIcon } from "../../assets/icons/EnvelopeIcon.svg";
+import { ReactComponent as DeleteIcon } from "../../assets/icons/DeleteIcon.svg";
 import StyledInput from "../../ui/StyledInput";
 import StyledButton from "../../ui/StyledButton";
 import { Controller, useForm } from "react-hook-form";
@@ -18,12 +19,17 @@ const AdminAddUser = () => {
   } = useForm();
 
   const people = [
-    { id: 1, name: "John Doe", email: "john@example.com", password: "John123" },
+    {
+      id: 1,
+      name: "John Doe",
+      email: "john@example.com",
+      userType: "Project Manager",
+    },
     {
       id: 2,
       name: "Jane Smith",
       email: "jane@example.com",
-      password: "Jane123",
+      userType: "Project Manager",
     },
   ];
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
@@ -210,38 +216,34 @@ const AdminAddUser = () => {
                       <div>
                         <StyledSelectionList listname="Roles" options={Role} />
                       </div>
-                      <div className="flex flex-grow ml-0 sm:ml-28 gap-3 sm:flex sm:flex-wrap sm:justify-start">
-                        <div className="flex overflow-hidden relative flex-col justify-center w-full sm:w-auto">
-                          <button className="h-9 w-full sm:w-32 relative shrink-0 bg-white rounded-md border border-gray-300 border-solid">
-                            Delete
-                          </button>
-                        </div>
-                      </div>
                     </div>
                   </td>
                 </tr>
 
-                <tr className="font-semibold  text-sm  text-gray-900">
+                <tr className="font-semibold  text-center text-sm  text-gray-900">
                   <td className="px-3 py-3 ">Name</td>
                   <td className="px-3 py-3  ">Email</td>
-                  <td className="px-3 py-3   ">Password</td>
+                  <td className="px-3 py-3   ">User Type</td>
+                  <td className="px-3 py-3   ">Delete</td>
                 </tr>
               </thead>
               <tbody>
                 {people.map((person) => (
                   <tr
                     key={person.id}
-                    className=" mb-2 border-b border-gray-200 text-left"
+                    className="mb-2 border-b text-center border-gray-200"
                   >
-                    <td className="px-3 py-4  text-sm text-gray-900">
-                      <input type="checkbox" class="mr-2  accent-purple-500" />{" "}
+                    <td className="px-3 py-4 text-sm text-gray-900 text-center">
                       {person.name}
                     </td>
-                    <td className="px-3 py-3  text-sm text-gray-900">
+                    <td className="px-3 py-3 text-sm text-gray-900 text-center">
                       {person.email}
                     </td>
-                    <td className="px-3 py-3 text-sm text-gray-900">
-                      {person.password}
+                    <td className="px-3 py-3 text-sm text-gray-900 text-center">
+                      {person.userType}
+                    </td>
+                    <td className="px-3 py-3 text-sm text-gray-900 text-center flex justify-center items-center">
+                      <DeleteIcon className="h-5 w-5" />
                     </td>
                   </tr>
                 ))}

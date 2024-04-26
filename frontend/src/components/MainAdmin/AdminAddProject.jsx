@@ -5,7 +5,7 @@ import StyledInput from "../../ui/StyledInput";
 import StyledButton from "../../ui/StyledButton";
 import { Controller, useForm } from "react-hook-form";
 import StyledSearch from "../../ui/StyledSearch";
-
+import { ReactComponent as DeleteIcon } from "../../assets/icons/DeleteIcon.svg";
 const AdminAddProject = () => {
   const {
     control,
@@ -13,17 +13,19 @@ const AdminAddProject = () => {
     formState: { errors },
   } = useForm();
   const emailOptions = [
-    { value: 'email1@example.com', label: 'email1@example.com' },
-    { value: 'email2@example.com', label: 'email2@example.com' },
-    { value: 'email3@example.com', label: 'email3@example.com' },
-    { value: 'email4@example.com', label: 'email4@example.com' },
+    { value: "email1@example.com", label: "email1@example.com" },
+    { value: "email2@example.com", label: "email2@example.com" },
+    { value: "email3@example.com", label: "email3@example.com" },
+    { value: "email4@example.com", label: "email4@example.com" },
   ];
   const people = [
-    { id: 1, ProjectName: "Account System", projectManager: "john@example.com" },
+    {
+      id: 1,
+      ProjectName: "Account System",
+    },
     {
       id: 2,
       ProjectName: "Ecommerce System",
-      projectManager: "jane@example.com",
     },
   ];
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
@@ -60,10 +62,10 @@ const AdminAddProject = () => {
             {errors.projectName && (
               <span className="text-red-500">{errors.projectName.message}</span>
             )}
- <h1 className="mt-4 mb-1 text-xs font-semibold leading-4 text-slate-500">
+            <h1 className="mt-4 mb-1 text-xs font-semibold leading-4 text-slate-500">
               project Manager
             </h1>
-<Controller
+            <Controller
               name="projectManager"
               control={control}
               defaultValue=""
@@ -74,7 +76,7 @@ const AdminAddProject = () => {
                     options={emailOptions}
                     {...field}
                   />
-                  {errors.projectManager&& (
+                  {errors.projectManager && (
                     <span className="text-red-500">
                       {errors.projectManager.message}
                     </span>
@@ -109,21 +111,13 @@ const AdminAddProject = () => {
                       <div className="flex-grow lg:w-20 max-w-xs">
                         <StyledInput placeholder="Search " Icon={SearchIcon} />
                       </div>
-
-                      <div className="flex flex-grow ml-0 sm:ml-28 gap-3 sm:flex sm:flex-wrap sm:justify-start">
-                        <div className="flex overflow-hidden relative flex-col justify-center w-full sm:w-auto">
-                          <button className="h-9 w-full sm:w-32 relative shrink-0 bg-white rounded-md border border-gray-300 border-solid">
-                            Delete
-                          </button>
-                        </div>
-                      </div>
                     </div>
                   </td>
                 </tr>
 
-                <tr className="font-semibold  text-sm  text-gray-900">
+                <tr className="font-semibold  text-sm text-left text-gray-900">
                   <td className="px-3 py-3 ">Name</td>
-                  <td className="px-3 py-3  ">Project Manager</td>
+                  <td className="px-3 py-3  ">Delete</td>
                 </tr>
               </thead>
               <tbody>
@@ -132,12 +126,11 @@ const AdminAddProject = () => {
                     key={person.id}
                     className=" mb-2 border-b border-gray-200 text-left"
                   >
-                    <td className="px-3 py-4  text-sm text-gray-900">
-                      <input type="checkbox" class="mr-2  accent-purple-500" />{" "}
+                    <td className="px-3 py-4  text-left text-sm text-gray-900">
                       {person.ProjectName}
                     </td>
-                    <td className="px-3 py-3  text-sm text-gray-900">
-                      {person.projectManager}
+                    <td className="px-3 py-3 text-sm text-gray-900 text-left">
+                      <DeleteIcon className="h-5 w-5" />
                     </td>
                   </tr>
                 ))}
