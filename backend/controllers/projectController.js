@@ -8,7 +8,17 @@ exports.createProject = async function (req, res) {
 };
 //get all project
 exports.getAll = async function (req, res) {
-  const projects = await Project.find();
+  const { searchQuery } = req.query;
+
+  const query = {};
+
+  if (searchQuery) {
+    query.$or = [
+      { name: { $regex: searchQuery, $options: "i" } },
+      { email: { $regex: searchQuery, $options: "i" } },
+    ];
+  }
+  const projects = await Project.find(query);
   res.status(200).json({ status: true, message: "OK", data: projects });
 };
 //get project by id

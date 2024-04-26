@@ -11,8 +11,9 @@ const ticketSchema = new Schema(
       required: true,
     },
     department: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
+      ref: "departments",
     },
     subject: {
       type: String,
@@ -32,12 +33,10 @@ const ticketSchema = new Schema(
       type: [String],
       default: [],
     },
-    projectId: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "projects",
-      },
-    ],
+    projectId: {
+      type: Schema.Types.ObjectId,
+      ref: "projects",
+    },
     assignedTo: {
       type: Schema.Types.ObjectId,
       ref: "users",
