@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const adminController =require("../controllers/adminController")
-const asyncHandler = require("../utils/asyncHandler")
-router.post("/add",asyncHandler(adminController.addAdmin))
-router.get("/get/:id",asyncHandler(adminController.getAdmin))
-router.put("/update/:id",asyncHandler(adminController.updateAdmin))
-router.delete("/delete/:id",asyncHandler(adminController.deleteAdmin))
+const adminController = require("../controllers/adminController");
+const asyncHandler = require("../utils/asyncHandler");
+router.post("/add", asyncHandler(adminController.addAdmin));
+router.get("/get/:id", asyncHandler(adminController.getAdmin));
+router.put("/update/:id", asyncHandler(adminController.updateAdmin));
+router.delete("/delete/:id", asyncHandler(adminController.deleteAdmin));
+router.post("/add-user", asyncHandler(adminController.addUser));
+router.delete("/delete-user/:id", asyncHandler(adminController.deleteUser));
 module.exports = router;
