@@ -2,6 +2,8 @@ import React from "react";
 import { ReactComponent as TicketIcon } from "../assets/icons/TicketIcon.svg";
 import { ReactComponent as UsersIcon } from "../assets/icons/UsersIcon.svg";
 import { ReactComponent as PlusIcon } from "../assets/icons/PlusIcon.svg";
+import { ReactComponent as DepartmentIcon } from "../assets/icons/DepartmentIcon.svg";
+import { ReactComponent as SquareIcon } from "../assets/icons/SquareIcon.svg";
 import { Link, useLocation } from "react-router-dom";
 import Footer from "../ui/Footer";
 import AdminNavbar from "../ui/AdminNavbar";
@@ -11,9 +13,9 @@ const SubNavigation = () => {
   const subNavigation = [
     { name: "Tickets", to: "Admin/Ticket", icon: TicketIcon },
     { name: "New Ticket", to: "Admin/AdminNewTicket", icon: PlusIcon },
-    { name: "Department",to: "Admin/Department",icon: UsersIcon,},
+    { name: "Department",to: "Admin/Department",icon: DepartmentIcon,},
     { name: "Add Member",to: "Admin/AddPeople",icon: UsersIcon,},
-    { name: "Add Project",to: "Admin/AddProject",icon: UsersIcon,},
+    { name: "Add Project",to: "Admin/AddProject",icon: SquareIcon,},
     { name: "Add User",to: "Admin/AddUser",icon: UsersIcon,},
     
   ];
