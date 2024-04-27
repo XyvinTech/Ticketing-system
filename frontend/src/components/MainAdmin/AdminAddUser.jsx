@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StyledSelectionList from "../../ui/StyledSelectionList";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Modal from "../../ui/Modal";
 import { ReactComponent as PersonIcon } from "../../assets/icons/PersonIcon.svg";
 import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
@@ -10,6 +12,9 @@ import { ReactComponent as DeleteIcon } from "../../assets/icons/DeleteIcon.svg"
 import StyledInput from "../../ui/StyledInput";
 import StyledButton from "../../ui/StyledButton";
 import { Controller, useForm } from "react-hook-form";
+import StyledMultipleSelection from "../../ui/StyledMultipleSelection";
+import { useProjectStore } from "../../store/projectStore";
+import { useUserStore } from "../../store/UserStore";
 
 const AdminAddUser = () => {
   const {
@@ -17,30 +22,46 @@ const AdminAddUser = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const { projects, fetchProject } = useProjectStore();
+  const [isChange, setIsChange] = useState(false); // State for modal
+  const { users, fetchUser, addUser, deleteUser } = useUserStore();
+  useEffect(() => {
+    fetchUser();
+  }, [isChange]);
+  useEffect(() => {
+    fetchProject();
+  }, []);
+  const selectOptions = projects.map((project) => ({
+    value: project._id,
+    label: project.projectName,
+  }));
 
-  const people = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      userType: "Project Manager",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      userType: "Project Manager",
-    },
-  ];
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
 
   const Role = [
-    { name: "Project Manager" },
-    { name: "Project Lead" },
-    { name: "Member" },
+    { value: "projectManager", name: "Project Manager" },
+    { value: "projectLead", name: "Project Lead" },
+    { value: "member", name: "Member" },
   ];
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      await addUser(data);
+      toast.success("User Added successfully!");
+      setIsChange(!isChange);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      await deleteUser(userId);
+      toast.success("User deleted successfully!");
+      setIsChange(!isChange);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
   return (
     <div className="py-6 px-4 sm:p-6 lg:pb-8">
@@ -139,33 +160,12 @@ const AdminAddUser = () => {
             {errors.password && (
               <span className="text-red-500">{errors.password.message}</span>
             )}
-            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-              Password Confirmation
-            </h1>
-            <Controller
-              name="passwordConfirmation"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <StyledInput
-                  type="password"
-                  placeholder="********"
-                  Icon={LockClosedIcon}
-                  {...field}
-                />
-              )}
-              rules={{ required: "Password Confirmation is required" }}
-            />
-            {errors.passwordConfirmation && (
-              <span className="text-red-500">
-                {errors.passwordConfirmation.message}
-              </span>
-            )}
+
             <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
               User Type
             </h1>
             <Controller
-              name="userType"
+              name="usertype"
               control={control}
               defaultValue=""
               render={({ field }) => (
@@ -175,14 +175,34 @@ const AdminAddUser = () => {
                     options={Role}
                     {...field}
                   />
-                  {errors.userType && (
+                  {errors.usertype && (
                     <span className="text-red-500">
-                      {errors.userType.message}
+                      {errors.usertype.message}
                     </span>
                   )}
                 </>
               )}
               rules={{ required: "UserType is required" }}
+            />
+
+            <h1 className="mt-5 mb-1 text-xs font-semibold leading-4 text-slate-500">
+              Project Name
+            </h1>
+            <Controller
+              name="projectId"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <>
+                  <StyledMultipleSelection options={selectOptions} {...field} />
+                  {errors.projectId && (
+                    <span className="text-red-500">
+                      {errors.projectId.message}
+                    </span>
+                  )}
+                </>
+              )}
+              rules={{ required: "Project name is required" }}
             />
             <div className="flex  justify-end gap-4">
               <button
@@ -220,7 +240,7 @@ const AdminAddUser = () => {
                   </td>
                 </tr>
 
-                <tr className="font-semibold  text-center text-sm  text-gray-900">
+                <tr className="font-semibold  text-left text-sm  text-gray-900">
                   <td className="px-3 py-3 ">Name</td>
                   <td className="px-3 py-3  ">Email</td>
                   <td className="px-3 py-3   ">User Type</td>
@@ -228,22 +248,34 @@ const AdminAddUser = () => {
                 </tr>
               </thead>
               <tbody>
-                {people.map((person) => (
+                {users.map((person) => (
                   <tr
-                    key={person.id}
-                    className="mb-2 border-b text-center border-gray-200"
+                    key={person._id}
+                    className="mb-2 border-b  border-gray-200"
                   >
-                    <td className="px-3 py-4 text-sm text-gray-900 text-center">
-                      {person.name}
+                    <td className="px-3 py-4 text-sm text-gray-900 text-left">
+                      {person.userName}
                     </td>
-                    <td className="px-3 py-3 text-sm text-gray-900 text-center">
+                    <td className="px-3 py-3 text-sm text-gray-900 text-left">
                       {person.email}
                     </td>
-                    <td className="px-3 py-3 text-sm text-gray-900 text-center">
-                      {person.userType}
+                    <td className="px-3 py-3 text-sm text-gray-900 text-left">
+                      {person.usertype === "projectManager"
+                        ? "Project Manager"
+                        : person.usertype === "member"
+                        ? "Member"
+                        : person.usertype === "lead"
+                        ? "Lead"
+                        : person.usertype === "client"
+                        ? "Client"
+                        : "Unknown"}
                     </td>
-                    <td className="px-3 py-3 text-sm text-gray-900 text-center flex justify-center items-center">
-                      <DeleteIcon className="h-5 w-5" />
+
+                    <td className="px-3 py-3 text-sm text-gray-900 text-left">
+                      <DeleteIcon
+                        className="h-5 w-5"
+                        onClick={() => handleDeleteUser(person._id)}
+                      />
                     </td>
                   </tr>
                 ))}

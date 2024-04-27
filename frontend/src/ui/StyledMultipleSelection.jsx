@@ -1,29 +1,28 @@
 import React from 'react';
 import Select from 'react-select';
 
-const StyledMultipleSelection = () => {
-  const emailOptions = [
-    { value: 'email1@example.com', label: 'email1@example.com' },
-    { value: 'email2@example.com', label: 'email2@example.com' },
-    { value: 'email3@example.com', label: 'email3@example.com' },
-    { value: 'email4@example.com', label: 'email4@example.com' },
-  ];
-
+const StyledMultipleSelection = ({options,onChange = () => {}}) => {
+  const handleChange = (selectedOptions) => {
+    const selectedValues = selectedOptions.map(option => option.value);
+    // Call the onChange prop with the selected values
+    onChange(selectedValues);
+  };
   return (
-    <div className='mt-20'>
+    <div>
       <Select
         isMulti
         name="emails"
-        options={emailOptions}
+        options={options}
         theme={(theme) => ({
             ...theme,
-            borderRadius: 0,
+            borderRadius: '0.375rem',
             colors: {
               ...theme.colors,
               primary25: '#9333EA', 
               primary: '#9333EA',   
             },
           })}
+          onChange={handleChange}
         classNamePrefix="select"
       />
     </div>

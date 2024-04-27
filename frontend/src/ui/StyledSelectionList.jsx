@@ -7,7 +7,7 @@ const StyledSelectionList = ({ options, label, onChange = () => {},listname }) =
 
   const handleChange = (value) => {
     setSelected(value);
-    onChange(value.name); 
+    onChange(value.value); 
   };
 
   return (
