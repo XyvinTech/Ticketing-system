@@ -26,13 +26,19 @@ const AdminAddUser = () => {
   const [isChange, setIsChange] = useState(false); // State for modal
   const { users, fetchUser, addUser, deleteUser } = useUserStore();
   const [search, setSearch] = useState();
+  const [role, setRole] = useState();
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+ 
   useEffect(() => {
     let filter = {};
     if (search) {
       filter.searchQuery = search;
     }
+  if(role && role!=="all"){
+    filter.usertype=role;
+  }
     fetchUser(filter);
-  }, [isChange, search]);
+  }, [isChange, search,role]);
   useEffect(() => {
     fetchProject();
   }, []);
@@ -41,9 +47,9 @@ const AdminAddUser = () => {
     label: project.projectName,
   }));
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
 
   const Role = [
+    { value: "all", name: "All" },
     { value: "projectManager", name: "Project Manager" },
     { value: "projectLead", name: "Project Lead" },
     { value: "member", name: "Member" },
@@ -184,37 +190,41 @@ const AdminAddUser = () => {
           </form>
         </Modal>
       )}
-      <div className="overflow-x-auto rounded-lg border shadow">
+      <div className="overflow-x-auto rounded-lg border shadow ">
         <div className="inline-block min-w-full align-middle">
           <div className="overflow-hidden">
             <table className="min-w-full divide-y divide-gray-300">
               <thead>
                 <tr>
-                  <td colSpan="4" className="px-3 py-3 text-left text-sm text-gray-900">
+                  <td colSpan="4" className="px-3 py-3 pb-10 text-left text-sm text-gray-900">
                     <div className="flex flex-col gap-3 sm:flex-row sm:gap-3 max-md:flex-wrap items-center">
                       <div className="flex-grow lg:w-20 max-w-xs">
                         <StyledInput
-                          placeholder="Search for names, groups or email"
+                          placeholder="Search for names or email"
                           Icon={SearchIcon}
                           onChange={(e) => setSearch(e.target.value)}
                         />
                       </div>
                       <div>
-                        <StyledSelectionList listname="Roles" options={Role} />
+                        <StyledSelectionList listname="Roles" 
+                        onChange={(value)=>setRole(value)}options={Role} />
                       </div>
                     </div>
                   </td>
                 </tr>
 
                 <tr className="font-semibold  text-left text-sm  text-gray-900">
-                  <td className="px-3 py-3 ">Name</td>
-                  <td className="px-3 py-3  ">Email</td>
-                  <td className="px-3 py-3   ">User Type</td>
-                  <td className="px-3 py-3   ">Delete</td>
+                  <td className="px-3 py-3 pt-5">Name</td>
+                  <td className="px-3 py-3 pt-5 ">Email</td>
+                  <td className="px-3 py-3  pt-5 ">User Type</td>
+                  <td className="px-3 py-3  pt-5 ">Delete</td>
                 </tr>
               </thead>
               <tbody>
-                {users.map((person) => (
+                {users.length===0?(
+                  <tr><td colSpan="4"className="pt-7 pb-7 text-sm text-red-500 text-center">No Users</td></tr>
+                ):(
+                users.map((person) => (
                   <tr key={person._id} className="mb-2 border-b  border-gray-200">
                     <td className="px-3 py-4 text-sm text-gray-900 text-left">{person.userName}</td>
                     <td className="px-3 py-3 text-sm text-gray-900 text-left">{person.email}</td>
@@ -237,7 +247,7 @@ const AdminAddUser = () => {
                       />
                     </td>
                   </tr>
-                ))}
+                )))}
               </tbody>
             </table>
           </div>

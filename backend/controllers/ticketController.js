@@ -29,7 +29,7 @@ exports.getTicket = async function (req, res) {
   if (!ticketId) {
     return res.status(400).json({ error: "Ticket ID is required" });
   }
-  const ticket = await Ticket.findById(ticketId);
+  const ticket = await Ticket.findById(ticketId).populate("department", "departmentName").populate("projectId");
 
   if (!ticket) {
     throw createError(404, "Ticket not found");

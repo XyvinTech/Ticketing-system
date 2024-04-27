@@ -8,11 +8,20 @@ export const addProject = async (projectData) => {
       console.error('Error caught:', error);
     }
   };
-  export const fetchProjects = async () => {
+  export const fetchProjects = async (filter) => {
     try {
-      const response = await axiosInstance.get("/project/get");
+      const response = await axiosInstance.get("/project/get",{params:filter});
       return response.data; 
     } catch (error) {
       console.error('Error caught:', error);
     }
   };
+  export const deleteProject = async (projectId) => {
+    try {
+      const response = await axiosInstance.delete(`/project/delete/${projectId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error caught:", error);
+    }
+  };
+  

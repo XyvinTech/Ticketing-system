@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactComponent as EnvelopeIcon } from "../assets/icons/EnvelopeIcon.svg";
 import { ReactComponent as LockClosedIcon } from "../assets/icons/LockClosedIcon.svg";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Logo from "../assets/Logo.png";
 import { Link, useNavigate } from "react-router-dom";

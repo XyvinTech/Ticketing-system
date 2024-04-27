@@ -2,7 +2,8 @@ import React from 'react'
 import { ReactComponent as CalendarIcon } from "../assets/icons/CalendarIcon.svg";
 import { ReactComponent as SquareIcon } from "../assets/icons/SquareIcon.svg";
 import { ReactComponent as ClockIcon} from "../assets/icons/ClockIcon.svg";
-const TableInfo = ({ reference,createdAt, priority, category, last_reply_on }) => {
+import { ReactComponent as DepartmentIcon} from "../assets/icons/DepartmentIcon.svg";
+const TableInfo = ({ reference,createdAt, priority, category,projectName, last_reply_on }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = { month: "short", day: "numeric", year: "numeric" };
@@ -32,6 +33,11 @@ const TableInfo = ({ reference,createdAt, priority, category, last_reply_on }) =
       <div className="flex items-center gap-1 pl-2 tooltip" data-tooltip="Last reply">
         <ClockIcon className="h-4 w-4 text-gray-400" />
         <span>{last_reply_on ? formatDate(last_reply_on) : '--'}</span>
+
+      </div>
+      <div className="flex items-center gap-1 pl-2 tooltip" data-tooltip="Project Name">
+        <DepartmentIcon className="h-4 w-4 text-gray-400" />
+        <span>{projectName}</span>
 
       </div>
     </div>

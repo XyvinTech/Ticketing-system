@@ -14,16 +14,20 @@ const AdminAddProject = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { projects, fetchProject, addProject } = useProjectStore();
+  const { projects, fetchProject, addProject,deleteProject } = useProjectStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChange, setIsChange] = useState(false);
+  const [search, setSearch] = useState();
   useEffect(() => {
-    fetchProject();
-  }, [isChange]);
+    let filter={};
+    if(search){
+      filter.searchQuery=search;
+    }
+    fetchProject(filter);
+  }, [isChange,search]);
   const onSubmit = async (data) => {
     try {
       await addProject(data);
-      toast.success("Project Added successfully!");
       setIsChange(!isChange);
       setIsModalOpen(false);
     } catch (error) {
@@ -32,8 +36,14 @@ const AdminAddProject = () => {
   };
   console.log("All Projects:", projects);
 
-  const handleDeleteProject = (projectId) => {
-    console.log("🚀 ~ handleDeleteProject ~ projectId:", projectId);
+  const handleDeleteProject = async(projectId) => {
+    try {
+      await deleteProject(projectId);
+      toast.success("Project deleted successfully!");
+      setIsChange(!isChange);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
   return (
     <div className="py-6 px-4 sm:p-6 lg:pb-8">
@@ -80,7 +90,7 @@ const AdminAddProject = () => {
                   <td colSpan="4" className="px-3 py-3 text-left text-sm text-gray-900">
                     <div className="flex flex-col gap-3 sm:flex-row sm:gap-3 max-md:flex-wrap items-center">
                       <div className="flex-grow lg:w-20 max-w-xs">
-                        <StyledInput placeholder="Search " Icon={SearchIcon} />
+                        <StyledInput placeholder="Search " Icon={SearchIcon}  onChange={(e) => setSearch(e.target.value)} />
                       </div>
                     </div>
                   </td>

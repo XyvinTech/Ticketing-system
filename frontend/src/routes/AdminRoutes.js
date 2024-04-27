@@ -17,7 +17,7 @@ const AdminRoutes = () => {
       <Routes>
         <Route path="/Ticket" element={<AdminTicket />} />
         <Route path="AdminNewTicket" element={<AdminNewTicket />} />
-        <Route path="SingleTicket/" element={<AdminSingleTicket />} />
+        <Route path="SingleTicket/:id" element={<AdminSingleTicket />} />
         <Route path="Department" element={<AdminDepartment />} />
         <Route path="AdminProfile" element={<AdminProfile />} />
         <Route path="AdminPassword" element={<AdminPassword />} />

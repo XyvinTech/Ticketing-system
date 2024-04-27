@@ -12,6 +12,7 @@ export const fetchTickets = async () => {
   export const fetchTicketById = async (ticketId) => {
     try {
     const response = await axiosInstance.get(`/ticket/get/${ticketId}`);
+   
     return response.data; 
   } catch (error) {
     console.error('Error caught:', error);

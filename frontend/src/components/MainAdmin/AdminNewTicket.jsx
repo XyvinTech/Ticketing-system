@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+
 import StyledSelectionList from "../../ui/StyledSelectionList";
 import StyledInput from "../../ui/StyledInput";
 import StyledText from "../../ui/StyledText";
@@ -11,6 +11,7 @@ import { useTicketStore } from "../../store/TicketStore";
 import { useNavigate } from "react-router-dom";
 import { useDepartmentStore } from "../../store/DepartmentStore";
 import { useProjectStore } from "../../store/projectStore";
+import { uploadImage } from "../../api/uploadapi";
 const AdminNewTicket = () => {
   const navigate = useNavigate()
   const {
@@ -38,8 +39,13 @@ const AdminNewTicket = () => {
     fetchProject();
   }, []);
   const onSubmit = async (data) => {
-
-    //& TODO add attachments
+    console.log("image",data.attachment)
+    if (data.attachment) {
+      const imageUrl = await uploadImage(data.attachment);
+      console.log(imageUrl)
+      data.attachment = [];
+      imageUrl.data.map(dataUrl=>data.attachment.push(dataUrl.url))
+    }
 
     try {
       await addTicket(data);
@@ -56,8 +62,7 @@ const AdminNewTicket = () => {
   return (
     <>
       <div className="divide-y divide-gray-200">
-        <ToastContainer />
-        <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+        <form onSubmit={handleSubmit(onSubmit)} >
           <div className="py-6 px-4 sm:p-6 lg:pb-8">
             <h1 className="mb-6 text-xl font-semibold">New Ticket</h1>
             <div className="space-y-6">

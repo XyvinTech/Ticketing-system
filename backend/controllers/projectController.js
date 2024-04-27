@@ -14,7 +14,7 @@ exports.getAll = async function (req, res) {
 
   if (searchQuery) {
     query.$or = [
-      { name: { $regex: searchQuery, $options: "i" } },
+      { projectName: { $regex: searchQuery, $options: "i" } },
       { email: { $regex: searchQuery, $options: "i" } },
     ];
   }

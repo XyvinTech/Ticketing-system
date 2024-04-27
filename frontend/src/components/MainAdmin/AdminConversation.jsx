@@ -1,14 +1,26 @@
 import { Disclosure } from "@headlessui/react";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { ReactComponent as UpIcon } from "../../assets/icons/Upicon.svg";
 import StyledText from "../../ui/StyledText";
 import FileUpload from "../../ui/FileUpload";
 import StyledButton from "../../ui/StyledButton";
+import { useConversationStore } from "../../store/ConversationStore";
 const AdminConversation = ({ ticketId }) => {
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit, reset } = useForm();
+  const { addConversation } = useConversationStore();
   const onSubmit = async (data) => {
-    console.log("Form data:", data);
+    try {
+      await addConversation(data);
+      toast.success("Replied successfully!");
+      reset();
+     
+    } catch (error) {
+      console.error("Error", error);
+      toast.error("Error!");
+    }
   };
 
   return (
