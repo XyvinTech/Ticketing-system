@@ -106,7 +106,7 @@ const AdminNewTicket = () => {
               </div>
               <div>
                 <Controller
-                  name="projectIf"
+                  name="projectId"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (

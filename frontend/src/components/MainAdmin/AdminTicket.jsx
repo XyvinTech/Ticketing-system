@@ -38,9 +38,7 @@ const AdminTicket = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const item = Array.isArray(tickets)
-    ? tickets.slice(indexOfFirstItem, indexOfLastItem)
-    : [];
+  const item = Array.isArray(tickets) ? tickets.slice(indexOfFirstItem, indexOfLastItem) : [];
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -68,11 +66,7 @@ const AdminTicket = () => {
     { name: "Project Manager" },
     { name: "Project Lead" },
   ];
-  const Role = [
-    { name: "Member" },
-    { name: "Designer" },
-    { name: "Developer" },
-  ];
+  const Role = [{ name: "Member" }, { name: "Designer" }, { name: "Developer" }];
   const Status = [
     { name: "assigned" },
     { name: "In progress" },
@@ -104,25 +98,16 @@ const AdminTicket = () => {
         {showAdminBoard && <AdminBoard />}{" "}
         {isModalOpen && (
           <Modal closeModal={() => setIsModalOpen(false)}>
-            <h1 className="flex-auto font-semibold">
-              Add People to My Project
-            </h1>
+            <h1 className="flex-auto font-semibold">Add People to My Project</h1>
 
-            <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-              Names or emails
-            </h1>
+            <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">Names or emails</h1>
             <StyledInput placeholder="eg:Maria, maria@gmail.com" />
 
-            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-              Role
-            </h1>
+            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">Role</h1>
             <StyledSelectionList listname="Role " options={Role} />
 
             <div className="flex  justify-end gap-4">
-              <button
-                className="font-semibold  mt-3"
-                onClick={() => setIsModalOpen(false)}
-              >
+              <button className="font-semibold  mt-3" onClick={() => setIsModalOpen(false)}>
                 Cancel
               </button>
               <StyledButton text="Add" />
@@ -145,17 +130,13 @@ const AdminTicket = () => {
                     reference={tickets.ticket_Id}
                     priority={tickets.priority}
                     createdAt={tickets.createdAt}
-                    category={tickets.department}
+                    category={tickets?.department?.departmentName}
                     // last_reply_on={i.replies[0]?.created_at}
                   />
                 </td>
                 <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
                   <button
-                    onClick={() =>
-                      setIsNotifyOpen(
-                        tickets.assignedto === "Notify ProjectManager"
-                      )
-                    }
+                    onClick={() => setIsNotifyOpen(tickets.assignedto === "Notify ProjectManager")}
                   >
                     <span
                       className={`rounded-full px-3 py-px text-sm
@@ -170,39 +151,30 @@ const AdminTicket = () => {
                       {tickets.assignedto}
                     </span>
                   </button>{" "}
-                  {isNotifyOpen &&
-                    tickets.assignedto === "Notify ProjectManager" && (
-                      <Modal closeModal={() => setIsNotifyOpen(false)}>
-                        <h1 className="flex-auto font-semibold text-black">
-                          Notify Project Manager
-                        </h1>
+                  {isNotifyOpen && tickets.assignedto === "Notify ProjectManager" && (
+                    <Modal closeModal={() => setIsNotifyOpen(false)}>
+                      <h1 className="flex-auto font-semibold text-black">Notify Project Manager</h1>
 
-                        <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                          To
-                        </h1>
-                        <StyledInput placeholder="eg:Maria, maria@gmail.com" />
-                        <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                          Sub
-                        </h1>
-                        <StyledInput placeholder="Notify admin about new ticket" />
+                      <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">To</h1>
+                      <StyledInput placeholder="eg:Maria, maria@gmail.com" />
+                      <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">Sub</h1>
+                      <StyledInput placeholder="Notify admin about new ticket" />
 
-                        <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-                          Notes
-                        </h1>
+                      <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">Notes</h1>
 
-                        <StyledInput placeholder="Enter Your Notes" />
+                      <StyledInput placeholder="Enter Your Notes" />
 
-                        <div className="flex  justify-end gap-4">
-                          <button
-                            className="font-semibold  mt-3 text-black"
-                            onClick={() => setIsNotifyOpen(false)}
-                          >
-                            Cancel
-                          </button>
-                          <StyledButton text="Notify" />
-                        </div>
-                      </Modal>
-                    )}
+                      <div className="flex  justify-end gap-4">
+                        <button
+                          className="font-semibold  mt-3 text-black"
+                          onClick={() => setIsNotifyOpen(false)}
+                        >
+                          Cancel
+                        </button>
+                        <StyledButton text="Notify" />
+                      </div>
+                    </Modal>
+                  )}
                 </td>
 
                 <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
@@ -224,10 +196,7 @@ const AdminTicket = () => {
                   </span>
                 </td>
                 <td>
-                  <StyledButton
-                    text="Assign Ticket"
-                    onClick={() => setIsModalOpen(true)}
-                  />
+                  <StyledButton text="Assign Ticket" onClick={() => setIsModalOpen(true)} />
                 </td>
               </tr>
             ))}
