@@ -23,9 +23,9 @@ const AdminProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(URL.createObjectURL(file));
-    setValue("profilePicture", file);
+    setValue("pic", file);
   };
-  
+
   useEffect(() => {
     fetchAdmin();
   }, [isChange]);
@@ -34,6 +34,7 @@ const AdminProfile = () => {
     if (admin) {
       setValue("userName", admin.userName || "");
       setValue("email", admin.email || "");
+      setSelectedImage(admin.pic);
     }
   }, [admin, setValue, isChange]);
 
@@ -68,9 +69,7 @@ const AdminProfile = () => {
               )}
             />
             {errors.userName && (
-              <span className="text-sm text-red-600">
-                {errors.userName.message}
-              </span>
+              <span className="text-sm text-red-600">{errors.userName.message}</span>
             )}
             {/* <Controller
               name="phoneNumber"
@@ -115,17 +114,12 @@ const AdminProfile = () => {
                 },
               }}
             />
-            {errors.email && (
-              <span className="text-sm text-red-600">
-                {errors.email.message}
-              </span>
-            )}
+            {errors.email && <span className="text-sm text-red-600">{errors.email.message}</span>}
             <Controller
-              name="profilePicture"
+              name="pic"
               control={control}
               render={({ field }) => (
                 <div className="sm:hidden">
-                  <h1>Picture</h1>
                   <div className="flex flex-wrap items-center gap-3">
                     <img
                       src={selectedImage}
@@ -151,14 +145,9 @@ const AdminProfile = () => {
               )}
             />
 
-            {errors.profilePicture && (
-              <span className="text-sm text-red-600">
-                {errors.profilePicture.message}
-              </span>
-            )}
+            {errors.pic && <span className="text-sm text-red-600">{errors.pic.message}</span>}
           </div>
           <div className="hidden sm:block">
-            <h1>picture</h1>
             <div className="relative overflow-hidden rounded-full">
               <img
                 src={selectedImage}

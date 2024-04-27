@@ -17,6 +17,10 @@ const adminSchema = new Schema(
       type: String,
       required: true,
     },
+    pic: {
+      type: String,
+      default: "https://image-upload-oxium.s3.ap-south-1.amazonaws.com/users/acute.png",
+    },
   },
   { timestamps: true }
 );
