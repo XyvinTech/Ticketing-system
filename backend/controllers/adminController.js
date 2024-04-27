@@ -76,12 +76,16 @@ exports.deleteUser = async function (req, res) {
 };
 
 exports.getUsers = async function (req, res) {
-  const { usertype, searchQuery } = req.query;
+  const { usertype, searchQuery, withOutClient } = req.query;
 
   const query = {};
 
   if (usertype) {
     query.usertype = usertype;
+  }
+
+  if (withOutClient) {
+    query.usertype = { $ne: "client" };
   }
 
   if (searchQuery) {

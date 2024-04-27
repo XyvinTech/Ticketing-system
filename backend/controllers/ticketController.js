@@ -18,7 +18,7 @@ exports.createTicket = async function (req, res) {
 
 //get all tickets
 exports.getAll = async function (req, res) {
-  const tickets = await Ticket.find();
+  const tickets = await Ticket.find({ status: { $ne: "deleted" } });
   res.status(200).json({ status: true, data: tickets });
 };
 
@@ -50,8 +50,7 @@ exports.updateTicket = async function (req, res) {
 //delete Ticket
 exports.deleteTicket = async function (req, res) {
   const ticketId = req.params.id;
-  const deletedTicket = await Ticket.findByIdAndDelete(ticketId);
-
+  const deletedTicket = await Ticket.findByIdAndUpdate(ticketId, { status: "deleted", new: true });
   if (!deletedTicket) {
     throw createError(404, "Ticket  not found");
   }

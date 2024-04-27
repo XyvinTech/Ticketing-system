@@ -26,7 +26,7 @@ const ticketSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: ["pending", "progress", "done", "archived"],
+      enum: ["pending", "progress", "done", "archived", "deleted"],
       default: "pending",
     },
     attachment: {

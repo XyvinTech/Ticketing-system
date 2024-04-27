@@ -4,8 +4,9 @@ const Schema = mongoose.Schema;
 const notificationSchema = new Schema(
   {
     user: {
-      type: [String],
-      default: [],
+      type: Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
     },
     type: {
       type: String,
