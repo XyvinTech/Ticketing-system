@@ -35,7 +35,8 @@ const ClientTicket = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const item = tickets.slice(indexOfFirstItem, indexOfLastItem);
+  const item = Array.isArray(tickets) ? tickets.slice(indexOfFirstItem, indexOfLastItem) : [];
+
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -61,6 +62,7 @@ const ClientTicket = () => {
     { name: "Resolved", count: 0 },
     { name: "Closed", count: 0 },
   ];
+  console.log("Gg",tickets)
   return (
     <div>
       <section className="py-6 px-4 sm:p-6 lg:pb-8">

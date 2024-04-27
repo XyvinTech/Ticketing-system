@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StyledInput from "../../ui/StyledInput";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useForm, Controller } from "react-hook-form";
 import { ReactComponent as PersonIcon } from "../../assets/icons/PersonIcon.svg";
 import { ReactComponent as PhoneIcon } from "../../assets/icons/PhoneIcon.svg";
 import { ReactComponent as EnvelopeIcon } from "../../assets/icons/EnvelopeIcon.svg";
 import StyledButton from "../../ui/StyledButton";
+import { useAdminStore } from "../../store/AdminStore";
 
 const AdminProfile = () => {
   const {
@@ -13,6 +16,7 @@ const AdminProfile = () => {
     formState: { errors },
     setValue,
   } = useForm();
+  const { admin, fetchAdmin, updateAdmin } = useAdminStore();
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleImageChange = (e) => {
@@ -20,11 +24,22 @@ const AdminProfile = () => {
     setSelectedImage(URL.createObjectURL(file));
     setValue("profilePicture", file);
   };
-
-  const onSubmit = (data) => {
-    console.log(data);
+  
+  useEffect(() => {
+    fetchAdmin();
+    setValue("userName", admin.userName);
+    setValue("email", admin.email);
+  }, []);
+  const onSubmit = async (data) => {
+    try {
+      await updateAdmin(data);
+      toast.success(" updated successfully!");
+    } catch (error) {
+      console.error("Error adding department:", error);
+    }
   };
 
+  console.log("addmin data", admin);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="px-4 py-6 sm:p-6 lg:pb-8">
@@ -32,24 +47,26 @@ const AdminProfile = () => {
         <div className="flex flex-col items-center gap-12 sm:flex-row">
           <div className="w-full flex-1 space-y-6">
             <Controller
-              name="name"
+              name="userName"
               control={control}
               render={({ field }) => (
                 <StyledInput
                   {...field}
                   type="text"
-                  label="Name"
+                  label=" User Name"
+                  onChange={(e) => field.onChange(e.target.value)}
+                  value={field.value || ""}
                   placeholder="Name"
                   Icon={PersonIcon}
                 />
               )}
             />
-            {errors.name && (
+            {errors.userName && (
               <span className="text-sm text-red-600">
-                {errors.name.message}
+                {errors.userName.message}
               </span>
             )}
-            <Controller
+            {/* <Controller
               name="phoneNumber"
               control={control}
               render={({ field }) => (
@@ -72,7 +89,7 @@ const AdminProfile = () => {
               <span className="text-sm text-red-600">
                 {errors.phoneNumber.message}
               </span>
-            )}
+            )} */}
             <Controller
               name="email"
               control={control}
@@ -81,6 +98,8 @@ const AdminProfile = () => {
                   {...field}
                   type="email"
                   label="Email"
+                  onChange={(e) => field.onChange(e.target.value)}
+                  value={field.value || ""}
                   placeholder="email@example.com"
                   Icon={EnvelopeIcon}
                 />

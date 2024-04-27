@@ -10,7 +10,7 @@ exports.addAdmin = async function (req, res) {
 };
 //get Admin by id
 exports.getAdmin = async function (req, res) {
-  const adminId = req.params.id;
+  const adminId = req.user;
   const admin = await Admin.findById(adminId);
 
   if (!admin) {
@@ -21,7 +21,7 @@ exports.getAdmin = async function (req, res) {
 };
 //update Admin
 exports.updateAdmin = async function (req, res) {
-  const adminId = req.params.id;
+  const adminId = req.user;
   const update = req.body;
 
   const updatedAdmin = await Admin.findByIdAndUpdate(adminId, update, { new: true });

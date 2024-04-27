@@ -1,42 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Modal from "../../ui/Modal";
 import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
 import StyledInput from "../../ui/StyledInput";
 import StyledButton from "../../ui/StyledButton";
 import { Controller, useForm } from "react-hook-form";
-import StyledSearch from "../../ui/StyledSearch";
 import { ReactComponent as DeleteIcon } from "../../assets/icons/DeleteIcon.svg";
+import { useProjectStore } from "../../store/projectStore";
 const AdminAddProject = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const emailOptions = [
-    { value: "email1@example.com", label: "email1@example.com" },
-    { value: "email2@example.com", label: "email2@example.com" },
-    { value: "email3@example.com", label: "email3@example.com" },
-    { value: "email4@example.com", label: "email4@example.com" },
-  ];
-  const people = [
-    {
-      id: 1,
-      ProjectName: "Account System",
-    },
-    {
-      id: 2,
-      ProjectName: "Ecommerce System",
-    },
-  ];
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
-
+  const { projects,fetchProject,addProject } = useProjectStore();
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isChange, setIsChange] = useState(false); 
+  useEffect(() => {
+    fetchProject();
+  }, [isChange]); 
   const onSubmit = async (data) => {
-    console.log(data);
+  try{
+    await addProject(data);
+    toast.success("Project Added successfully!");
+    setIsChange(!isChange)
+    setIsModalOpen(false);
+  }
+  catch (error) {
+    console.error("Error adding project:", error);
+  }
   };
+  console.log("All Projects:", projects);
   return (
     <div className="py-6 px-4 sm:p-6 lg:pb-8">
       <h1 className="text-xl font-semibold">Projects</h1>
-
       <div className="mb-4 pr-5 flex justify-between items-center">
         <div className="flex mt-5 gap-3 divide-x divide-dashed text-sm text-gray-500">
           <div className="font-semibold">All(2)</div>
@@ -62,29 +60,7 @@ const AdminAddProject = () => {
             {errors.projectName && (
               <span className="text-red-500">{errors.projectName.message}</span>
             )}
-            <h1 className="mt-4 mb-1 text-xs font-semibold leading-4 text-slate-500">
-              project Manager
-            </h1>
-            <Controller
-              name="projectManager"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <>
-                  <StyledSearch
-                    listname="User Type"
-                    options={emailOptions}
-                    {...field}
-                  />
-                  {errors.projectManager && (
-                    <span className="text-red-500">
-                      {errors.projectManager.message}
-                    </span>
-                  )}
-                </>
-              )}
-              rules={{ required: "Project Manager is required" }}
-            />
+            
             <div className="flex  justify-end gap-4">
               <button
                 className="font-semibold  mt-3"
@@ -121,16 +97,13 @@ const AdminAddProject = () => {
                 </tr>
               </thead>
               <tbody>
-                {people.map((person) => (
-                  <tr
-                    key={person.id}
-                    className=" mb-2 border-b border-gray-200 text-left"
-                  >
-                    <td className="px-3 py-4  text-left text-sm text-gray-900">
-                      {person.ProjectName}
-                    </td>
-                    <td className="px-3 py-3 text-sm text-gray-900 text-left">
-                      <DeleteIcon className="h-5 w-5" />
+                {projects.map((project) => (
+                  <tr key={project._id} className="border-b border-gray-200">
+                    <td className="px-3 py-4 text-left text-sm text-gray-900">{project.projectName}</td>
+                    <td className="px-3 py-3">
+                      <button onClick={() => handleDeleteProject(project._id)}>
+                        <DeleteIcon className="h-5 w-5 text-gray-500" />
+                      </button>
                     </td>
                   </tr>
                 ))}

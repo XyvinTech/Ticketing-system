@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,23 +7,47 @@ import StyledInput from "../../ui/StyledInput";
 import StyledText from "../../ui/StyledText";
 import FileUpload from "../../ui/FileUpload";
 import StyledButton from "../../ui/StyledButton";
+import { useTicketStore } from "../../store/TicketStore";
+import { useNavigate } from "react-router-dom";
+import { useDepartmentStore } from "../../store/DepartmentStore";
+import { useProjectStore } from "../../store/projectStore";
 const AdminNewTicket = () => {
+  const navigate = useNavigate()
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm();
-  const Priority = [{ name: "Low" }, { name: "Medium" }, { name: "High" }];
-  const Project = [
-    { name: "Project 1" },
-    { name: "Project 2" },
-  ];
-  const Department= [
-    { name: "Tech & Development" },
-    { name: "UI/UX Product Designing" },
-  ];
+  const { addTicket } = useTicketStore();
+  const { departments, fetchDepartment } = useDepartmentStore();
+  const { projects, fetchProject } = useProjectStore();
+  const Priority = [{ value:"low",name: "Low" }, {value:"medium" ,name: "Medium" }, {value:"high" ,name: "High" }];
+  const Project =projects.map((project) => ({
+    value: project._id,
+    name: project.projectName,
+  }));
+  const Department = departments.map((dep) => ({
+    value: dep._id,
+    name: dep.departmentName,
+  }));
+  useEffect(() => {
+    fetchDepartment();
+  }, []);
+  useEffect(() => {
+    fetchProject();
+  }, []);
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      await addTicket(data);
+      toast.success("Ticket created successfully!");
+      reset();
+      navigate("/admin/ticket");
+     
+    } catch (error) {
+      console.error("Error adding ticket:", error);
+      toast.error("Error!");
+    }
   };
 
   return (
@@ -82,7 +106,7 @@ const AdminNewTicket = () => {
               </div>
               <div>
                 <Controller
-                  name="project"
+                  name="projectIf"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (

@@ -1,12 +1,15 @@
 import { Switch } from "@headlessui/react";
 import { useForm, Controller } from "react-hook-form";
-import React, { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import React, { useEffect, useState } from "react";
 import Modal from "../../ui/Modal";
 import StyledInput from "../../ui/StyledInput";
 import StyledButton from "../../ui/StyledButton";
 import { ReactComponent as CloseIcon } from "../../assets/icons/CloseIcon.svg";
 import { ReactComponent as UpDownIcon } from "../../assets/icons/UpDownIcon.svg";
 import StyledText from "../../ui/StyledText";
+import { useDepartmentStore } from "../../store/DepartmentStore";
 
 const AdminDepartment = () => {
   const [enabled, setEnabled] = useState(false);
@@ -15,40 +18,11 @@ const AdminDepartment = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const UserData = [
-    {
-      name: "Tech & Development",
-      emails: [
-        "john@example.com",
-        "annu@gmail.com",
-        "john@example.com",
-        "annu@gmail.com",
-        "john@example.com",
-        "annu@gmail.com",
-      ],
-    },
-    {
-      name: "UI/UX Product Designing",
-      emails: ["john@example.com", "annu@gmail.com"],
-    },
-    {
-      name: "Marketing and SEO",
-      emails: ["john@example.com", "annu@gmail.com"],
-    },
-    {
-      name: "Branding and Creatives",
-      emails: ["john@example.com", "annu@gmail.com"],
-    },
-    {
-      name: "Billing and Payment",
-      emails: ["john@example.com", "annu@gmail.com"],
-    },
-  ];
-
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChange, setIsChange] = useState(false);
   const [isAssignOpen, setisAssignOpen] = useState(false);
-
+  const { departments, fetchDepartment, addDepartment } = useDepartmentStore();
   const [expandedRows, setExpandedRows] = useState([]);
   const handleRowClick = (index) => {
     const newRowState = [...expandedRows];
@@ -59,7 +33,21 @@ const AdminDepartment = () => {
     }
     setExpandedRows(newRowState);
   };
+  useEffect(() => {
+    fetchDepartment();
+  }, [isChange]);
 
+  const onSubmit = async (data) => {
+    try {
+      await addDepartment(data);
+      toast.success("Department Added successfully!");
+      setIsChange(!isChange);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error adding department:", error);
+    }
+  };
+  console.log("allDepartment", departments);
   return (
     <div className="py-6 px-4 sm:p-6 lg:pb-8">
       <h1 className="text-xl font-semibold">Department</h1>
@@ -73,32 +61,45 @@ const AdminDepartment = () => {
 
       {isModalOpen && (
         <Modal closeModal={() => setIsModalOpen(false)}>
-          <h1 className="flex-auto font-semibold">New Category</h1>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <h1 className="flex-auto font-semibold">New Category</h1>
 
-          <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-            Title
-          </h1>
-          <StyledInput />
-          <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-            Description
-          </h1>
-          <Controller
-            name="description"
-            control={control}
-            defaultValue=""
-            render={({ field }) => <StyledText field={field} />}
-            rules={{ required: "Description is required" }}
-          />
+            <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
+              Title
+            </h1>
+            <Controller
+              name="departmentName"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <StyledInput type="text" {...field} />}
+              rules={{ required: "Department Name is required" }}
+            />
+            {errors.departmentName && (
+              <span className="text-red-500">
+                {errors.departmentName.message}
+              </span>
+            )}
+            <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
+              Description
+            </h1>
+            <Controller
+              name="description"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <StyledText field={field} />}
+              rules={{ required: "Description is required" }}
+            />
 
-          <div className="flex mt-12  justify-start gap-4">
-            <button
-              className="font-semibold  mt-3"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Cancel
-            </button>
-            <StyledButton text="save" />
-          </div>
+            <div className="flex mt-12  justify-start gap-4">
+              <button
+                className="font-semibold  mt-3"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <StyledButton text="save" type="submit" />
+            </div>
+          </form>
         </Modal>
       )}
       <div className="overflow-x-auto rounded-lg border shadow">
@@ -180,54 +181,37 @@ const AdminDepartment = () => {
                 </tr>
               </thead>
               <tbody>
-                {UserData.map((user, userIndex) => (
-                  <React.Fragment key={userIndex}>
-                    <tr className=" mb-2 border-b border-gray-200">
-                      <td className="px-3 py-4 text-left text-sm text-gray-900">
-                        <input
-                          type="checkbox"
-                          class="mr-2  accent-purple-500"
-                        />
-                        {user.name}
-                      </td>
+                {departments.map((user, index) => (
+                  <tr key={index} className=" mb-2 border-b border-gray-200">
+                    <td className="px-3 py-4 text-left text-sm text-gray-900">
+                      <input type="checkbox" class="mr-2  accent-purple-500" />
+                      {user.departmentName}
+                    </td>
 
-                      <td className=" text-sm text-gray-900">
-                        {user.emails
-                          .slice(
-                            0,
-                            expandedRows.includes(userIndex)
-                              ? user.emails.length
-                              : 3
-                          ) // Display up to 3 emails
-                          .reduce((chunks, email, index) => {
-                            if (index % 3 === 0) chunks.push([]);
-                            chunks[chunks.length - 1].push(email);
-                            return chunks;
-                          }, [])
-                          .map((chunk, chunkIndex) => (
-                            <div key={chunkIndex} className="flex mb-2">
-                              {chunk.map((email, emailIndex) => (
-                                <div
-                                  key={emailIndex}
-                                  className="flex rounded-full px-2 py-1 text-sm items-center mr-2 mt-3  bg-purple-100"
-                                >
-                                  <span>{email}</span>
-                                  <button className="ml-1">
-                                    <CloseIcon className="h-4 w-4 text-purple-500" />
-                                  </button>
-                                </div>
-                              ))}
+                    <td className="text-sm text-gray-900">
+                      {user.members ? (
+                        user.members.map((member, memberIndex) => (
+                          <div key={memberIndex} className="flex mb-2">
+                            {/* Display member information */}
+                            <div className="flex rounded-full px-2 py-1 text-sm items-center mr-2 mt-3 bg-purple-100">
+                              <span>{member.email}</span>
+                              <button className="ml-1">
+                                <CloseIcon className="h-4 w-4 text-purple-500" />
+                              </button>
                             </div>
-                          ))}
-                      </td>
+                          </div>
+                        ))
+                      ) : (
+                        <span>No members found.</span> // Display this message if members is null or undefined
+                      )}
+                    </td>
 
-                      <td className="px-3 py-3 text-left text-sm text-gray-900">
-                        <button onClick={() => handleRowClick(userIndex)}>
-                          <UpDownIcon className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  </React.Fragment>
+                    <td className="px-3 py-3 text-left text-sm text-gray-900">
+                      <button onClick={() => handleRowClick(index)}>
+                        <UpDownIcon className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
