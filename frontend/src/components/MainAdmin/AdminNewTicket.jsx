@@ -39,10 +39,8 @@ const AdminNewTicket = () => {
     fetchProject();
   }, []);
   const onSubmit = async (data) => {
-    console.log("image",data.attachment)
     if (data.attachment) {
       const imageUrl = await uploadImage(data.attachment);
-      console.log(imageUrl)
       data.attachment = [];
       imageUrl.data.map(dataUrl=>data.attachment.push(dataUrl.url))
     }

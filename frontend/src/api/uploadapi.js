@@ -16,7 +16,6 @@ export const uploadImage = async (files) => {
       formData.append("attachments", files);
     }
     const response = await axiosInstance.post("/upload",formData, config);
-    console.log("respo",response)
     return response.data;
   } catch (error) {
     console.error("Error caught:", error);
