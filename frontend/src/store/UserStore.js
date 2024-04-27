@@ -3,8 +3,8 @@ import { addUser, fetchUsers,deleteUser } from "../api/userapi";
 
 const useUserStore = create((set) => ({
     users: [],
-    fetchUser:async()=>{
-      const data=await fetchUsers();
+    fetchUser:async(filter)=>{
+      const data=await fetchUsers(filter);
       set({ users: data.data });
     },
     addUser: async (userData) => {
