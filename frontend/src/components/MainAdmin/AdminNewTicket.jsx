@@ -38,6 +38,9 @@ const AdminNewTicket = () => {
     fetchProject();
   }, []);
   const onSubmit = async (data) => {
+
+    //& TODO add attachments
+
     try {
       await addTicket(data);
       toast.success("Ticket created successfully!");
