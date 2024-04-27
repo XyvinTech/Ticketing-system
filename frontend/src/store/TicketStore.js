@@ -8,15 +8,15 @@ const useTicketStore = create((set) => ({
     set({ tickets: allTicketData.data });
 
   },
-  ticket: null,
   fetchTicketById:async (ticketId) => {
     const ticketByid=await fetchTicketById(ticketId);
-    set({ticket: ticketByid })
+    set({tickets: ticketByid })
   },
   addTicket: async(ticketData) => {
     const addTickets=addTicket( ticketData);
     set((state) => ({ tickets: [...state.tickets,addTickets] }));
 
-},}));
+},
+}));
 
 export { useTicketStore };

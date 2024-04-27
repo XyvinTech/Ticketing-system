@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TicketGrid from "../../ui/TicketGrid";
 import StyledInput from "../../ui/StyledInput";
 import StyledTable from "../../ui/StyledTable";
@@ -11,43 +11,22 @@ import AdminBoard from "./AdminBoard";
 import StyledSelectionList from "../../ui/StyledSelectionList";
 import Modal from "../../ui/Modal";
 import DropDown from "../../ui/DropDown";
+import { useTicketStore } from "../../store/TicketStore";
 
 const AdminTicket = () => {
   const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
+  const { tickets, fetchTickets } = useTicketStore();
+  useEffect(() => {
+    fetchTickets();
+  }, []);
   const items = [
-    { name: "Total", count: 7 },
+    { name: "Total", count: tickets.length },
     { name: "Assigned", count: 7 },
     { name: "Unassigned", count: 0 },
     { name: "Resolved", count: 0 },
     { name: "Closed", count: 0 },
-  ];
-
-  const dummyTickets = [
-    {
-      id: 1,
-      reference: "REF001",
-      subject: "HOW I TR",
-      priority: "High",
-      created_at: "March 5,2024",
-      category: { name: "Category A" },
-      replies: [{ created_at: "--" }],
-      status: "assigned",
-      assignedto: "Notify ProjectManager",
-    },
-    {
-      id: 2,
-      reference: "REF001",
-      subject: "HOW I TR",
-      priority: "High",
-      created_at: "March 5,2024",
-      category: { name: "Category A" },
-      replies: [{ created_at: "--" }],
-      status: "assigned",
-      assignedto: "Assign a member Now",
-    },
-    // Add more dummy tickets as needed
   ];
 
   const headers = ["Ticket", "Assigned To", "Status", "Assign"];
@@ -59,7 +38,9 @@ const AdminTicket = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = dummyTickets.slice(indexOfFirstItem, indexOfLastItem);
+  const item = Array.isArray(tickets)
+    ? tickets.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -73,7 +54,7 @@ const AdminTicket = () => {
 
   // Go to next page
   const goToNextPage = () => {
-    if (currentPage < Math.ceil(dummyTickets.length / itemsPerPage)) {
+    if (currentPage < Math.ceil(tickets.length / itemsPerPage)) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -98,6 +79,7 @@ const AdminTicket = () => {
     { name: "completed" },
     { name: "Archived" },
   ];
+  console.log("tickets", tickets);
   return (
     <div>
       <section className="py-6 px-4 sm:p-6 lg:pb-8">
@@ -149,100 +131,101 @@ const AdminTicket = () => {
         )}
         {!showAdminBoard && (
           <StyledTable header={headers}>
-            {currentItems.map((i) => (
-              <tr key={i.id}>
+            {item.map((tickets) => (
+              <tr key={tickets._id}>
                 <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
                   <input type="checkbox" class="mr-2  accent-purple-500" />
                   <Link
                     to={"/Admin/SingleTicket"}
                     className="text-lg font-semibold text-purple-600 hover:text-purple-800"
                   >
-                    {i.subject}
+                    {tickets.subject}
                   </Link>
                   <TableInfo
-                    reference={i.reference}
-                    priority={i.priority}
-                    createdAt={i.created_at}
-                    category={i.category.name}
-                    last_reply_on={i.replies[0]?.created_at}
+                    reference={tickets.ticket_Id}
+                    priority={tickets.priority}
+                    createdAt={tickets.createdAt}
+                    category={tickets.department}
+                    // last_reply_on={i.replies[0]?.created_at}
                   />
                 </td>
                 <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
                   <button
                     onClick={() =>
-                      setIsNotifyOpen(i.assignedto === "Notify ProjectManager")
+                      setIsNotifyOpen(
+                        tickets.assignedto === "Notify ProjectManager"
+                      )
                     }
                   >
                     <span
                       className={`rounded-full px-3 py-px text-sm
       ${
-        i.assignedto === "Assign a member Now"
+        tickets.assignedto === "Assign a member Now"
           ? "bg-indigo-100 text-indigo-800"
-          : i.assignedto === "Notify ProjectManager"
+          : tickets.assignedto === "Notify ProjectManager"
           ? "bg-red-100 text-red-800"
           : ""
       }`}
                     >
-                      {i.assignedto}
+                      {tickets.assignedto}
                     </span>
                   </button>{" "}
-                  {isNotifyOpen && i.assignedto === "Notify ProjectManager" && (
-                    <Modal closeModal={() => setIsNotifyOpen(false)}>
-                      <h1 className="flex-auto font-semibold text-black">
-                        Notify Project Manager
-                      </h1>
+                  {isNotifyOpen &&
+                    tickets.assignedto === "Notify ProjectManager" && (
+                      <Modal closeModal={() => setIsNotifyOpen(false)}>
+                        <h1 className="flex-auto font-semibold text-black">
+                          Notify Project Manager
+                        </h1>
 
-                      <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                        To
-                      </h1>
-                      <StyledInput placeholder="eg:Maria, maria@gmail.com" />
-                      <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                        Sub
-                      </h1>
-                      <StyledInput placeholder="Notify admin about new ticket" />
+                        <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
+                          To
+                        </h1>
+                        <StyledInput placeholder="eg:Maria, maria@gmail.com" />
+                        <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
+                          Sub
+                        </h1>
+                        <StyledInput placeholder="Notify admin about new ticket" />
 
-                      <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-                        Notes
-                      </h1>
+                        <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
+                          Notes
+                        </h1>
 
-                      <StyledInput placeholder="Enter Your Notes" />
+                        <StyledInput placeholder="Enter Your Notes" />
 
-                      <div className="flex  justify-end gap-4">
-                        <button
-                          className="font-semibold  mt-3 text-black"
-                          onClick={() => setIsNotifyOpen(false)}
-                        >
-                          Cancel
-                        </button>
-                        <StyledButton text="Notify" />
-                      </div>
-                    </Modal>
-                  )}
+                        <div className="flex  justify-end gap-4">
+                          <button
+                            className="font-semibold  mt-3 text-black"
+                            onClick={() => setIsNotifyOpen(false)}
+                          >
+                            Cancel
+                          </button>
+                          <StyledButton text="Notify" />
+                        </div>
+                      </Modal>
+                    )}
                 </td>
 
                 <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
                   <span
                     className={`rounded-full px-3 py-px text-sm
                       ${
-                        i.status === "assigned"
+                        tickets.status === "assigned"
                           ? "bg-indigo-100 text-indigo-800"
-                          : i.status === "unassigned"
+                          : tickets.status === "Archived"
                           ? "bg-gray-100 text-gray-800"
-                          : i.status === "closed"
+                          : tickets.status === "Not Started"
                           ? "bg-red-100 text-red-800"
-                          : i.status === "resolved"
+                          : tickets.status === "Done"
                           ? "bg-green-100 text-green-800"
                           : ""
                       }`}
                   >
-                    {i.status}
+                    {tickets.status}
                   </span>
                 </td>
                 <td>
-                  {" "}
                   <StyledButton
-                    text="Assign Ticket" 
-                    
+                    text="Assign Ticket"
                     onClick={() => setIsModalOpen(true)}
                   />
                 </td>
@@ -252,7 +235,7 @@ const AdminTicket = () => {
               <td colSpan="2" className="px-4 py-2">
                 <Pagination
                   currentPage={currentPage}
-                  totalItems={dummyTickets.length}
+                  totalItems={tickets.length}
                   itemsPerPage={itemsPerPage}
                   paginate={paginate}
                   goToPreviousPage={goToPreviousPage}

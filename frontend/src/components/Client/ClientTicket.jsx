@@ -21,7 +21,7 @@ const ClientTicket = () => {
 
   useEffect(() => {
     fetchTickets();
-  }, [fetchTickets]); 
+  }, []); 
   
   
   
