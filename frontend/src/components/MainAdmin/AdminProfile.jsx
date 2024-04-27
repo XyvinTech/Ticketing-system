@@ -8,6 +8,7 @@ import { ReactComponent as PhoneIcon } from "../../assets/icons/PhoneIcon.svg";
 import { ReactComponent as EnvelopeIcon } from "../../assets/icons/EnvelopeIcon.svg";
 import StyledButton from "../../ui/StyledButton";
 import { useAdminStore } from "../../store/AdminStore";
+import { uploadImage } from "../../api/uploadapi";
 
 const AdminProfile = () => {
   const {
@@ -40,6 +41,10 @@ const AdminProfile = () => {
 
   const onSubmit = async (data) => {
     try {
+      if (data.pic) {
+        const imageUrl = await uploadImage(data.pic);
+        data.pic = imageUrl.data[0].url;
+      }
       await updateAdmin(data);
       setIsChange(!isChange);
       toast.success(" updated successfully!");
@@ -48,7 +53,6 @@ const AdminProfile = () => {
     }
   };
 
-  console.log("addmin data", admin);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="px-4 py-6 sm:p-6 lg:pb-8">
