@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { getAdmin, getAdminById,updateAdmin } from "../api/adminapi";
 
 const useAdminStore = create((set) => ({
-  admin: [],
+  admin: null,
   getAdmin: async (adminData) => {
     const data = await getAdmin(adminData);
     set({ admin: data }); 

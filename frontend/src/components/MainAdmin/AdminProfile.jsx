@@ -18,6 +18,7 @@ const AdminProfile = () => {
   } = useForm();
   const { admin, fetchAdmin, updateAdmin } = useAdminStore();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isChange, setIsChange] = useState(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -27,12 +28,19 @@ const AdminProfile = () => {
   
   useEffect(() => {
     fetchAdmin();
-    setValue("userName", admin.userName);
-    setValue("email", admin.email);
-  }, []);
+  }, [isChange]);
+
+  useEffect(() => {
+    if (admin) {
+      setValue("userName", admin.userName || "");
+      setValue("email", admin.email || "");
+    }
+  }, [admin, setValue, isChange]);
+
   const onSubmit = async (data) => {
     try {
       await updateAdmin(data);
+      setIsChange(!isChange);
       toast.success(" updated successfully!");
     } catch (error) {
       console.error("Error adding department:", error);
@@ -54,8 +62,6 @@ const AdminProfile = () => {
                   {...field}
                   type="text"
                   label=" User Name"
-                  onChange={(e) => field.onChange(e.target.value)}
-                  value={field.value || ""}
                   placeholder="Name"
                   Icon={PersonIcon}
                 />
@@ -98,8 +104,6 @@ const AdminProfile = () => {
                   {...field}
                   type="email"
                   label="Email"
-                  onChange={(e) => field.onChange(e.target.value)}
-                  value={field.value || ""}
                   placeholder="email@example.com"
                   Icon={EnvelopeIcon}
                 />
