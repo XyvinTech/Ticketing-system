@@ -27,3 +27,13 @@ export const fetchTickets = async () => {
     console.error('Error caught:', error);
   }
 };
+export const updateTicket = async (ticketId, updateData) => {
+  try {
+    const response = await axiosInstance.put(`/ticket/update/${ticketId}`, updateData);
+    console.log(response.data)
+    return response.data;
+   
+  } catch (error) {
+    console.error('Error caught:', error);
+  }
+};

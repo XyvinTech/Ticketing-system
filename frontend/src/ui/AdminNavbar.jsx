@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { ReactComponent as MenuIcon } from "../assets/icons/MenuIcon.svg";
 import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
 import { ReactComponent as SearchIcon } from "../assets/icons/SearchIcon.svg";
 import { Link, useLocation } from "react-router-dom";
+import { useAdminStore } from "../store/AdminStore";
 
 const navigation = [{ name: "Tickets", to: "Admin/Ticket", current: true }];
 
 const AdminNavbar = () => {
+  const { admin, fetchAdmin ,isChange} = useAdminStore();
+  useEffect(() => {
+    fetchAdmin();
+  }, [isChange]);
   const location = useLocation();
   return (
     <Disclosure as="nav" className="bg-white">
@@ -62,10 +67,7 @@ const AdminNavbar = () => {
                 </div>
 
                 <div className="hidden lg:ml-4 lg:flex lg:items-center">
-                  <Link className="mr-4 block rounded-full p-1 text-gray-400 hover:text-purple-500">
-                    <span className="sr-only">search</span>
-                    <SearchIcon className="h-6 w-6" />
-                  </Link>
+                  
                   <Link
                     to={"/Admin/AdminNotifications"}
                     className="mr-4 block rounded-full p-1 text-gray-400 hover:text-purple-500 "
@@ -79,8 +81,7 @@ const AdminNavbar = () => {
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
+                        src={admin?.pic}alt=""
                       />
                     </Menu.Button>
 
@@ -123,7 +124,7 @@ const AdminNavbar = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              to={"/"}
+                              to={"/logout"}
                               className={
                                 "block px-4 py-2 text-sm text-gray-700" +
                                 (active ? " bg-gray-100" : "")
@@ -165,7 +166,7 @@ const AdminNavbar = () => {
                 <div className="flex-shrink-0">
                   <img
                     className="h-10 w-10 rounded-full border object-cover"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    src={admin?.pic}
                     alt=""
                   />
                 </div>
@@ -199,16 +200,14 @@ const AdminNavbar = () => {
                   className="block  py-2 text-sm text-gray-700"
                 >
                   <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
-                   Change Password
+                    Change Password
                   </Disclosure.Button>
                 </Link>
-                <Link
-                  to={"/"}
-                  className="block  py-2 text-sm text-gray-700"
-                >
-                <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
-                  Logout
-                </Disclosure.Button></Link>
+                <Link to={"/logout"} className="block  py-2 text-sm text-gray-700">
+                  <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
+                    Logout
+                  </Disclosure.Button>
+                </Link>
               </div>
             </div>
           </Disclosure.Panel>

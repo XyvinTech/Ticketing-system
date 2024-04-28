@@ -16,3 +16,13 @@ export const addDepartment = async (depData) => {
       console.error('Error caught:', error);
     }
   };
+  export const updateDepartment = async (departmentId, updateData) => {
+    try {
+      const response = await axiosInstance.put(`/department/edit/${departmentId}`, updateData);
+      console.log(response.data)
+      return response.data;
+     
+    } catch (error) {
+      console.error('Error caught:', error);
+    }
+  };

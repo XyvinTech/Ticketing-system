@@ -1,18 +1,16 @@
 import { create } from "zustand";
 import { addConversation, fetchConversationById } from "../api/conversationapi";
+import { toast } from "react-toastify";
 
 const useConversationStore = create((set) => ({
   conversations: [],
   fetchConversationById: async (conversationId) => {
-    // set({ conversation: [] });
     const fetchedConversation = await fetchConversationById(conversationId);
-    set({ conversations: fetchedConversation });
+    set({ conversations: fetchedConversation?.data});
   },
   addConversation: async (conversationData) => {
     const newConversation = await addConversation(conversationData);
-    set((state) => ({
-      conversations: [...state.conversations, newConversation],
-    }));
+    toast.success(newConversation.message);
   },
 }));
 

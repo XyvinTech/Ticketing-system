@@ -3,16 +3,9 @@ const createError = require("http-errors");
 
 //create conversation
 exports.createConversation = async function (req, res) {
-  const attachmentFilenames = req.files.map(file => file.filename);
-  console.log("fkke",attachmentFilenames)
-  const data = new Conversation({
-    ...req.body,
-    attachment: attachmentFilenames
-  });
-  
-  console.log(data);
+  const data = new Conversation(req.body);
   await data.save();
-  res.status(201).json({ status: true, message: "ok" });
+  res.status(201).json({ status: true, message: "Added Successfully",data });
 };
 
 // get All Conversation 
@@ -24,14 +17,14 @@ exports.getAll = async function (req, res)  {
 exports.getAllByTicketId = async function (req, res) {
   const ticketId = req.params.id;
   if (!ticketId) {
-    return res.status(400).json({ error: "Ticket ID is required" });
+    return res.status(400).json({ message: "Ticket ID is required" });
   }
   const conversations = await Conversation.find({ ticketId: ticketId }).populate("ticketId");
 
   if (!conversations || conversations.length === 0) {
     return res.status(404).json({ status: false, message: "Conversations not found" });
   }
-  res.status(200).json( conversations );
+  res.status(201).json({ status: true, message: "ok",data:conversations });
 
   
 };

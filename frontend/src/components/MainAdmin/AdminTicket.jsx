@@ -8,19 +8,36 @@ import { Link } from "react-router-dom";
 import Pagination from "../../ui/Pagination";
 import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
 import AdminBoard from "./AdminBoard";
-import StyledSelectionList from "../../ui/StyledSelectionList";
 import Modal from "../../ui/Modal";
 import DropDown from "../../ui/DropDown";
 import { useTicketStore } from "../../store/TicketStore";
+import { useUserStore } from "../../store/UserStore";
+import { Controller, useForm } from "react-hook-form";
+import StyledSearch from "../../ui/StyledSearch";
 
 const AdminTicket = () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const { tickets, fetchTickets, updateTicket } = useTicketStore();
+  const { users, fetchUser } = useUserStore();
   const [showAdminBoard, setShowAdminBoard] = useState(false);
+  const [ticketId, setTicketId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
-  const { tickets, fetchTickets } = useTicketStore();
+  const [isChange, setIsChange] = useState(false);
+
   useEffect(() => {
     fetchTickets();
+  }, [isChange]);
+  useEffect(() => {
+    let filter = {};
+    filter.withOutClient = true;
+    fetchUser(filter);
   }, []);
+
   const items = [
     { name: "Total", count: tickets.length },
     { name: "Assigned", count: 7 },
@@ -28,7 +45,10 @@ const AdminTicket = () => {
     { name: "Resolved", count: 0 },
     { name: "Closed", count: 0 },
   ];
-
+  const selectOptions = users.map((user) => ({
+    value: user._id,
+    label: user.email,
+  }));
   const headers = ["Ticket", "Assigned To", "Status", "Assign"];
 
   // Pagination state
@@ -79,7 +99,16 @@ const AdminTicket = () => {
     { name: "completed" },
     { name: "Archived" },
   ];
-  console.log("tickets", tickets);
+
+  const onSubmit = async (data, ticketId) => {
+    try {
+      await updateTicket(ticketId, data);
+      setIsChange(!isChange);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error adding :", error);
+    }
+  };
   return (
     <div>
       <section className="py-6 px-4 sm:p-6 lg:pb-8">
@@ -104,47 +133,58 @@ const AdminTicket = () => {
         {showAdminBoard && <AdminBoard />}{" "}
         {isModalOpen && (
           <Modal closeModal={() => setIsModalOpen(false)}>
-            <h1 className="flex-auto font-semibold">
-              Add People to My Project
-            </h1>
+            <form onSubmit={handleSubmit((data) => onSubmit(data, ticketId))}>
+              <h1 className="flex-auto font-semibold">
+                Add People to My Project
+              </h1>
 
-            <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-              Names or emails
-            </h1>
-            <StyledInput placeholder="eg:Maria, maria@gmail.com" />
+              <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
+                Names or emails
+              </h1>
+              <Controller
+                name="assignedTo"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <>
+                    <StyledSearch options={selectOptions} {...field} />
+                    {errors.assignedTo && (
+                      <span className="text-red-500">
+                        {errors.assignedTo.message}
+                      </span>
+                    )}
+                  </>
+                )}
+              />
 
-            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-              Role
-            </h1>
-            <StyledSelectionList listname="Role " options={Role} />
-
-            <div className="flex  justify-end gap-4">
-              <button
-                className="font-semibold  mt-3"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Cancel
-              </button>
-              <StyledButton text="Add" />
-            </div>
+              <div className="flex  justify-end gap-4">
+                <button
+                  className="font-semibold  mt-3"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <StyledButton text="Add" type="submit" />
+              </div>
+            </form>
           </Modal>
         )}
         {!showAdminBoard && (
           <StyledTable header={headers}>
-            {item.map((tickets) => (
-              <tr key={tickets._id}>
+            {item?.map((tickets) => (
+              <tr key={tickets?._id}>
                 <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
                   <input type="checkbox" class="mr-2  accent-purple-500" />
                   <Link
-                    to={`/Admin/SingleTicket/${tickets._id}`}
+                    to={`/Admin/SingleTicket/${tickets?._id}`}
                     className="text-lg font-semibold text-purple-600 hover:text-purple-800"
                   >
-                    {tickets.subject}
+                    {tickets?.subject}
                   </Link>
                   <TableInfo
-                    reference={tickets.ticket_Id}
-                    priority={tickets.priority}
-                    createdAt={tickets.createdAt}
+                    reference={tickets?.ticket_Id}
+                    priority={tickets?.priority}
+                    createdAt={tickets?.createdAt}
                     category={tickets?.department?.departmentName}
                     // last_reply_on={i.replies[0]?.created_at}
                     projectName={tickets?.projectId?.projectName}
@@ -154,25 +194,25 @@ const AdminTicket = () => {
                   <button
                     onClick={() =>
                       setIsNotifyOpen(
-                        tickets.assignedto === "Notify ProjectManager"
+                        tickets?.assignedto === "Notify ProjectManager"
                       )
                     }
                   >
                     <span
                       className={`rounded-full px-3 py-px text-sm
       ${
-        tickets.assignedto === "Assign a member Now"
+        tickets?.assignedTo === "Assign a member Now"
           ? "bg-indigo-100 text-indigo-800"
-          : tickets.assignedto === "Notify ProjectManager"
+          : tickets?.assignedto === "Notify ProjectManager"
           ? "bg-red-100 text-red-800"
           : ""
       }`}
                     >
-                      {tickets.assignedto}
+                      {tickets?.assignedTo?.email}
                     </span>
-                  </button>{" "}
+                  </button>
                   {isNotifyOpen &&
-                    tickets.assignedto === "Notify ProjectManager" && (
+                    tickets?.assignedto === "Notify ProjectManager" && (
                       <Modal closeModal={() => setIsNotifyOpen(false)}>
                         <h1 className="flex-auto font-semibold text-black">
                           Notify Project Manager
@@ -210,24 +250,27 @@ const AdminTicket = () => {
                   <span
                     className={`rounded-full px-3 py-px text-sm
                       ${
-                        tickets.status === "assigned"
+                        tickets?.status === "progress"
                           ? "bg-indigo-100 text-indigo-800"
-                          : tickets.status === "Archived"
+                          : tickets?.status === "deleted"
                           ? "bg-gray-100 text-gray-800"
-                          : tickets.status === "Not Started"
+                          : tickets?.status === "pending"
                           ? "bg-red-100 text-red-800"
-                          : tickets.status === "Done"
+                          : tickets?.status === "completed"
                           ? "bg-green-100 text-green-800"
                           : ""
                       }`}
                   >
-                    {tickets.status}
+                    {tickets?.status}
                   </span>
                 </td>
                 <td>
                   <StyledButton
                     text="Assign Ticket"
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setTicketId(tickets?._id);
+                    }}
                   />
                 </td>
               </tr>
