@@ -41,6 +41,10 @@ const ticketSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "users",
     },
+    reporter: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+    },
   },
   { timestamps: true }
 );

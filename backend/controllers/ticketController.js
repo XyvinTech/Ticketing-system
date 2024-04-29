@@ -9,6 +9,7 @@ exports.createTicket = async function (req, res) {
   const ticket_Id = getProject.projectName.toUpperCase().slice(0, 3);
 
   req.body.ticket_Id = ticket_Id + "-00" + (ticketCount + 1);
+  req.body.reporter = req.user;
 
   const data = await Ticket.create(req.body);
 
@@ -29,7 +30,9 @@ exports.getTicket = async function (req, res) {
   if (!ticketId) {
     return res.status(400).json({ error: "Ticket ID is required" });
   }
-  const ticket = await Ticket.findById(ticketId).populate("department", "departmentName").populate("projectId");
+  const ticket = await Ticket.findById(ticketId)
+    .populate("department", "departmentName")
+    .populate("projectId");
 
   if (!ticket) {
     throw createError(404, "Ticket not found");
