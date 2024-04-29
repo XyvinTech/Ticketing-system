@@ -28,7 +28,7 @@ exports.createTicket = async function (req, res) {
   // const tickeObj = {
   //   _id: populatedTicket._id,
   //   ticket_Id: populatedTicket.ticket_Id,
-  //   mail: populatedTicket.reporter.email,
+  //   mail: populatedTicket.reporter? populatedTicket.reporter.email : admin,
   //   department: populatedTicket.department.departmentName,
   //   description: populatedTicket.description,
   //   updatedAt: populatedTicket.updatedAt,
