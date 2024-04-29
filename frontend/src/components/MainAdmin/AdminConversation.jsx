@@ -8,15 +8,23 @@ import StyledText from "../../ui/StyledText";
 import FileUpload from "../../ui/FileUpload";
 import StyledButton from "../../ui/StyledButton";
 import { useConversationStore } from "../../store/ConversationStore";
-const AdminConversation = ({ ticketId }) => {
+import { uploadImage } from "../../api/uploadapi";
+const AdminConversation = ({ ticketId, isChange, setIsChange }) => {
   const { control, handleSubmit, reset } = useForm();
   const { addConversation } = useConversationStore();
   const onSubmit = async (data) => {
+    data.ticketId = ticketId;
+
+    if (data.attachment.length > 0) {
+      const imageUrl = await uploadImage(data.attachment);
+      console.log(imageUrl);
+      data.attachment = imageUrl.data.map((dataUrl) => dataUrl.url);
+    }
+
     try {
       await addConversation(data);
-      toast.success("Replied successfully!");
+      setIsChange(!isChange);
       reset();
-     
     } catch (error) {
       console.error("Error", error);
       toast.error("Error!");

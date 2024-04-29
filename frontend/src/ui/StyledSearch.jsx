@@ -1,7 +1,7 @@
 import React from "react";
 import Select from "react-select";
 
-const StyledSearch = ({ options }) => {
+const StyledSearch = ({ options ,onChange = () => {}}) => {
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
@@ -14,7 +14,9 @@ const StyledSearch = ({ options }) => {
       borderRadius: '0.375rem', // Rounded-md
     }),
   };
-
+  const handleChange = (selectedOption) => {
+    onChange(selectedOption.value);
+  };
   return (
     <>
       <Select
@@ -32,6 +34,7 @@ const StyledSearch = ({ options }) => {
         })}
         name="search"
         options={options}
+        onChange={handleChange} 
       />
     </>
   );

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { addUser, fetchUsers,deleteUser } from "../api/userapi";
+import { toast } from "react-toastify";
 
 const useUserStore = create((set) => ({
     users: [],
@@ -10,6 +11,7 @@ const useUserStore = create((set) => ({
     addUser: async (userData) => {
       const newUser = await addUser(userData);
       set((state) => ({ users: [...state.users, newUser] }));
+      toast.success(newUser.message);
     },
     deleteUser:async(userId)=>{
         await deleteUser(userId);

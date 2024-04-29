@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
-
 import StyledSelectionList from "../../ui/StyledSelectionList";
 import StyledInput from "../../ui/StyledInput";
 import StyledText from "../../ui/StyledText";
@@ -13,18 +12,29 @@ import { useDepartmentStore } from "../../store/DepartmentStore";
 import { useProjectStore } from "../../store/projectStore";
 import { uploadImage } from "../../api/uploadapi";
 const AdminNewTicket = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm();
   const { addTicket } = useTicketStore();
   const { departments, fetchDepartment } = useDepartmentStore();
   const { projects, fetchProject } = useProjectStore();
-  const Priority = [{ value:"low",name: "Low" }, {value:"medium" ,name: "Medium" }, {value:"high" ,name: "High" }];
-  const Project =projects.map((project) => ({
+
+  useEffect(() => {
+    fetchDepartment();
+  }, []);
+  useEffect(() => {
+    fetchProject();
+  }, []);
+  const Priority = [
+    { value: "low", name: "Low" },
+    { value: "medium", name: "Medium" },
+    { value: "high", name: "High" },
+  ];
+  const Project = projects.map((project) => ({
     value: project._id,
     name: project.projectName,
   }));
@@ -32,17 +42,12 @@ const AdminNewTicket = () => {
     value: dep._id,
     name: dep.departmentName,
   }));
-  useEffect(() => {
-    fetchDepartment();
-  }, []);
-  useEffect(() => {
-    fetchProject();
-  }, []);
   const onSubmit = async (data) => {
-    if (data.attachment) {
+    if (data.attachment.length > 0) {
       const imageUrl = await uploadImage(data.attachment);
+
       data.attachment = [];
-      imageUrl.data.map(dataUrl=>data.attachment.push(dataUrl.url))
+      imageUrl.data.map((dataUrl) => data.attachment.push(dataUrl.url));
     }
 
     try {
@@ -50,7 +55,6 @@ const AdminNewTicket = () => {
       toast.success("Ticket created successfully!");
       reset();
       navigate("/admin/ticket");
-     
     } catch (error) {
       console.error("Error adding ticket:", error);
       toast.error("Error!");
@@ -60,7 +64,7 @@ const AdminNewTicket = () => {
   return (
     <>
       <div className="divide-y divide-gray-200">
-        <form onSubmit={handleSubmit(onSubmit)} >
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="py-6 px-4 sm:p-6 lg:pb-8">
             <h1 className="mb-6 text-xl font-semibold">New Ticket</h1>
             <div className="space-y-6">

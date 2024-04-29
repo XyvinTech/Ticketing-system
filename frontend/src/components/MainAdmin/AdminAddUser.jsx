@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import StyledSelectionList from "../../ui/StyledSelectionList";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Modal from "../../ui/Modal";
 import { ReactComponent as PersonIcon } from "../../assets/icons/PersonIcon.svg";
 import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
@@ -21,24 +20,26 @@ const AdminAddUser = () => {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
   const { projects, fetchProject } = useProjectStore();
-  const [isChange, setIsChange] = useState(false); // State for modal
   const { users, fetchUser, addUser, deleteUser } = useUserStore();
+  const [isChange, setIsChange] = useState(false);
+
   const [search, setSearch] = useState();
   const [role, setRole] = useState();
-  const [isModalOpen, setIsModalOpen] = useState(false); 
- 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
     let filter = {};
     if (search) {
       filter.searchQuery = search;
     }
-  if(role && role!=="all"){
-    filter.usertype=role;
-  }
+    if (role && role !== "all") {
+      filter.usertype = role;
+    }
     fetchUser(filter);
-  }, [isChange, search,role]);
+  }, [isChange, search, role]);
   useEffect(() => {
     fetchProject();
   }, []);
@@ -46,7 +47,6 @@ const AdminAddUser = () => {
     value: project._id,
     label: project.projectName,
   }));
-
 
   const Role = [
     { value: "all", name: "All" },
@@ -57,9 +57,9 @@ const AdminAddUser = () => {
   const onSubmit = async (data) => {
     try {
       await addUser(data);
-      toast.success("User Added successfully!");
       setIsChange(!isChange);
       setIsModalOpen(false);
+      reset();
     } catch (error) {
       console.error("Error adding user:", error);
     }
@@ -80,7 +80,7 @@ const AdminAddUser = () => {
 
       <div className="mb-4 pr-5 flex justify-between items-center">
         <div className="flex mt-5 gap-3 divide-x divide-dashed text-sm text-gray-500">
-          <div className="font-semibold">All(2)</div>
+          <div className="font-semibold">All({users.length})</div>
         </div>
         <StyledButton text="Add User" onClick={() => setIsModalOpen(true)} />
       </div>
@@ -90,32 +90,50 @@ const AdminAddUser = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <h1 className="flex-auto font-semibold">Add User</h1>
 
-            <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">User Name</h1>
+            <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
+              User Name
+            </h1>
             <Controller
               name="userName"
               control={control}
               defaultValue=""
               render={({ field }) => (
-                <StyledInput type="text" Icon={PersonIcon} placeholder="John" {...field} />
+                <StyledInput
+                  type="text"
+                  Icon={PersonIcon}
+                  placeholder="John"
+                  {...field}
+                />
               )}
               rules={{ required: "User Name is required" }}
             />
-            {errors.userName && <span className="text-red-500">{errors.userName.message}</span>}
+            {errors.userName && (
+              <span className="text-red-500">{errors.userName.message}</span>
+            )}
 
-            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">Phone Number</h1>
+            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
+              Phone Number
+            </h1>
             <Controller
               name="phoneNumber"
               control={control}
               defaultValue=""
               render={({ field }) => (
-                <StyledInput type="tel" placeholder="0987654323" Icon={PhoneIcon} {...field} />
+                <StyledInput
+                  type="tel"
+                  placeholder="0987654323"
+                  Icon={PhoneIcon}
+                  {...field}
+                />
               )}
               rules={{ required: "Phone Number is required" }}
             />
             {errors.phoneNumber && (
               <span className="text-red-500">{errors.phoneNumber.message}</span>
             )}
-            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">Email</h1>
+            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
+              Email
+            </h1>
             <Controller
               name="email"
               control={control}
@@ -130,8 +148,12 @@ const AdminAddUser = () => {
               )}
               rules={{ required: "Email is required" }}
             />
-            {errors.email && <span className="text-red-500">{errors.email.message}</span>}
-            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">Password</h1>
+            {errors.email && (
+              <span className="text-red-500">{errors.email.message}</span>
+            )}
+            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
+              Password
+            </h1>
             <Controller
               name="password"
               control={control}
@@ -146,18 +168,28 @@ const AdminAddUser = () => {
               )}
               rules={{ required: "Password is required" }}
             />
-            {errors.password && <span className="text-red-500">{errors.password.message}</span>}
+            {errors.password && (
+              <span className="text-red-500">{errors.password.message}</span>
+            )}
 
-            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">User Type</h1>
+            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
+              User Type
+            </h1>
             <Controller
               name="usertype"
               control={control}
               defaultValue=""
               render={({ field }) => (
                 <>
-                  <StyledSelectionList listname="User Type" options={Role} {...field} />
+                  <StyledSelectionList
+                    listname="User Type"
+                    options={Role}
+                    {...field}
+                  />
                   {errors.usertype && (
-                    <span className="text-red-500">{errors.usertype.message}</span>
+                    <span className="text-red-500">
+                      {errors.usertype.message}
+                    </span>
                   )}
                 </>
               )}
@@ -175,14 +207,19 @@ const AdminAddUser = () => {
                 <>
                   <StyledMultipleSelection options={selectOptions} {...field} />
                   {errors.projectId && (
-                    <span className="text-red-500">{errors.projectId.message}</span>
+                    <span className="text-red-500">
+                      {errors.projectId.message}
+                    </span>
                   )}
                 </>
               )}
               rules={{ required: "Project name is required" }}
             />
             <div className="flex  justify-end gap-4">
-              <button className="font-semibold  mt-3" onClick={() => setIsModalOpen(false)}>
+              <button
+                className="font-semibold  mt-3"
+                onClick={() => setIsModalOpen(false)}
+              >
                 Cancel
               </button>
               <StyledButton text="Add" type="submit" />
@@ -196,7 +233,10 @@ const AdminAddUser = () => {
             <table className="min-w-full divide-y divide-gray-300">
               <thead>
                 <tr>
-                  <td colSpan="4" className="px-3 py-3 pb-10 text-left text-sm text-gray-900">
+                  <td
+                    colSpan="4"
+                    className="px-3 py-3 pb-10 text-left text-sm text-gray-900"
+                  >
                     <div className="flex flex-col gap-3 sm:flex-row sm:gap-3 max-md:flex-wrap items-center">
                       <div className="flex-grow lg:w-20 max-w-xs">
                         <StyledInput
@@ -206,8 +246,11 @@ const AdminAddUser = () => {
                         />
                       </div>
                       <div>
-                        <StyledSelectionList listname="Roles" 
-                        onChange={(value)=>setRole(value)}options={Role} />
+                        <StyledSelectionList
+                          listname="Roles"
+                          onChange={(value) => setRole(value)}
+                          options={Role}
+                        />
                       </div>
                     </div>
                   </td>
@@ -221,33 +264,48 @@ const AdminAddUser = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.length===0?(
-                  <tr><td colSpan="4"className="pt-7 pb-7 text-sm text-red-500 text-center">No Users</td></tr>
-                ):(
-                users.map((person) => (
-                  <tr key={person._id} className="mb-2 border-b  border-gray-200">
-                    <td className="px-3 py-4 text-sm text-gray-900 text-left">{person.userName}</td>
-                    <td className="px-3 py-3 text-sm text-gray-900 text-left">{person.email}</td>
-                    <td className="px-3 py-3 text-sm text-gray-900 text-left">
-                      {person.usertype === "projectManager"
-                        ? "Project Manager"
-                        : person.usertype === "member"
-                        ? "Member"
-                        : person.usertype === "lead"
-                        ? "Lead"
-                        : person.usertype === "client"
-                        ? "Client"
-                        : "Unknown"}
-                    </td>
-
-                    <td className="px-3 py-3 text-sm text-gray-900 text-left">
-                      <DeleteIcon
-                        className="h-5 w-5"
-                        onClick={() => handleDeleteUser(person._id)}
-                      />
+                {users?.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="pt-7 pb-7 text-sm text-red-500 text-center"
+                    >
+                      No Users
                     </td>
                   </tr>
-                )))}
+                ) : (
+                  users?.map((person) => (
+                    <tr
+                      key={person?._id}
+                      className="mb-2 border-b  border-gray-200"
+                    >
+                      <td className="px-3 py-4 text-sm text-gray-900 text-left">
+                        {person?.userName}
+                      </td>
+                      <td className="px-3 py-3 text-sm text-gray-900 text-left">
+                        {person?.email}
+                      </td>
+                      <td className="px-3 py-3 text-sm text-gray-900 text-left">
+                        {person?.usertype === "projectManager"
+                          ? "Project Manager"
+                          : person?.usertype === "member"
+                          ? "Member"
+                          : person?.usertype === "lead"
+                          ? "Lead"
+                          : person?.usertype === "client"
+                          ? "Client"
+                          : "Unknown"}
+                      </td>
+
+                      <td className="px-3 py-3 text-sm text-gray-900 text-left">
+                        <DeleteIcon
+                          className="h-5 w-5"
+                          onClick={() => handleDeleteUser(person?._id)}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

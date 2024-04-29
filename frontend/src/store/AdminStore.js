@@ -3,6 +3,10 @@ import { getAdmin, getAdminById,updateAdmin } from "../api/adminapi";
 
 const useAdminStore = create((set) => ({
   admin: null,
+  isChange:false,
+  updateChange:(isChange)=>{
+    set({isChange:!isChange})
+  },
   getAdmin: async (adminData) => {
     const data = await getAdmin(adminData);
     set({ admin: data }); 

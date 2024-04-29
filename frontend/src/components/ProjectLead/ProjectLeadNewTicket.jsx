@@ -1,7 +1,5 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import StyledSelectionList from "../../ui/StyledSelectionList";
 import StyledInput from "../../ui/StyledInput";
 import StyledText from "../../ui/StyledText";

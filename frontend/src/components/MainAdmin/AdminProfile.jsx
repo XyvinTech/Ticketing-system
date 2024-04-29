@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import StyledInput from "../../ui/StyledInput";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useForm, Controller } from "react-hook-form";
 import { ReactComponent as PersonIcon } from "../../assets/icons/PersonIcon.svg";
-import { ReactComponent as PhoneIcon } from "../../assets/icons/PhoneIcon.svg";
 import { ReactComponent as EnvelopeIcon } from "../../assets/icons/EnvelopeIcon.svg";
 import StyledButton from "../../ui/StyledButton";
 import { useAdminStore } from "../../store/AdminStore";
@@ -17,9 +15,8 @@ const AdminProfile = () => {
     formState: { errors },
     setValue,
   } = useForm();
-  const { admin, fetchAdmin, updateAdmin } = useAdminStore();
+  const { admin, updateChange, updateAdmin } = useAdminStore();
   const [selectedImage, setSelectedImage] = useState(null);
-  const [isChange, setIsChange] = useState(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -28,16 +25,12 @@ const AdminProfile = () => {
   };
 
   useEffect(() => {
-    fetchAdmin();
-  }, [isChange]);
-
-  useEffect(() => {
     if (admin) {
       setValue("userName", admin.userName || "");
       setValue("email", admin.email || "");
       setSelectedImage(admin.pic);
     }
-  }, [admin, setValue, isChange]);
+  }, [admin, setValue]);
 
   const onSubmit = async (data) => {
     try {
@@ -46,7 +39,7 @@ const AdminProfile = () => {
         data.pic = imageUrl.data[0].url;
       }
       await updateAdmin(data);
-      setIsChange(!isChange);
+      updateChange();
       toast.success(" updated successfully!");
     } catch (error) {
       console.error("Error adding department:", error);
@@ -73,7 +66,9 @@ const AdminProfile = () => {
               )}
             />
             {errors.userName && (
-              <span className="text-sm text-red-600">{errors.userName.message}</span>
+              <span className="text-sm text-red-600">
+                {errors.userName.message}
+              </span>
             )}
             {/* <Controller
               name="phoneNumber"
@@ -118,7 +113,11 @@ const AdminProfile = () => {
                 },
               }}
             />
-            {errors.email && <span className="text-sm text-red-600">{errors.email.message}</span>}
+            {errors.email && (
+              <span className="text-sm text-red-600">
+                {errors.email.message}
+              </span>
+            )}
             <Controller
               name="pic"
               control={control}
@@ -149,7 +148,9 @@ const AdminProfile = () => {
               )}
             />
 
-            {errors.pic && <span className="text-sm text-red-600">{errors.pic.message}</span>}
+            {errors.pic && (
+              <span className="text-sm text-red-600">{errors.pic.message}</span>
+            )}
           </div>
           <div className="hidden sm:block">
             <div className="relative overflow-hidden rounded-full">

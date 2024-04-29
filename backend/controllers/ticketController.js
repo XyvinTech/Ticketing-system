@@ -20,7 +20,7 @@ exports.createTicket = async function (req, res) {
 exports.getAll = async function (req, res) {
   const tickets = await Ticket.find({ status: { $ne: "deleted" } })
     .populate("department", "departmentName")
-    .populate("projectId");
+    .populate("projectId").populate("assignedTo");
   res.status(200).json({ status: true, data: tickets });
 };
 

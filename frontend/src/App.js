@@ -6,13 +6,16 @@ import MemberRoutes from "./routes/MemberRoutes";
 import ProjectManagerRoutes from "./routes/ProjectManagerRoutes";
 import ProjectLead from "./routes/ProjectLead";
 import ClientRoutes from "./routes/ClientRoutes";
+import { Logout } from "./utils/Logout";
+import { RequireAuth } from './utils/Auth';
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/Register" element={<RegisterForm />} />
-        <Route path="/Admin/*" element={<AdminRoutes />} />
+        <Route path="/Admin/*" element={<RequireAuth><AdminRoutes /></RequireAuth>} />
         <Route path="/Client/Ticket/*" element={<ClientRoutes />} />
         <Route path="/ProjectManager/*" element={<ProjectManagerRoutes />} />
         <Route path="/ProjectLead/*" element={<ProjectLead />} />
