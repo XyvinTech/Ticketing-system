@@ -13,7 +13,7 @@ router.use("/admin", verifyToken, adminRoutes);
 router.use("/conversation", conversationRoutes);
 router.use("/user", userRoutes);
 router.use("/project", verifyToken, projectRoutes);
-router.use("/ticket", ticketRoutes);
+router.use("/ticket", verifyToken, ticketRoutes);
 router.use("/notification", notificationRoutes);
 router.use("/auth", authRoutes);
 router.use("/department", verifyToken, departmentRoutes);

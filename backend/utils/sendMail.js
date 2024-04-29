@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { EMAIL_ID, PASSWORD } = process.env;
 const nodemailer = require("nodemailer");
-const sendMail = async (receiverMail, subject, text, ticketObject, role) => {
+const sendMail = async (receiverMail, ticketObject, role) => {
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -14,8 +14,7 @@ const sendMail = async (receiverMail, subject, text, ticketObject, role) => {
     const mailOptions = {
       from: EMAIL_ID,
       to: receiverMail,
-      subject: subject,
-      text,
+      subject: "You Have New Ticket today!",
       html: `
       <!DOCTYPE html>
       <html>
@@ -85,12 +84,12 @@ const sendMail = async (receiverMail, subject, text, ticketObject, role) => {
             >
               <h2 style="font-size: 20px; font-weight: 600">We have an error in app</h2>
               <p style="font-size: 12px; font-weight: 400">
-                #${ticketObject.ticketId} | ${ticketObject.updatedAt} | 
+                #${ticketObject.ticket_Id} | ${ticketObject.updatedAt} | 
                 ${ticketObject.priority} | ${ticketObject.department}
               </p>
-              <p style="margin: 30px 0; color: #374151; font-size: 11px; font-family: 400">
-                ${ticketObject.description}
-              </p>
+              <div style="margin: 30px 0; color: #374151; font-size: 11px; font-family: 400">
+              ${ticketObject.description}
+              </div>
             </div>
             <br />
             <br />

@@ -8,10 +8,10 @@ const notificationSchema = new Schema(
       ref: "users",
       required: true,
     },
-    type: {
-      type: String,
-      required: true,
-    },
+    // type: {
+    //   type: String,
+    //   required: true,
+    // },
     message: {
       type: String,
       required: true,

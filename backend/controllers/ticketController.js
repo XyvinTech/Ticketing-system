@@ -1,6 +1,9 @@
 const Ticket = require("../models/ticket");
 const createError = require("http-errors");
 const Project = require("../models/project");
+const User = require("../models/user");
+const Notification = require("../models/notification");
+const sendMail = require("../utils/sendMail");
 
 //create New Ticket
 exports.createTicket = async function (req, res) {
@@ -13,6 +16,42 @@ exports.createTicket = async function (req, res) {
 
   const data = await Ticket.create(req.body);
 
+  const findUser = await User.find({
+    usertype: { $in: ["projectManager", "projectLead"] },
+    projectId: req.body.projectId,
+  });
+
+  // * Uncomment the following line for production
+  // let populatedTicket = await data.populate("reporter");
+  // populatedTicket = await populatedTicket.populate("department");
+
+  // const tickeObj = {
+  //   _id: populatedTicket._id,
+  //   ticket_Id: populatedTicket.ticket_Id,
+  //   mail: populatedTicket.reporter.email,
+  //   department: populatedTicket.department.departmentName,
+  //   description: populatedTicket.description,
+  //   updatedAt: populatedTicket.updatedAt,
+  //   priority: populatedTicket.priority,
+  // };
+
+  const notifications = [];
+
+  findUser.forEach((user) => {
+    const notification = new Notification({
+      user: user._id,
+      message: `A new ticket (#${req.body.ticket_Id}) has been created`,
+      ticketId: data._id,
+    });
+
+    // * Uncomment the following line for production
+    // sendMail(user.email, tickeObj, user.usertype);
+
+    notifications.push(notification);
+  });
+
+  await Notification.insertMany(notifications);
+
   res.status(201).json({ status: true, message: "Ticket created successfully", data });
 };
 
@@ -20,7 +59,8 @@ exports.createTicket = async function (req, res) {
 exports.getAll = async function (req, res) {
   const tickets = await Ticket.find({ status: { $ne: "deleted" } })
     .populate("department", "departmentName")
-    .populate("projectId").populate("assignedTo");
+    .populate("projectId")
+    .populate("assignedTo");
   res.status(200).json({ status: true, data: tickets });
 };
 
@@ -61,4 +101,3 @@ exports.deleteTicket = async function (req, res) {
 
   res.status(200).json({ status: true, message: "ok" });
 };
-
