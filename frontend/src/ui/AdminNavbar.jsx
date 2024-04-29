@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { ReactComponent as MenuIcon } from "../assets/icons/MenuIcon.svg";
 import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
+import Logo from "../assets/Logo.png";
 import { ReactComponent as SearchIcon } from "../assets/icons/SearchIcon.svg";
 import { Link, useLocation } from "react-router-dom";
 import { useAdminStore } from "../store/AdminStore";
@@ -22,11 +23,7 @@ const AdminNavbar = () => {
             <div className="relative flex h-16 items-center justify-between">
               <div className="flex">
                 <div className="flex flex-shrink-0 items-center">
-                  <img
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    alt="Your Company"
-                  />
+                <img src={Logo} alt="Logo" className="mx-auto mb-4 h-5 w-5 "/>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="hidden lg:ml-6 lg:flex lg:space-x-8">

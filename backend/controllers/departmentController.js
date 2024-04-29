@@ -38,3 +38,13 @@ exports.getDepartments = async function (req, res) {
 
   res.status(200).json({ status: true, message: "Departments list", data });
 };
+exports.deleteDepartment = async function (req, res) {
+  const depId = req.params.id;
+  const deleteDep = await Department.findByIdAndDelete(depId);
+
+  if (!deleteDep) {
+    throw createError(404, "User not found");
+  }
+
+  res.status(200).json({ status: true, message: "Department deleted successfully" });
+};

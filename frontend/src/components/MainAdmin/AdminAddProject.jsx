@@ -49,7 +49,7 @@ const AdminAddProject = () => {
       <h1 className="text-xl font-semibold">Projects</h1>
       <div className="mb-4 pr-5 flex justify-between items-center">
         <div className="flex mt-5 gap-3 divide-x divide-dashed text-sm text-gray-500">
-          <div className="font-semibold">All(2)</div>
+          <div className="font-semibold">All({projects.length})</div>
         </div>
         <StyledButton text="Add Project" onClick={() => setIsModalOpen(true)} />
       </div>

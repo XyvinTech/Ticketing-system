@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { addDepartment, fetchDepartment, updateDepartment } from "../api/departmentapi";
+import { addDepartment, deleteDepartment, fetchDepartment, updateDepartment } from "../api/departmentapi";
 import { toast } from "react-toastify";
 
 const useDepartmentStore = create((set) => ({
@@ -21,6 +21,9 @@ const useDepartmentStore = create((set) => ({
         ),
       })); 
     },
+    deleteDepartment:async(departmentId)=>{
+      await deleteDepartment(departmentId);
+  }
    
 }));
 

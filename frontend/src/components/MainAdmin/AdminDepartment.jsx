@@ -19,7 +19,7 @@ const AdminDepartment = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { departments, fetchDepartment, addDepartment, updateDepartment } =
+  const { departments, fetchDepartment, addDepartment, updateDepartment,deleteDepartment } =
     useDepartmentStore();
   const { users, fetchUser } = useUserStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,14 +67,22 @@ const AdminDepartment = () => {
       console.error("Error adding :", error);
     }
   };
-
+  const handleDelete = async (departmentId) => {
+    try {
+      await deleteDepartment(departmentId);
+      toast.success("User deleted successfully!");
+      setIsChange(!isChange);
+    } catch (error) {
+      console.error("Error deleting:", error);
+    }
+  };
   return (
     <div className="py-6 px-4 sm:p-6 lg:pb-8">
       <h1 className="text-xl font-semibold">Department</h1>
 
       <div className="mb-4 pr-5 flex justify-between items-center">
         <div className="flex mt-5 gap-3 divide-x divide-dashed text-sm text-gray-500">
-          <div className="font-semibold">All(5)</div>
+          <div className="font-semibold">All({departments.length})</div>
         </div>
         <StyledButton text="Add Group" onClick={() => setIsModalOpen(true)} />
       </div>
@@ -200,7 +208,7 @@ const AdminDepartment = () => {
                       />
                     </td>
                     <td className="px-3 py-3 text-sm text-gray-900 text-left">
-                      <DeleteIcon className="h-5 w-5" />
+                      <DeleteIcon className="h-5 w-5"   onClick={() => handleDelete(user?._id)}/>
                     </td>
                     <td className="px-3 py-3 text-left text-sm text-gray-900">
                       <UpDownIcon
