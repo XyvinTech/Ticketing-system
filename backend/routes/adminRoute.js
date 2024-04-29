@@ -9,4 +9,5 @@ router.delete("/delete/:id", asyncHandler(adminController.deleteAdmin));
 router.post("/add-user", asyncHandler(adminController.addUser));
 router.delete("/delete-user/:id", asyncHandler(adminController.deleteUser));
 router.get("/get-user", asyncHandler(adminController.getUsers));
+router.put("/update-password", asyncHandler(adminController.updatePassword));
 module.exports = router;
