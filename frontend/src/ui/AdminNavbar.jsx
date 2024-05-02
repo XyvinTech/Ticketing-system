@@ -10,11 +10,12 @@ import { useAdminStore } from "../store/AdminStore";
 const navigation = [{ name: "Tickets", to: "Admin/Ticket", current: true }];
 
 const AdminNavbar = () => {
-  const { admin, fetchAdmin ,isChange} = useAdminStore();
+  const { user, fetchLogin ,isChange} = useAdminStore();
   useEffect(() => {
-    fetchAdmin();
+    fetchLogin();
   }, [isChange]);
   const location = useLocation();
+  
   return (
     <Disclosure as="nav" className="bg-white">
       {({ open }) => (
@@ -43,7 +44,7 @@ const AdminNavbar = () => {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <div class="flex items-center lg:hidden">
+                <div className="flex items-center lg:hidden">
                   <button
                     type="button"
                     className="mr-4 block rounded-full p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
@@ -78,7 +79,7 @@ const AdminNavbar = () => {
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
-                        src={admin?.pic}alt=""
+                        src={user?.profilePicture}alt=""
                       />
                     </Menu.Button>
 
@@ -163,16 +164,16 @@ const AdminNavbar = () => {
                 <div className="flex-shrink-0">
                   <img
                     className="h-10 w-10 rounded-full border object-cover"
-                    src={admin?.pic}
+                    src={user?.profilePicture}
                     alt=""
                   />
                 </div>
                 <div className="ml-3">
                   <div className="text-base font-medium text-gray-800">
-                    Anjana V U
+                    {user?.userName}
                   </div>
                   <div className="text-sm font-medium text-gray-500 mr-10">
-                    anjanavu2000@gmail.com
+                    {user?.email}
                   </div>
                 </div>
 

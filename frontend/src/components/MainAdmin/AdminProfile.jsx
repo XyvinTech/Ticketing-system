@@ -5,8 +5,8 @@ import { useForm, Controller } from "react-hook-form";
 import { ReactComponent as PersonIcon } from "../../assets/icons/PersonIcon.svg";
 import { ReactComponent as EnvelopeIcon } from "../../assets/icons/EnvelopeIcon.svg";
 import StyledButton from "../../ui/StyledButton";
-import { useAdminStore } from "../../store/AdminStore";
 import { uploadImage } from "../../api/uploadapi";
+import { useAdminStore } from "../../store/AdminStore";
 
 const AdminProfile = () => {
   const {
@@ -15,30 +15,30 @@ const AdminProfile = () => {
     formState: { errors },
     setValue,
   } = useForm();
-  const { admin, updateChange, updateAdmin } = useAdminStore();
+  const { user, updateChange, updateUser } = useAdminStore();
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(URL.createObjectURL(file));
-    setValue("pic", file);
+    setValue("profilePicture", file);
   };
 
   useEffect(() => {
-    if (admin) {
-      setValue("userName", admin.userName || "");
-      setValue("email", admin.email || "");
-      setSelectedImage(admin.pic);
+    if (user) {
+      setValue("userName", user.userName || "");
+      setValue("email", user.email || "");
+      setSelectedImage(user.profilePicture);
     }
-  }, [admin, setValue]);
+  }, [user, setValue]);
 
   const onSubmit = async (data) => {
     try {
-      if (data.pic) {
-        const imageUrl = await uploadImage(data.pic);
-        data.pic = imageUrl.data[0].url;
+      if (data.profilePicture) {
+        const imageUrl = await uploadImage(data.profilePicture);
+        data.profilePicture = imageUrl.data[0].url;
       }
-      await updateAdmin(data);
+      await updateUser(data);
       updateChange();
       toast.success(" updated successfully!");
     } catch (error) {
@@ -119,7 +119,7 @@ const AdminProfile = () => {
               </span>
             )}
             <Controller
-              name="pic"
+              name="profilePicture"
               control={control}
               render={({ field }) => (
                 <div className="sm:hidden">
@@ -148,8 +148,8 @@ const AdminProfile = () => {
               )}
             />
 
-            {errors.pic && (
-              <span className="text-sm text-red-600">{errors.pic.message}</span>
+            {errors.profilePicture && (
+              <span className="text-sm text-red-600">{errors.profilePicture.message}</span>
             )}
           </div>
           <div className="hidden sm:block">

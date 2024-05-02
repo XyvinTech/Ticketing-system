@@ -14,6 +14,7 @@ import { useTicketStore } from "../../store/TicketStore";
 import { useUserStore } from "../../store/UserStore";
 import { Controller, useForm } from "react-hook-form";
 import StyledSearch from "../../ui/StyledSearch";
+import { useDepartmentStore } from "../../store/DepartmentStore";
 
 const AdminTicket = () => {
   const {
@@ -23,32 +24,48 @@ const AdminTicket = () => {
   } = useForm();
   const { tickets, fetchTickets, updateTicket } = useTicketStore();
   const { users, fetchUser } = useUserStore();
+  const { departments, fetchDepartment } = useDepartmentStore();
   const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [ticketId, setTicketId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [isChange, setIsChange] = useState(false);
-
+  const [search, setSearch] = useState();
+  const [status, setStatus] = useState();
+  const [dep, setDep] = useState();
   useEffect(() => {
-    fetchTickets();
-  }, [isChange]);
+    let filter = {};
+    if (status && status !=="all") {
+      filter.inStatus = status;
+    }
+    if (dep) {
+      filter.inDep = dep;
+    }
+    if (search) {
+      filter.searchQuery = search;
+    }
+    fetchTickets(filter);
+  }, [isChange,search,status,dep]);
   useEffect(() => {
     let filter = {};
     filter.withOutClient = true;
     fetchUser(filter);
   }, []);
-
+  useEffect(() => {
+    fetchDepartment();
+  }, []);
   const items = [
-    { name: "Total", count: tickets.length },
+    { name: "Total", count: tickets?.length },
     { name: "Assigned", count: 7 },
     { name: "Unassigned", count: 0 },
     { name: "Resolved", count: 0 },
     { name: "Closed", count: 0 },
   ];
-  const selectOptions = users.map((user) => ({
-    value: user._id,
-    label: user.email,
-  }));
+  const selectOptions = users && Array.isArray(users) ? users.map((user) => ({
+    value: user?._id,
+    label: user?.email,
+  })) : [];
+  
   const headers = ["Ticket", "Assigned To", "Status", "Assign"];
 
   // Pagination state
@@ -83,21 +100,22 @@ const AdminTicket = () => {
   };
 
   const Manager = [
-    { name: "All" },
-    { name: "My Tickets" },
-    { name: "Project Manager" },
-    { name: "Project Lead" },
+    { value: "all", name: "All" },
+    { value: "admin", name: "my tickt"},
+    { value: "projectManager", name: "Project Manager" },
+    { value: "projectLead", name: "Project Lead" },
+    { value: "member", name: "Member" },
+    { value: "client", name: "Client" },
   ];
-  const Role = [
-    { name: "Member" },
-    { name: "Designer" },
-    { name: "Developer" },
-  ];
+  const options =departments.map((project) => ({
+    value: project._id,
+    name: project.departmentName,
+  }));
   const Status = [
-    { name: "assigned" },
-    { name: "In progress" },
-    { name: "completed" },
-    { name: "Archived" },
+    { value: "all", name: "all" },
+    { value: "pending", name: "pending" },
+    { value: "progress", name: "progress" },
+    { value: "completed", name: "completed" },
   ];
 
   const onSubmit = async (data, ticketId) => {
@@ -118,9 +136,9 @@ const AdminTicket = () => {
         </div>
         <div className="flex flex-col md:flex-row justify-between gap-3 pb-4 max-md:flex-wrap">
           <div className="mt-4 flex flex-col md:flex-row items-center gap-3 md:items-center md:flex">
-            <StyledInput placeholder="Search" Icon={SearchIcon} />
-            <DropDown label="Category" options={Role} />
-            <DropDown label="Status" options={Status} />
+            <StyledInput placeholder="Search" Icon={SearchIcon}onChange={(e) => setSearch(e.target.value)} />
+            <DropDown label="Department" options={options} onChange={(value) => setDep(value)}/>
+            <DropDown label="Status" options={Status }onChange={(value) => setStatus(value)} />
             <DropDown label="Manager" options={Manager} />
             <button
               className="mt-1 cursor-default rounded-md border bg-white py-2 pl-3 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500"
@@ -174,7 +192,7 @@ const AdminTicket = () => {
             {item?.map((tickets) => (
               <tr key={tickets?._id}>
                 <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
-                  <input type="checkbox" class="mr-2  accent-purple-500" />
+                  {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
                   <Link
                     to={`/Admin/SingleTicket/${tickets?._id}`}
                     className="text-lg font-semibold text-purple-600 hover:text-purple-800"
@@ -279,7 +297,7 @@ const AdminTicket = () => {
               <td colSpan="2" className="px-4 py-2">
                 <Pagination
                   currentPage={currentPage}
-                  totalItems={tickets.length}
+                  totalItems={tickets?.length}
                   itemsPerPage={itemsPerPage}
                   paginate={paginate}
                   goToPreviousPage={goToPreviousPage}

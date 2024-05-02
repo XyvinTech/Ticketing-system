@@ -10,18 +10,50 @@ exports.createDepartment = async function (req, res) {
 
   await Department.create(req.body);
 
-  res.status(201).json({ status: true, message: "Department added successfully" });
+  res
+    .status(201)
+    .json({ status: true, message: "Department added successfully" });
 };
 
 exports.editDepartment = async function (req, res) {
   const { departmentId } = req.params;
+  const { members } = req.body;
+  const { action } = req.query;
 
-  const department = await Department.findByIdAndUpdate(departmentId, req.body, { new: true });
+  let department = await Department.findById(departmentId);
   if (!department) {
-    return res.status(409).json({ message: "Department not found" });
+    return res.status(404).json({ message: "Department not found" });
   }
+  if (action === "push") {
+    members.forEach((memberId) => {
+      department.members.push(memberId);
+    });
+  } else if (action === "pop") {
+    const userId = department.members.findIndex((user) => user === members);
+    department.members.splice(userId, 1);
+  }
+  department = await department.save();
 
-  res.status(200).json({ status: true, message: "Department updated", department });
+  return res
+    .status(200)
+    .json({ status: true, message: "Department updated", department });
+};
+
+exports.removeMember = async (req, res) => {
+  const { departmentId } = req.params;
+  const memberId = Object.keys(req.body)[0];
+  
+  const department = await Department.findById(departmentId);
+  if (!department) {
+    return res.status(404).json({ message: "Department not found" });
+  }
+  department.members.pull(memberId);
+  const updatedDepartment = await department.save();
+  res.status(200).json({
+    status: true,
+    message: "Member removed from department successfully",
+    department: updatedDepartment,
+  });
 };
 
 exports.getDepartments = async function (req, res) {
@@ -46,5 +78,7 @@ exports.deleteDepartment = async function (req, res) {
     throw createError(404, "User not found");
   }
 
-  res.status(200).json({ status: true, message: "Department deleted successfully" });
+  res
+    .status(200)
+    .json({ status: true, message: "Department deleted successfully" });
 };

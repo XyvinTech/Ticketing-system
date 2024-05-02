@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TicketGrid from "../../ui/TicketGrid";
 import StyledInput from "../../ui/StyledInput";
 import StyledTable from "../../ui/StyledTable";
@@ -9,51 +9,36 @@ import Pagination from "../../ui/Pagination";
 import { ReactComponent as SearcIcon } from "../../assets/icons/SearchIcon.svg";
 import MemberBoard from "./MemberBoard";
 import Modal from "../../ui/Modal";
+import { useTicketStore } from "../../store/TicketStore";
 
 const MemberTicket = () => {
   const [showMemberBoard, setShowMemberBoard] = useState(false);
+  const { tickets, fetchTickets } = useTicketStore();
+  const [isChange, setIsChange] = useState(false);
+  useEffect(() => {
+    fetchTickets();
+  }, [isChange]);
   const items = [
-    { name: "Total", count: 7 },
+    { name: "Total", count: tickets?.length },
     { name: "Assigned", count: 7 },
     { name: "Unassigned", count: 0 },
     { name: "Resolved", count: 0 },
     { name: "Closed", count: 0 },
   ];
 
-  const dummyTickets = [
-    {
-      id: 1,
-      reference: "REF001",
-      subject: "Dummy Ticket 1",
-      priority: "High",
-      created_at: "March 5,2024",
-      category: { name: "Category A" },
-      replies: [{ created_at: "--" }],
-      status: "assigned",
-    },
-    {
-      id: 2,
-      reference: "REF002",
-      subject: "Dummy Ticket 2",
-      priority: "Medium",
-      created_at: "March 5,2024",
-      category: { name: "Category B" },
-      replies: [{ created_at: "--" }],
-      status: "unassigned",
-    },
-    // Add more dummy tickets as needed
-  ];
 
   const headers = ["Ticket",  "Status"];
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
+  const itemsPerPage = 7;
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = dummyTickets.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = Array.isArray(tickets)
+  ? tickets.slice(indexOfFirstItem, indexOfLastItem)
+  : [];
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -67,16 +52,16 @@ const MemberTicket = () => {
 
   // Go to next page
   const goToNextPage = () => {
-    if (currentPage < Math.ceil(dummyTickets.length / itemsPerPage)) {
+    if (currentPage < Math.ceil(tickets?.length / itemsPerPage)) {
       setCurrentPage(currentPage + 1);
     }
   };
   const handleBoardButtonClick = () => {
     setShowMemberBoard(true); // Show AnotherBoard when the button is clicked
   };
-  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  // const [isStatusOpen, setIsStatusOpen] = useState(false);
  
- const statuses = ["assigned", "unassigned", "closed", "resolved"]; 
+//  const statuses = ["assigned", "unassigned", "closed", "resolved"]; 
  
   return (
     <div>
@@ -110,44 +95,45 @@ const MemberTicket = () => {
         {showMemberBoard && <MemberBoard />}{" "}
         {!showMemberBoard && (
           <StyledTable header={headers}>
-            {currentItems.map((i) => (
-              <tr key={i.id}>
+            {currentItems?.map((i) => (
+              <tr key={i._id}>
                 <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
                   <input type="checkbox" className="mr-2 checkbox-purple" />
                   <Link
-                    to={"/Member/SingleTicket"}
+                    to={`/Member/SingleTicket/${i?._id}`}
                     className="text-lg font-semibold text-purple-600 hover:text-purple-800"
                   >
-                    {i.subject}
+                    {i?.subject}
                   </Link>
                   <TableInfo
-                    reference={i.reference}
-                    priority={i.priority}
-                    createdAt={i.created_at}
-                    category={i.category.name}
-                    last_reply_on={i.replies[0]?.created_at}
+                    reference={i?.ticket_Id}
+                    priority={i?.priority}
+                    createdAt={i?.createdAt}
+                    category={i?.department?.departmentName}
+                    projectName={i?.projectId?.projectName}
+                    // last_reply_on={i.replies[0]?.created_at}
                   />
                 </td>
                 <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                  <button onClick={() => setIsStatusOpen(true)} >
+                  {/* <button onClick={() => setIsStatusOpen(true)} > */}
                     <span
                       className={`rounded-full px-3 py-px text-sm
                       ${
-                        i.status === "assigned"
+                        i?.status === "progress"
                           ? "bg-indigo-100 text-indigo-800"
-                          : i.status === "unassigned"
+                          : i?.status === "deleted"
                           ? "bg-gray-100 text-gray-800"
-                          : i.status === "closed"
+                          : i?.status === "pending"
                           ? "bg-red-100 text-red-800"
-                          : i.status === "resolved"
+                          : i?.status === "completed"
                           ? "bg-green-100 text-green-800"
                           : ""
                       }`}
                     >
-                      {i.status}
+                      {i?.status}
                     </span>
-                  </button>
-                  {isStatusOpen && (
+                  {/* </button> */}
+                  {/* {isStatusOpen && (
                     <Modal  closeModal={() => setIsStatusOpen(false)}>
                          <div className="grid gap-2">
           {statuses.map((status) => (
@@ -175,7 +161,7 @@ const MemberTicket = () => {
           ))}
         </div>
                     </Modal>
-                  )}
+                  )} */}
                 </td>
               </tr>
             ))}
@@ -183,7 +169,7 @@ const MemberTicket = () => {
               <td colSpan="2" className="px-4 py-2">
                 <Pagination
                   currentPage={currentPage}
-                  totalItems={dummyTickets.length}
+                  totalItems={tickets?.length}
                   itemsPerPage={itemsPerPage}
                   paginate={paginate}
                   goToPreviousPage={goToPreviousPage}

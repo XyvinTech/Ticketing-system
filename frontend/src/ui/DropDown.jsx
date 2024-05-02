@@ -7,7 +7,7 @@ const DropDown= ({ options, label, onChange = () => {}}) => {
 
   const handleChange = (value) => {
     setSelected(value);
-    onChange(value.name); 
+    onChange(value.value); 
   };
 
   return (

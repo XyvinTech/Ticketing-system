@@ -13,7 +13,7 @@ export const addConversation = async (conversationData) => {
 export const fetchConversationById = async (conversationId) => {
   try {
     const response = await axiosInstance.get(`/conversation/fetch/${conversationId}`);
-   console.log("res",response.data)
+  //  console.log("res",response.data)
     return response.data; 
   } catch (error) {
     console.error('Error caught:', error);

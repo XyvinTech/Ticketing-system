@@ -47,12 +47,18 @@ const AdminAddUser = () => {
     value: project._id,
     label: project.projectName,
   }));
-
   const Role = [
     { value: "all", name: "All" },
     { value: "projectManager", name: "Project Manager" },
     { value: "projectLead", name: "Project Lead" },
     { value: "member", name: "Member" },
+    { value: "client", name: "Client" },
+  ];
+  const Roles = [
+    { value: "projectManager", name: "Project Manager" },
+    { value: "projectLead", name: "Project Lead" },
+    { value: "member", name: "Member" },
+    { value: "client", name: "Client" },
   ];
   const onSubmit = async (data) => {
     try {
@@ -80,7 +86,7 @@ const AdminAddUser = () => {
 
       <div className="mb-4 pr-5 flex justify-between items-center">
         <div className="flex mt-5 gap-3 divide-x divide-dashed text-sm text-gray-500">
-          <div className="font-semibold">All({users.length})</div>
+          <div className="font-semibold">All({users?.length})</div>
         </div>
         <StyledButton text="Add User" onClick={() => setIsModalOpen(true)} />
       </div>
@@ -183,7 +189,7 @@ const AdminAddUser = () => {
                 <>
                   <StyledSelectionList
                     listname="User Type"
-                    options={Role}
+                    options={Roles}
                     {...field}
                   />
                   {errors.usertype && (
@@ -264,7 +270,7 @@ const AdminAddUser = () => {
                 </tr>
               </thead>
               <tbody>
-                {users?.length === 0 ? (
+                {Array.isArray(users) && users?.length === 0 ? (
                   <tr>
                     <td
                       colSpan="4"
@@ -274,7 +280,9 @@ const AdminAddUser = () => {
                     </td>
                   </tr>
                 ) : (
-                  users?.map((person) => (
+                  Array.isArray(users) &&
+                  users.map((person) => (
+                    person?.usertype !== "admin" && (
                     <tr
                       key={person?._id}
                       className="mb-2 border-b  border-gray-200"
@@ -290,13 +298,12 @@ const AdminAddUser = () => {
                           ? "Project Manager"
                           : person?.usertype === "member"
                           ? "Member"
-                          : person?.usertype === "lead"
-                          ? "Lead"
+                          : person?.usertype === "projectLead"
+                          ? "Project Lead"
                           : person?.usertype === "client"
                           ? "Client"
                           : "Unknown"}
                       </td>
-
                       <td className="px-3 py-3 text-sm text-gray-900 text-left">
                         <DeleteIcon
                           className="h-5 w-5"
@@ -304,6 +311,7 @@ const AdminAddUser = () => {
                         />
                       </td>
                     </tr>
+                    )
                   ))
                 )}
               </tbody>

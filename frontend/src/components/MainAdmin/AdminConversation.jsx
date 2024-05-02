@@ -2,7 +2,6 @@ import { Disclosure } from "@headlessui/react";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { ReactComponent as UpIcon } from "../../assets/icons/Upicon.svg";
 import StyledText from "../../ui/StyledText";
 import FileUpload from "../../ui/FileUpload";
@@ -17,7 +16,6 @@ const AdminConversation = ({ ticketId, isChange, setIsChange }) => {
 
     if (data.attachment.length > 0) {
       const imageUrl = await uploadImage(data.attachment);
-      console.log(imageUrl);
       data.attachment = imageUrl.data.map((dataUrl) => dataUrl.url);
     }
 

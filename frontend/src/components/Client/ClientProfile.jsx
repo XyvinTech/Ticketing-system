@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StyledInput from "../../ui/StyledInput";
+import { toast } from "react-toastify";
 import { useForm, Controller } from "react-hook-form";
 import { ReactComponent as PersonIcon } from "../../assets/icons/PersonIcon.svg";
-import { ReactComponent as PhoneIcon } from "../../assets/icons/PhoneIcon.svg";
 import { ReactComponent as EnvelopeIcon } from "../../assets/icons/EnvelopeIcon.svg";
 import StyledButton from "../../ui/StyledButton";
+import { uploadImage } from "../../api/uploadapi";
+import { useAdminStore } from "../../store/AdminStore";
 
 const ClientProfile = () => {
   const {
@@ -13,6 +15,7 @@ const ClientProfile = () => {
     formState: { errors },
     setValue,
   } = useForm();
+  const { user, updateChange, updateUser} = useAdminStore();
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleImageChange = (e) => {
@@ -20,9 +23,26 @@ const ClientProfile = () => {
     setSelectedImage(URL.createObjectURL(file));
     setValue("profilePicture", file);
   };
+  useEffect(() => {
+    if (user) {
+      setValue("userName", user.userName || "");
+      setValue("email", user.email || "");
+      setSelectedImage(user.profilePicture);
+    }
+  }, [user, setValue]);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      if (data.profilePicture) {
+        const imageUrl = await uploadImage(data.profilePicture);
+        data.profilePicture = imageUrl.data[0].url;
+      }
+      await updateUser(data);
+      updateChange();
+      toast.success(" updated successfully!");
+    } catch (error) {
+      console.error("Error adding department:", error);
+    }
   };
 
   return (
@@ -32,24 +52,24 @@ const ClientProfile = () => {
         <div className="flex flex-col items-center gap-12 sm:flex-row">
           <div className="w-full flex-1 space-y-6">
             <Controller
-              name="name"
+              name="userName"
               control={control}
               render={({ field }) => (
                 <StyledInput
                   {...field}
                   type="text"
-                  label="Name"
+                  label=" User Name"
                   placeholder="Name"
                   Icon={PersonIcon}
                 />
               )}
             />
-            {errors.name && (
+            {errors.userName && (
               <span className="text-sm text-red-600">
-                {errors.name.message}
+                {errors.userName.message}
               </span>
             )}
-            <Controller
+            {/* <Controller
               name="phoneNumber"
               control={control}
               render={({ field }) => (
@@ -72,7 +92,7 @@ const ClientProfile = () => {
               <span className="text-sm text-red-600">
                 {errors.phoneNumber.message}
               </span>
-            )}
+            )} */}
             <Controller
               name="email"
               control={control}
@@ -102,7 +122,6 @@ const ClientProfile = () => {
               control={control}
               render={({ field }) => (
                 <div className="sm:hidden">
-                  <h1>Picture</h1>
                   <div className="flex flex-wrap items-center gap-3">
                     <img
                       src={selectedImage}
@@ -129,13 +148,10 @@ const ClientProfile = () => {
             />
 
             {errors.profilePicture && (
-              <span className="text-sm text-red-600">
-                {errors.profilePicture.message}
-              </span>
+              <span className="text-sm text-red-600">{errors.profilePicture.message}</span>
             )}
           </div>
           <div className="hidden sm:block">
-            <h1>picture</h1>
             <div className="relative overflow-hidden rounded-full">
               <img
                 src={selectedImage}

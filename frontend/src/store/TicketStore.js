@@ -8,9 +8,9 @@ import {
 
 const useTicketStore = create((set) => ({
   tickets: [],
-  fetchTickets: async () => {
-    const allTicketData = await fetchTickets();
-    set({ tickets: allTicketData.data });
+  fetchTickets: async (filter) => {
+    const allTicketData = await fetchTickets(filter);
+    set({ tickets: allTicketData?.data });
   },
   fetchTicketById: async (ticketId) => {
     const ticketByid = await fetchTicketById(ticketId);
@@ -18,9 +18,12 @@ const useTicketStore = create((set) => ({
     set({ tickets: ticketByid.data });
   },
   addTicket: async (ticketData) => {
-    const addTickets = addTicket(ticketData);
-    set((state) => ({ tickets: [...state.tickets, addTickets] }));
+    const addTickets = await addTicket(ticketData); // Assuming addTicket returns a promise
+    set((state) => ({ 
+      tickets: Array.isArray(state.tickets) ? [...state.tickets, addTickets] : [addTickets] 
+    }));
   },
+  
   updateTicket: async (ticketId, updateData) => {
     const updateTickets = updateTicket(ticketId, updateData);
     set((state) => ({

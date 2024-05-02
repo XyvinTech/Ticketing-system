@@ -4,7 +4,6 @@ const User = require("../models/user");
 //create New Admin
 exports.addAdmin = async function (req, res) {
   const data = new Admin(req.body);
-  console.log(data);
   await data.save();
   res.status(201).json({ status: true, message: "ok" });
 };
@@ -76,7 +75,7 @@ exports.deleteUser = async function (req, res) {
 };
 
 exports.getUsers = async function (req, res) {
-  const { usertype, searchQuery, withOutClient } = req.query;
+  const { usertype, searchQuery, withOutClient, inManager,inLead} = req.query;
 
   const query = {};
 
@@ -85,9 +84,15 @@ exports.getUsers = async function (req, res) {
   }
 
   if (withOutClient) {
-    query.usertype = { $ne: "client" };
+    query.usertype = { $nin: ["client", "admin"] };
   }
-
+  
+  if (inManager) {
+    query.usertype = { $nin: ["client", "admin","projectManager"] };
+  }
+  if(inLead){
+    query.usertype={$nin :["client","admin","projectManager","projectLead"]}
+  }
   if (searchQuery) {
     query.$or = [
       { name: { $regex: searchQuery, $options: "i" } },

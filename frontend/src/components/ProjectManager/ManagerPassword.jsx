@@ -3,20 +3,45 @@ import StyledInput from "../../ui/StyledInput";
 import { useForm, Controller } from "react-hook-form";
 import { ReactComponent as LockClosedIcon } from "../../assets/icons/LockClosedIcon.svg";
 import StyledButton from "../../ui/StyledButton";
+import { updatePassword } from "../../api/userapi";
+import { toast } from "react-toastify";
 
 const ManagerPassword = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setError,
+    reset,
   } = useForm();
 
-  // Regular expression for password validation
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  const onSubmit = (data) => {
-    console.log(data); 
+  const onSubmit = async (data) => {
+    try {
+      if (data.newPassword !== data.confirmPassword) {
+        setError("newPassword", {
+          type: "manual",
+          message: "Passwords don't match",
+        });
+        setError("confirmPassword", {
+          type: "manual",
+          message: "Passwords don't match",
+        });
+        return;
+      } else {
+        const changePassword = await updatePassword(data);
+        reset();
+        toast.success(changePassword.message);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        toast.error("Something Went Wrong. Please try again.");
+      } else {
+        toast.error("Failed to update password. Please try again later.");
+      }
+    }
   };
 
   return (

@@ -18,7 +18,7 @@ const ProjectManagerRoutes = () => {
         <Route path="AddPeople" element={<AddPeople />} />
         <Route path="ManagerProfile" element={<ManagerProfile />} />
         <Route path="ManagerNotification" element={<ManagerNotification />} />
-        <Route path="ManagerSingleTicket" element={<ManagerSingleTicket />} />
+        <Route path="SingleTicket/:id" element={<ManagerSingleTicket />} />
         <Route path="ManagerNewTicket" element={<ManagerNewTicket />} />
       </Routes>
     </ManagerLayout>

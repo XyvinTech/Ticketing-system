@@ -16,10 +16,10 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/Register" element={<RegisterForm />} />
         <Route path="/Admin/*" element={<RequireAuth><AdminRoutes /></RequireAuth>} />
-        <Route path="/Client/Ticket/*" element={<ClientRoutes />} />
-        <Route path="/ProjectManager/*" element={<ProjectManagerRoutes />} />
-        <Route path="/ProjectLead/*" element={<ProjectLead />} />
-        <Route path="/Member/*" element={<MemberRoutes />} />
+        <Route path="/Client/Ticket/*" element={<RequireAuth><ClientRoutes /></RequireAuth>} />
+        <Route path="/ProjectManager/*" element={<RequireAuth><ProjectManagerRoutes /></RequireAuth>} />
+        <Route path="/ProjectLead/*" element={<RequireAuth><ProjectLead /></RequireAuth>} />
+        <Route path="/Member/*" element={<RequireAuth><MemberRoutes /></RequireAuth>} />
       </Routes>
     </>
   );

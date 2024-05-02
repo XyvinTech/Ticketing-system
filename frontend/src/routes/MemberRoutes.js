@@ -14,7 +14,7 @@ const MemberRoutes = () => {
         <Route path="Profile" element={<MemberProfile />} />
         <Route path="Notification" element={<MemberNotification />} />
         <Route path="Password" element={<MemberPassword />} />
-        <Route path="SingleTicket" element={<MemberSingleTicket />} />
+        <Route path="SingleTicket/:id" element={<MemberSingleTicket />} />
       </Routes>
     </MemberLayout>
   );

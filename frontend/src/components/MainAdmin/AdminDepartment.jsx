@@ -12,6 +12,7 @@ import StyledText from "../../ui/StyledText";
 import { useDepartmentStore } from "../../store/DepartmentStore";
 import { useUserStore } from "../../store/UserStore";
 import StyledMultipleSelection from "../../ui/StyledMultipleSelection";
+import { removeMember, updateDepartment } from "../../api/departmentapi";
 
 const AdminDepartment = () => {
   const {
@@ -19,7 +20,7 @@ const AdminDepartment = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { departments, fetchDepartment, addDepartment, updateDepartment,deleteDepartment } =
+  const { departments, fetchDepartment, addDepartment, deleteDepartment } =
     useDepartmentStore();
   const { users, fetchUser } = useUserStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,10 +37,10 @@ const AdminDepartment = () => {
     filter.withOutClient = true;
     fetchUser(filter);
   }, []);
-  const selectOptions = users.map((user) => ({
-    value: user._id,
-    label: user.email,
-  }));
+  const selectOptions = users && Array.isArray(users) ? users.map((user) => ({
+    value: user?._id,
+    label: user?.email,
+  })) : [];
 
   const handleExpand = (index) => {
     setExpandedRows((prevState) => ({
@@ -57,9 +58,11 @@ const AdminDepartment = () => {
       console.error("Error adding department:", error);
     }
   };
-  const handleUpdateUser = async (data, departmentId) => {
+  const handleUpdateUser = async (data, departmentId,action) => {
     try {
-      await updateDepartment(departmentId, data);
+      let filter={action:action}
+      await updateDepartment( data,departmentId,filter);
+      
       toast.success("Updated successfully!");
       setIsChange(!isChange);
       setisAssignOpen(false);
@@ -74,6 +77,20 @@ const AdminDepartment = () => {
       setIsChange(!isChange);
     } catch (error) {
       console.error("Error deleting:", error);
+    }
+  };
+  const handleRemoveMember = async (departmentId, memberId) => {
+    try {
+      // Call API to remove member from department
+      
+      await removeMember(departmentId, memberId);
+     
+      // Update state to reflect the change
+      setIsChange(!isChange);
+      // Show success message
+      toast.success("Member removed successfully!");
+    } catch (error) {
+      console.error("Error removing member:", error);
     }
   };
   return (
@@ -169,7 +186,12 @@ const AdminDepartment = () => {
                               <div key={memberIndex} className="flex mb-2 mr-2">
                                 <div className="flex rounded-full px-2 py-1 text-sm items-center bg-purple-100">
                                   <span>{member.email}</span>
-                                  <button className="ml-1">
+                                  <button
+                                    className="ml-1"
+                                    onClick={() =>
+                                      handleUpdateUser(user._id, member._id,"pop")
+                                    }
+                                  >
                                     <CloseIcon className="h-4 w-4 text-purple-500" />
                                   </button>
                                 </div>
@@ -203,12 +225,17 @@ const AdminDepartment = () => {
                         className="h-5 w-5 text-green-500 cursor-pointer"
                         onClick={() => {
                           setisAssignOpen(true);
+                          // console.log("setDepartmentId",user._id)
                           setDepartmentId(user._id);
+                        
                         }}
                       />
                     </td>
                     <td className="px-3 py-3 text-sm text-gray-900 text-left">
-                      <DeleteIcon className="h-5 w-5"   onClick={() => handleDelete(user?._id)}/>
+                      <DeleteIcon
+                        className="h-5 w-5"
+                        onClick={() => handleDelete(user?._id)}
+                      />
                     </td>
                     <td className="px-3 py-3 text-left text-sm text-gray-900">
                       <UpDownIcon
@@ -224,7 +251,8 @@ const AdminDepartment = () => {
               <Modal closeModal={() => setisAssignOpen(false)}>
                 <form
                   onSubmit={handleSubmit((data) =>
-                    handleUpdateUser(data, departmentId)
+                    handleUpdateUser( departmentId,data,"push")
+                   
                   )}
                 >
                   <h1 className="flex-auto font-semibold">

@@ -1,11 +1,15 @@
 import { create } from "zustand";
-import { addProject, deleteProject, fetchProjects } from "../api/projectapi";
+import { addProject, deleteProject, fetchProjectById, fetchProjects } from "../api/projectapi";
 import { toast } from "react-toastify";
 
 const useProjectStore = create((set) => ({
   projects: [],
   fetchProject:async(filter)=>{
     const data=await fetchProjects(filter);
+    set({ projects: data.data });
+  },
+  fetchProjectById:async()=>{
+    const data=await fetchProjectById();
     set({ projects: data.data });
   },
   addProject: async (projectData) => {

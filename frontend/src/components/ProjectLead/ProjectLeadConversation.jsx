@@ -1,14 +1,32 @@
 import { Disclosure } from "@headlessui/react";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
+import { toast } from "react-toastify";
 import { ReactComponent as UpIcon } from "../../assets/icons/Upicon.svg";
 import StyledText from "../../ui/StyledText";
 import FileUpload from "../../ui/FileUpload";
 import StyledButton from "../../ui/StyledButton";
-const ProjectLeadConversation = ({ ticketId }) => {
-  const { control, handleSubmit } = useForm();
+import { useConversationStore } from "../../store/ConversationStore";
+import { uploadImage } from "../../api/uploadapi";
+const ProjectLeadConversation = ({ ticketId, isChange, setIsChange }) => {
+  const { control, handleSubmit, reset } = useForm();
+  const { addConversation } = useConversationStore();
   const onSubmit = async (data) => {
-    console.log("Form data:", data);
+    data.ticketId = ticketId;
+
+    if (data.attachment.length > 0) {
+      const imageUrl = await uploadImage(data.attachment);
+      data.attachment = imageUrl.data.map((dataUrl) => dataUrl.url);
+    }
+
+    try {
+      await addConversation(data);
+      setIsChange(!isChange);
+      reset();
+    } catch (error) {
+      console.error("Error", error);
+      toast.error("Error!");
+    }
   };
 
   return (

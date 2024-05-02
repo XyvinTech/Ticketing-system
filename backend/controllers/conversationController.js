@@ -3,9 +3,16 @@ const createError = require("http-errors");
 
 //create conversation
 exports.createConversation = async function (req, res) {
-  const data = new Conversation(req.body);
-  await data.save();
-  res.status(201).json({ status: true, message: "Added Successfully",data });
+  const conversationData = req.body;
+  conversationData.senderId = req.user; // Set senderId to req.user
+
+  try {
+    const conversation = new Conversation(conversationData);
+    await conversation.save();
+    res.status(201).json({ status: true, message: "Added Successfully", data: conversation });
+  } catch (error) {
+    res.status(500).json({ status: false, message: "Error occurred while adding conversation", error });
+  }
 };
 
 // get All Conversation 
@@ -19,7 +26,7 @@ exports.getAllByTicketId = async function (req, res) {
   if (!ticketId) {
     return res.status(400).json({ message: "Ticket ID is required" });
   }
-  const conversations = await Conversation.find({ ticketId: ticketId }).populate("ticketId");
+  const conversations = await Conversation.find({ ticketId: ticketId }).populate("ticketId").populate("senderId");
 
   if (!conversations || conversations.length === 0) {
     return res.status(404).json({ status: false, message: "Conversations not found" });

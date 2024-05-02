@@ -3,19 +3,30 @@ import StyledInput from "../../ui/StyledInput";
 import { useForm, Controller } from "react-hook-form";
 import { ReactComponent as LockClosedIcon } from "../../assets/icons/LockClosedIcon.svg";
 import StyledButton from "../../ui/StyledButton";
+import { toast } from "react-toastify";
+import { updatePassword } from "../../api/userapi";
 
 const ClientPassword = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setError,
+    reset
   } = useForm();
 
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  const onSubmit = (data) => {
-    console.log(data); 
+  const onSubmit = async (data) => {
+    if (data.newPassword !== data.confirmPassword) {
+      setError("newPassword", { type: "manual", message: "Passwords does'nt match" });
+      setError("confirmPassword", { type: "manual", message: "Passwords does'nt match" });
+      return;
+    } else {
+      const changePassword = await updatePassword(data);
+      reset();
+      toast.success(changePassword.message);
+    }
   };
 
   return (
@@ -41,9 +52,7 @@ const ClientPassword = () => {
                 rules={{ required: "Current Password is required" }}
               />
               {errors.currentPassword && (
-                <span className="text-sm text-red-600">
-                  {errors.currentPassword.message}
-                </span>
+                <span className="text-sm text-red-600">{errors.currentPassword.message}</span>
               )}
               <Controller
                 name="newPassword"
@@ -68,9 +77,7 @@ const ClientPassword = () => {
                 }}
               />
               {errors.newPassword && (
-                <span className="text-sm text-red-600">
-                  {errors.newPassword.message}
-                </span>
+                <span className="text-sm text-red-600">{errors.newPassword.message}</span>
               )}
               <Controller
                 name="confirmPassword"
@@ -90,15 +97,11 @@ const ClientPassword = () => {
                 }}
               />
               {errors.confirmPassword && (
-                <span className="text-sm text-red-600">
-                  {errors.confirmPassword.message}
-                </span>
+                <span className="text-sm text-red-600">{errors.confirmPassword.message}</span>
               )}
             </div>
             <div className="h-fit w-full max-w-fit rounded-lg border border-amber-400 bg-amber-50 p-6 shadow">
-              <h1 className="mb-5 text-xl font-semibold">
-                Password Guidelines
-              </h1>
+              <h1 className="mb-5 text-xl font-semibold">Password Guidelines</h1>
               <ul className="list-inside list-disc space-y-1 text-gray-700">
                 <li>Contains at least 8 characters long</li>
                 <li>Includes at least one uppercase letter</li>

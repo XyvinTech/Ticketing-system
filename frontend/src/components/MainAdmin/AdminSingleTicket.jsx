@@ -7,12 +7,14 @@ import AdminConversation from "./AdminConversation";
 import { useTicketStore } from "../../store/TicketStore";
 import { useParams } from "react-router-dom";
 import { useConversationStore } from "../../store/ConversationStore";
+import { useAdminStore } from "../../store/AdminStore";
 
 const AdminSingleTicket = () => {
   const { id } = useParams();
   const { fetchTicketById, tickets } = useTicketStore();
   const { conversations, fetchConversationById } = useConversationStore();
   const [isChange, setIsChange] = useState(false);
+  const { user} = useAdminStore();
   useEffect(() => {
     fetchTicketById(id);
   }, [id]);
@@ -43,17 +45,17 @@ const AdminSingleTicket = () => {
                 <div>
                   <span
                     className={`rounded-full px-3 py-px text-sm
-                      ${
-                        tickets?.status === "assigned"
-                          ? "bg-indigo-100 text-indigo-800"
-                          : tickets?.status === "pending"
-                          ? "bg-gray-100 text-gray-800"
-                          : tickets?.status === "closed"
-                          ? "bg-red-100 text-red-800"
-                          : tickets?.status === "completed"
-                          ? "bg-green-100 text-green-800"
-                          : ""
-                      }`}
+                    ${
+                      tickets?.status === "progress"
+                        ? "bg-indigo-100 text-indigo-800"
+                        : tickets?.status === "deleted"
+                        ? "bg-gray-100 text-gray-800"
+                        : tickets?.status === "pending"
+                        ? "bg-red-100 text-red-800"
+                        : tickets?.status === "completed"
+                        ? "bg-green-100 text-green-800"
+                        : ""
+                    }`}
                   >
                     {tickets?.status}
                   </span>
@@ -84,15 +86,11 @@ const AdminSingleTicket = () => {
               </div>
             </div>
             {conversations?.map((item) => (
-              <div key={item?._id} className="divide-y  border shadow">
+              <div key={item?._id} className={`divide-y border shadow ${item?.senderId?._id === user?._id ? 'text-right' : ''}`}>
                 <div className="px-3 py-5">
-                  <div
-                    className="justify-center  text-base leading-7 text-gray-700 max-w-[890px] max-md:pr-5 max-md:max-w-full"
-                    dangerouslySetInnerHTML={{
-                      __html: item.message ? item.message : "",
-                    }}
-                  ></div>
-                </div>
+                <h1 className="mb-6 text-xl font-semibold text-purple-600">{item?.senderId?.userName}</h1>
+                <div className=" text-gray-700  max-md:max-w-full" dangerouslySetInnerHTML={{ __html: item.message ? item.message : "" }}></div>
+              </div>
                 {item?.attachment?.map((i, index) => (
                   <div className="py-3 pr-3 pl-3">
                     <div className="flex items-center gap-1 font-semibold text-gray-500">

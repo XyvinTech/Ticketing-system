@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ReactComponent as EnvelopeIcon } from "../assets/icons/EnvelopeIcon.svg";
 import { ReactComponent as LockClosedIcon } from "../assets/icons/LockClosedIcon.svg";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Logo from "../assets/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import StyledInput from "../ui/StyledInput";
 import StyledButton from "../ui/StyledButton";
 import { Controller, useForm } from "react-hook-form";
-import { useAdminStore } from "../store/AdminStore";
+import { getLogin } from "../api/userapi";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,12 +17,37 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const getAdmin = useAdminStore((state) => state.getAdmin);
-  const onSubmit = async (data) => {
+  //  const{getLogin, user}=useAdminStore();
+  //  useEffect(() => {
+  //   fetchLogin();
+  // }, []);
+  const onSubmit = async (datas) => {
     try {
-      await getAdmin(data);
-
-      navigate("/Admin/ticket");
+      const user = await getLogin(datas);
+      localStorage.setItem("token", user.token);
+      // localStorage.setItem("user", user.userType);
+      if (user?.userType) {
+        switch (user?.userType) {
+          case "projectManager":
+            navigate("/projectManager/Ticket");
+            break;
+          case "projectLead":
+            navigate("/projectLead/Ticket");
+            break;
+          case "client":
+            navigate("/Client/Ticket");
+            break;
+          case "member":
+            navigate("/Member/Ticket");
+            break;
+          case "admin":
+            navigate("/Admin/Ticket");
+            break;
+          default:
+            navigate("/");
+            break;
+        }
+      }
       toast.success("Login successfully!");
     } catch (error) {
       console.error("Login Error:", error);
@@ -32,7 +57,6 @@ const Login = () => {
 
   return (
     <div className="flex flex-col justify-center px-5 my-20 mx-auto w-full max-w-[480px]">
-     
       <div className="flex flex-col self-stretch pt-6 px-6 py-9 w-full text-sm leading-5 text-gray-700 bg-white rounded-md border border border-solid shadow">
         <header className="mb-6">
           <img src={Logo} alt="Logo" className="mx-auto mb-4" />

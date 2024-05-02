@@ -50,7 +50,7 @@ const ClientTicket = () => {
 
   // Go to next page
   const goToNextPage = () => {
-    if (currentPage < Math.ceil(tickets.length / itemsPerPage)) {
+    if (currentPage < Math.ceil(tickets?.length / itemsPerPage)) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -62,7 +62,6 @@ const ClientTicket = () => {
     { name: "Resolved", count: 0 },
     { name: "Closed", count: 0 },
   ];
-  console.log("Gg",tickets)
   return (
     <div>
       <section className="py-6 px-4 sm:p-6 lg:pb-8">
@@ -100,32 +99,33 @@ const ClientTicket = () => {
         {!showClientBoard && (
         <StyledTable header={headers}>
           
-          {item.map((tickets) => (
-            <tr key={tickets._id}>
+          {item?.map((tickets) => (
+            <tr key={tickets?._id}>
               <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
-              <input type="checkbox" class="mr-2  accent-purple-500" />
-                <Link to={`/Client/Ticket/SingleTicket/${tickets._id}`}  className="text-lg font-semibold text-purple-600 hover:text-purple-800">
-                  {tickets.subject}
+              {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
+                <Link to={`/Client/Ticket/SingleTicket/${tickets?._id}`}  className="text-lg font-semibold text-purple-600 hover:text-purple-800">
+                  {tickets?.subject}
                 </Link>
                 <TableInfo
-                  reference={tickets.reference}
-                  priority={tickets.priority}
-                  createdAt={tickets.createdAt}
-                  category={tickets.category}
+                  reference={tickets?.ticket_Id}
+                  priority={tickets?.priority}
+                  createdAt={tickets?.createdAt}
+                  category={tickets?.department?.departmentName}
                   // last_reply_on={tickets.replies[0]?.created_at}
+                  projectName={tickets?.projectId?.projectName}
                 />
               </td>
               <td className="whitespace-nowrap text-sm  text-gray-500 px-3 py-4">
                 <span
                   className={`rounded-full px-3 py-px text-sm
                   ${
-                      tickets.status === "In Progress"
+                    tickets?.status === "progress"
                       ? "bg-indigo-100 text-indigo-800"
-                      : tickets.status === "Archived"
+                      : tickets?.status === "deleted"
                       ? "bg-gray-100 text-gray-800"
-                      : tickets.status === "Not Started"
+                      : tickets?.status === "pending"
                       ? "bg-red-100 text-red-800"
-                      : tickets.status === "Done"
+                      : tickets?.status === "completed"
                       ? "bg-green-100 text-green-800"
                       : ""
                   }`}

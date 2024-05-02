@@ -13,8 +13,8 @@ const useDepartmentStore = create((set) => ({
       set((state) => ({ departments: [...state.departments, newData] }));
       toast.success(newData.message);
     },
-    updateDepartment: async (departmentId, updateData) => {
-      const updatedep = updateDepartment(departmentId, updateData);
+    updateDepartment: async (departmentId, updateData,filter) => {
+      const updatedep = updateDepartment(departmentId, updateData,filter);
       set((state) => ({
         departments: state.departments.map((dep) =>
           dep._id === departmentId ? { ...dep, ...updatedep } : dep

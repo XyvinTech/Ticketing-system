@@ -16,6 +16,14 @@ export const addProject = async (projectData) => {
       console.error('Error caught:', error);
     }
   };
+  export const fetchProjectById = async () => {
+    try {
+      const response = await axiosInstance.get("/project/fetchId");
+      return response.data; 
+    } catch (error) {
+      console.error('Error caught:', error);
+    }
+  };
   export const deleteProject = async (projectId) => {
     try {
       const response = await axiosInstance.delete(`/project/delete/${projectId}`);

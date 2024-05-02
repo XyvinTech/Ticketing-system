@@ -1,9 +1,8 @@
 const User = require("../models/user");
 const createError = require("http-errors");
-const bcryptUtils = require("../utils/bcrypt");
 //get user
 exports.getUser = async function (req, res) {
-  const userId = req.params.id;
+  const userId = req.user;
   const user = await User.findById(userId);
 
   if (!user) {
@@ -14,59 +13,33 @@ exports.getUser = async function (req, res) {
 };
 
 //profile Updation
-exports.profileUpdate = async function (req, res) {
-  const userId = req.params.id;
-  
-  const updateObj = {};
-  if (req.body.userName) {
-    updateObj.userName = req.body.userName;
-  }
-  if (req.body.phoneNumber) {
-    updateObj.phoneNumber = req.body.phoneNumber;
-  }
-  if (req.body.email) {
-    updateObj.email = req.body.email;
-  }
-  if (req.file && req.file.buffer) {
-    updateObj.profilePicture = req.file.buffer;
-  }
+exports.updateUser = async function (req, res) {
+  const userId = req.user;
+  const update = req.body;
 
-  const updatedUser = await User.findByIdAndUpdate(userId, updateObj, { new: true });
+  const updatedUser = await User.findByIdAndUpdate(userId, update, { new: true });
 
   if (!updatedUser) {
-    throw new Error("User not found");
+    throw createError(404, "Admin not found");
   }
 
-  res.json({ message: "Profile updated successfully", user: updatedUser });
+  res.status(200).json({ status: true, message: "ok" });
 };
 
+
 //password Updation
-exports.passwordupdate = async function (req, res) {
-  const userId = req.params.id;
-  const { currentPassword, newPassword, confirmPassword } = req.body;
+exports.passwordupdate= async function (req, res) {
+  const { currentPassword, newPassword } = req.body;
 
-  if (newPassword !== confirmPassword) {
-    return res.status(400).json({ message: "Passwords do not match" });
+  const findUser = await User.findById(req.user);
+
+  if (!findUser) return res.status(400).json({ message: "User not found" });
+
+  if (findUser && (await findUser.matchPassword(currentPassword))) {
+    findUser.password = newPassword;
+    await findUser.save();
+    return res.status(200).json({ status: true, message: "Password updated" });
+  } else {
+    return res.status(401).json({ message: "Current password is invalid" });
   }
-
-  const updatedUser = await User.findByIdAndUpdate(userId, {}, { new: true });
-
-  if (!updatedUser) {
-    return res.status(404).json({ message: "User not found" });
-  }
-
-  const isPasswordValid = await bcryptUtils.comparePasswords(
-    currentPassword,
-    updatedUser.password
-  );
-  if (!isPasswordValid) {
-    return res.status(401).json({ message: "Invalid current password" });
-  }
-
-  const hashedPassword = await bcryptUtils.hashPassword(newPassword);
-
-  updatedUser.password = hashedPassword;
-  await updatedUser.save();
-
-  res.status(200).json({ message: "Password updated successfully" });
 };

@@ -16,10 +16,10 @@ export const addDepartment = async (depData) => {
       console.error('Error caught:', error);
     }
   };
-  export const updateDepartment = async (departmentId, updateData) => {
+  export const updateDepartment = async (departmentId, updateData,filter={}) => {
     try {
-      const response = await axiosInstance.put(`/department/edit/${departmentId}`, updateData);
-      console.log(response.data)
+      const response = await axiosInstance.put(`/department/edit/${departmentId}`, updateData,{params:filter});
+      // console.log(response.data)
       return response.data;
      
     } catch (error) {
@@ -29,6 +29,14 @@ export const addDepartment = async (depData) => {
   export const deleteDepartment = async (departmentId) => {
     try {
       const response = await axiosInstance.delete(`/department/delete/${departmentId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error caught:", error);
+    }
+  };
+  export const removeMember = async (departmentId,memberId) => {
+    try {
+      const response = await axiosInstance.put(`/department/removeMember/${departmentId}`,memberId);
       return response.data;
     } catch (error) {
       console.error("Error caught:", error);

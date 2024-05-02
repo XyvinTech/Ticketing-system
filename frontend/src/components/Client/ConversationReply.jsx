@@ -1,34 +1,33 @@
 import { Disclosure } from "@headlessui/react";
 import React from "react";
-import { useForm, Controller } from "react-hook-form"; 
+import { useForm, Controller } from "react-hook-form";
+import { toast } from "react-toastify";
 import { ReactComponent as UpIcon } from "../../assets/icons/Upicon.svg";
 import StyledText from "../../ui/StyledText";
 import FileUpload from "../../ui/FileUpload";
 import StyledButton from "../../ui/StyledButton";
 import { useConversationStore } from "../../store/ConversationStore";
-const ConversationReply = ({ ticketId }) => {
-  const { control, handleSubmit } = useForm();
-  const addConversation = useConversationStore((state) => state.addConversation);
+import { uploadImage } from "../../api/uploadapi";
+const ConversationReply = ({ ticketId, isChange, setIsChange }) => {
+  const { control, handleSubmit, reset } = useForm();
+  const { addConversation } = useConversationStore();
   const onSubmit = async (data) => {
+    data.ticketId = ticketId;
+
+    if (data.attachment.length > 0) {
+      const imageUrl = await uploadImage(data.attachment);
+      data.attachment = imageUrl.data.map((dataUrl) => dataUrl.url);
+    }
+
     try {
-      const newData = { ...data, ticketId: ticketId }; 
-      const formData = new FormData();
-      formData.append("ticketId", newData.ticketId);
-      formData.append("message", newData.message);
-      newData.attachment.forEach((file) => {
-        formData.append("attachment", file);
-      });
-  
-      await addConversation(formData);
-      // console.log("Form data:", newData);
-      window.location.reload(); 
+      await addConversation(data);
+      setIsChange(!isChange);
+      reset();
     } catch (error) {
-      console.error("Error adding ticket:", error);
+      console.error("Error", error);
+      toast.error("Error!");
     }
   };
-  
-  
-  
 
   return (
     <>
@@ -48,25 +47,28 @@ const ConversationReply = ({ ticketId }) => {
               />
             </Disclosure.Button>
             <Disclosure.Panel className="divide-y rounded-b-lg border shadow">
-              <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                encType="multipart/form-data"
+              >
                 <div className="px-3 pb-3 pt-6">
-                 
                   <Controller
                     name="message"
                     control={control}
-                    render={({ field }) => (
-                      <StyledText field={field} />
-                    )}
+                    render={({ field }) => <StyledText field={field} />}
                   />
-                 <div className="mt-12">  <Controller
-              name="attachment"
-              control={control}
-              defaultValue={[]}
-              render={({ field: { onChange } }) => <FileUpload onChange={onChange} />}
-            /></div>   
-                    
-                 
-                  
+                  <div className="mt-12">
+                    {" "}
+                    <Controller
+                      name="attachment"
+                      control={control}
+                      defaultValue={[]}
+                      render={({ field: { onChange } }) => (
+                        <FileUpload onChange={onChange} />
+                      )}
+                    />
+                  </div>
+
                   <div className="flex justify-end">
                     <StyledButton text="Add" type="submit" />
                   </div>

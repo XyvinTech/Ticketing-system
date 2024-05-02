@@ -22,18 +22,18 @@ exports.createTicket = async function (req, res) {
   });
 
   // * Uncomment the following line for production
-  // let populatedTicket = await data.populate("reporter");
-  // populatedTicket = await populatedTicket.populate("department");
+  let populatedTicket = await data.populate("reporter");
+  populatedTicket = await populatedTicket.populate("department");
 
-  // const tickeObj = {
-  //   _id: populatedTicket._id,
-  //   ticket_Id: populatedTicket.ticket_Id,
-  //   mail: populatedTicket.reporter? populatedTicket.reporter.email : admin,
-  //   department: populatedTicket.department.departmentName,
-  //   description: populatedTicket.description,
-  //   updatedAt: populatedTicket.updatedAt,
-  //   priority: populatedTicket.priority,
-  // };
+  const tickeObj = {
+    _id: populatedTicket._id,
+    ticket_Id: populatedTicket.ticket_Id,
+    mail: populatedTicket.reporter? populatedTicket.reporter.email : admin,
+    department: populatedTicket.department.departmentName,
+    description: populatedTicket.description,
+    updatedAt: populatedTicket.updatedAt,
+    priority: populatedTicket.priority,
+  };
 
   const notifications = [];
 
@@ -45,7 +45,7 @@ exports.createTicket = async function (req, res) {
     });
 
     // * Uncomment the following line for production
-    // sendMail(user.email, tickeObj, user.usertype);
+    sendMail(user.email, tickeObj, user.usertype);
 
     notifications.push(notification);
   });
@@ -57,12 +57,47 @@ exports.createTicket = async function (req, res) {
 
 //get all tickets
 exports.getAll = async function (req, res) {
-  const tickets = await Ticket.find({ status: { $ne: "deleted" } })
-    .populate("department", "departmentName")
+  const { searchQuery, inStatus,inDep } = req.query;
+  const query = {};
+  // console.log("tickets",inDep)
+  if (inStatus) {
+    query.status = inStatus;
+   
+  }
+  if (inDep) {
+    query.department = inDep;
+  }
+  if (searchQuery) {
+    query.$or = [
+      { subject: { $regex: searchQuery, $options: "i" } }
+    ];
+  }
+  const user = await User.findById(req.user);
+  if (user.usertype === "admin") {
+    const tickets = await Ticket.find(query)
+    .populate("department")
     .populate("projectId")
     .populate("assignedTo");
-  res.status(200).json({ status: true, data: tickets });
+
+    res.status(200).json({ status: true, data: tickets });
+    // console.log("ticketst",tickets)
+  } else {
+    const projectIds = user.projectId.map(id => id.toString());
+
+    const tickets = await Ticket.find({
+      projectId: { $in: projectIds },
+      status: { $ne: "deleted" }
+    })
+      .populate("department", "departmentName")
+      .populate("projectId")
+      .populate("assignedTo");
+
+    res.status(200).json({ status: true, data: tickets });
+  }
 };
+
+
+
 
 //get ticket by id
 exports.getTicket = async function (req, res) {

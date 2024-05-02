@@ -1,4 +1,5 @@
 const Project = require("../models/project");
+const User = require("../models/user");
 const createError = require("http-errors");
 //create project
 exports.createProject = async function (req, res) {
@@ -23,8 +24,11 @@ exports.getAll = async function (req, res) {
 };
 //get project by id
 exports.getProject = async function (req, res) {
-  const projectId = req.params.id;
-  const project = await Project.findById(projectId);
+  const user = await User.findById(req.user);
+  const projectIds = user.projectId.map(id => id.toString());
+  const project = await Project.find({
+    _id: { $in: projectIds }
+  })
 
   if (!project) {
     throw createError(404, "Project not found");

@@ -19,7 +19,7 @@ const ProjectManagerRoutes = () => {
         <Route path="AddPeople" element={<ProjectLeadAddPeople />} />
         <Route path="Profile" element={<ProjectLeadProfile/>} />
         <Route path="/Notification" element={<ProjectLeadNotification />} />
-        <Route path="/SingleTicket" element={<ProjectLeadSingleTicket />} />
+        <Route path="/SingleTicket/:id" element={<ProjectLeadSingleTicket />} />
         <Route path="NewTicket" element={<ProjectLeadNewTicket />} />
       </Routes>
     </ProjectLeadLayout>

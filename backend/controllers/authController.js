@@ -1,4 +1,5 @@
 const Admin = require("../models/admin");
+const User = require("../models/user");
 const generateToken = require("../utils/generateToken");
 
 exports.signUp = async function (req, res) {
@@ -17,13 +18,13 @@ exports.signUp = async function (req, res) {
 exports.logIn = async function (req, res) {
   const { email, password } = req.body;
 
-  const findUser = await Admin.findOne({ email });
+  const findUser = await User.findOne({ email });
 
   if (!findUser) return res.status(400).json({ message: "User not found" });
 
   if (findUser && (await findUser.matchPassword(password))) {
     const token = generateToken(findUser._id);
-    return res.status(200).json({ message: "Login successfull", token: token });
+    return res.status(200).json({ message: "Login successfull", token: token , userType: findUser.usertype});
   } else {
     return res.status(401).json({ message: "Invalid credentials" });
   }

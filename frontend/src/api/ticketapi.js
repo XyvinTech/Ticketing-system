@@ -1,8 +1,10 @@
 import axiosInstance from "./axiosintercepter";
 
-export const fetchTickets = async () => {
+export const fetchTickets = async (filter) => {
   try {
-    const response = await axiosInstance.get("/ticket/get");
+    const response = await axiosInstance.get("/ticket/get",{
+      params: filter
+    });
     return response.data; 
   } catch (error) {
     console.error('Error caught:', error);
@@ -30,7 +32,7 @@ export const fetchTickets = async () => {
 export const updateTicket = async (ticketId, updateData) => {
   try {
     const response = await axiosInstance.put(`/ticket/update/${ticketId}`, updateData);
-    console.log(response.data)
+    // console.log(response.data)
     return response.data;
    
   } catch (error) {

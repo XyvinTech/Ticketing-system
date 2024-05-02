@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { ReactComponent as MenuIcon } from "../assets/icons/MenuIcon.svg";
 import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
 import { ReactComponent as SearchIcon } from "../assets/icons/SearchIcon.svg";
 import { Link, useLocation } from "react-router-dom";
+import Logo from "../assets/Logo.png";
+import { useAdminStore } from "../store/AdminStore";
 
 const navigation = [{ name: "Tickets", to: "Client/Ticket", current: true }];
 
 const ClientNavbar = () => {
+  const { user, fetchLogin ,isChange} = useAdminStore();
+  useEffect(() => {
+    fetchLogin();
+  }, [isChange]);
   const location = useLocation();
   return (
     <Disclosure as="nav" className="bg-white">
@@ -17,11 +23,8 @@ const ClientNavbar = () => {
             <div className="relative flex h-16 items-center justify-between">
               <div className="flex">
                 <div className="flex flex-shrink-0 items-center">
-                  <img
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    alt="Your Company"
-                  />
+                <img src={Logo} alt="Logo" className="mx-auto mb-4 h-5 w-5 "/>
+               
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="hidden lg:ml-6 lg:flex lg:space-x-8">
@@ -41,7 +44,7 @@ const ClientNavbar = () => {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <div class="flex items-center lg:hidden">
+                <div className="flex items-center lg:hidden">
                   <button
                     type="button"
                     className="mr-4 block rounded-full p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
@@ -79,8 +82,7 @@ const ClientNavbar = () => {
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
+                        src={user?.profilePicture}  alt=""
                       />
                     </Menu.Button>
 
@@ -123,7 +125,7 @@ const ClientNavbar = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              to={"/"}
+                            to={"/logout"}
                               className={
                                 "block px-4 py-2 text-sm text-gray-700" +
                                 (active ? " bg-gray-100" : "")
@@ -165,16 +167,16 @@ const ClientNavbar = () => {
                 <div className="flex-shrink-0">
                   <img
                     className="h-10 w-10 rounded-full border object-cover"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    src={user?.profilePicture}
                     alt=""
                   />
                 </div>
                 <div className="ml-3">
                   <div className="text-base font-medium text-gray-800">
-                    Anjana V U
+                    {user?.userName}
                   </div>
                   <div className="text-sm font-medium text-gray-500 mr-10">
-                    anjanavu2000@gmail.com
+                   {user?.email}
                   </div>
                 </div>
 
@@ -203,7 +205,7 @@ const ClientNavbar = () => {
                   </Disclosure.Button>
                 </Link>
                 <Link
-                  to={"/"}
+                   to={"/logout"}
                   className="block  py-2 text-sm text-gray-700"
                 >
                 <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">

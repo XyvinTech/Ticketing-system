@@ -1,28 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StyledTable from "../../ui/StyledTable";
 
 import { ReactComponent as MenuIcon } from "../../assets/icons/MenuHorizontalIcon.svg";
 import { ReactComponent as CalendarIcon } from "../../assets/icons/CalendarIcon.svg";
 import { Menu } from "@headlessui/react";
 import Pagination from "../../ui/Pagination";
+import { useNotificationStore } from "../../store/NotificationStore";
 
 const AdminNotification = () => {
   const [showUnread, setShowUnread] = useState(false);
+  const { notification, fetchNotification } = useNotificationStore();
+
+  useEffect(() => {
+    fetchNotification();
+  }, []);
   const headers = ["Message"];
-  const notifications = [
-    {
-      id: 1,
-      message: "Notification 1",
-      created_at: "2024-03-12",
-      read_at: null, 
-    },
-    {
-      id: 2,
-      message: "Notification 2",
-      created_at: "2024-03-11",
-      read_at: "2024-03-11", 
-    },
-  ];
+  
 
   // Pagination state for all notifications
   const [allCurrentPage, setAllCurrentPage] = useState(1);
@@ -35,13 +28,16 @@ const AdminNotification = () => {
   // Pagination logic for all notifications
   const allIndexOfLastItem = allCurrentPage * allItemsPerPage;
   const allIndexOfFirstItem = allIndexOfLastItem - allItemsPerPage;
-  const allCurrentItems = notifications.slice(allIndexOfFirstItem, allIndexOfLastItem);
+  const allCurrentItems = notification?.slice(
+    allIndexOfFirstItem,
+    allIndexOfLastItem
+  );
 
   // Pagination logic for unread notifications
   const unreadIndexOfLastItem = unreadCurrentPage * unreadItemsPerPage;
   const unreadIndexOfFirstItem = unreadIndexOfLastItem - unreadItemsPerPage;
-  const unreadCurrentItems = notifications
-    .filter(notification => !notification.read_at)
+  const unreadCurrentItems = notification
+    .filter((notification) => !notification?.isRead)
     .slice(unreadIndexOfFirstItem, unreadIndexOfLastItem);
 
   // Change page for all notifications
@@ -59,7 +55,7 @@ const AdminNotification = () => {
 
   // Go to next page for all notifications
   const goToAllNextPage = () => {
-    if (allCurrentPage < Math.ceil(notifications.length / allItemsPerPage)) {
+    if (allCurrentPage < Math.ceil(notification?.length / allItemsPerPage)) {
       setAllCurrentPage(allCurrentPage + 1);
     }
   };
@@ -73,11 +69,27 @@ const AdminNotification = () => {
 
   // Go to next page for unread notifications
   const goToUnreadNextPage = () => {
-    if (unreadCurrentPage < Math.ceil(notifications.filter(notification => !notification.read_at).length / unreadItemsPerPage)) {
+    if (
+      unreadCurrentPage <
+      Math.ceil(
+        notification.filter((n) => !n?.isRead).length /
+          unreadItemsPerPage
+      )
+    ) {
       setUnreadCurrentPage(unreadCurrentPage + 1);
     }
   };
-
+  function formatDate(dateTimeString) {
+    if (!dateTimeString) return ""; // handle null or undefined value
+    
+    const date = new Date(dateTimeString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month starts from 0
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  }
+  
   return (
     <div className="px-4 py-6 sm:p-6 lg:pb-8">
       <h1 className="mb-6 text-xl font-semibold">Notifications</h1>
@@ -91,7 +103,10 @@ const AdminNotification = () => {
               All
             </button>
             <div className="pl-3">
-              <button className={` ${!showUnread ? "" : "font-semibold"}`} onClick={() => setShowUnread(true)}>
+              <button
+                className={` ${!showUnread ? "" : "font-semibold"}`}
+                onClick={() => setShowUnread(true)}
+              >
                 Unread Notifications
               </button>
             </div>
@@ -112,55 +127,56 @@ const AdminNotification = () => {
         </div>
       </div>
       <StyledTable header={headers}>
-        {showUnread ? (
-          unreadCurrentItems.map((notification) => (
-            <tr key={notification.id}>
-              <div className="group flex items-center justify-between gap-12 px-3 py-4 hover:bg-gray-50">
-                <div className="text-base">
-                  <div className="font-semibold text-purple-600">
-                    {notification.message}
+        {showUnread
+          ? unreadCurrentItems?.map((notification) => (
+              <tr key={notification?._id}>
+                <div className="group flex items-center justify-between gap-12 px-3 py-4 hover:bg-gray-50">
+                  <div className="text-base">
+                    <div className="font-semibold text-purple-600">
+                      {notification?.message}
+                    </div>
+                    <div className="flex items-center gap-1 text-xs">
+                      <CalendarIcon className="h-4 w-4 text-gray-400" />
+                      <span>{notification?.createdAt}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1 text-xs">
-                    <CalendarIcon className="h-4 w-4 text-gray-400" />
-                    <span>{notification.created_at}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {!notification.read_at && (
-                    <div className="h-3 w-3 rounded-full bg-purple-500"></div>
-                  )}
-                </div>
-              </div>
-            </tr>
-          ))
-        ) : (
-          allCurrentItems.map((notification) => (
-            <tr key={notification.id}>
-              <div className="group flex items-center justify-between gap-12 px-3 py-4 hover:bg-gray-50">
-                <div className="text-base">
-                  <div className="font-semibold text-purple-600">
-                    {notification.message}
-                  </div>
-                  <div className="flex items-center gap-1 text-xs">
-                    <CalendarIcon className="h-4 w-4 text-gray-400" />
-                    <span>{notification.created_at}</span>
+                  <div className="flex items-center gap-2">
+                    {!notification?.isRead && (
+                      <div className="h-3 w-3 rounded-full bg-purple-500"></div>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {!notification.read_at && (
-                    <div className="h-3 w-3 rounded-full bg-purple-500"></div>
-                  )}
+              </tr>
+            ))
+          : allCurrentItems.map((notification) => (
+              <tr key={notification?._id}>
+                <div className="group flex items-center justify-between gap-12 px-3 py-4 hover:bg-gray-50">
+                  <div className="text-base">
+                    <div className="font-semibold text-purple-600">
+                      {notification?.message}
+                    </div>
+                    <div className="flex items-center gap-1 text-xs">
+                      <CalendarIcon className="h-4 w-4 text-gray-400" />
+                      <span>{formatDate(notification?.createdAt)}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {!notification?.isRead && (
+                      <div className="h-3 w-3 rounded-full bg-purple-500"></div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </tr>
-          ))
-        )}
+              </tr>
+            ))}
         <tr>
           <td colSpan="2" className="px-4 py-2">
             {showUnread ? (
               <Pagination
                 currentPage={unreadCurrentPage}
-                totalItems={notifications.filter(notification => !notification.read_at).length}
+                totalItems={
+                  notification.filter((n) => !n?.isRead)
+                    .length
+                }
                 itemsPerPage={unreadItemsPerPage}
                 paginate={unreadPaginate}
                 goToPreviousPage={goToUnreadPreviousPage}
@@ -169,7 +185,7 @@ const AdminNotification = () => {
             ) : (
               <Pagination
                 currentPage={allCurrentPage}
-                totalItems={notifications.length}
+                totalItems={notification?.length}
                 itemsPerPage={allItemsPerPage}
                 paginate={allPaginate}
                 goToPreviousPage={goToAllPreviousPage}

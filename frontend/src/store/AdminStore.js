@@ -1,26 +1,28 @@
 import { create } from "zustand";
-import { getAdmin, getAdminById,updateAdmin } from "../api/adminapi";
+import {  getLogin, getLoginById, updateUser } from "../api/userapi";
+
 
 const useAdminStore = create((set) => ({
-  admin: null,
-  isChange:false,
-  updateChange:(isChange)=>{
-    set({isChange:!isChange})
-  },
-  getAdmin: async (adminData) => {
-    const data = await getAdmin(adminData);
-    set({ admin: data }); 
-    localStorage.setItem("token", data.token);
-  },
-  fetchAdmin:async()=>{
-    const fetch = await getAdminById();
-    set({ admin: fetch.data });
-  },
-  updateAdmin:async(data)=>{
-    const updatedAdmin=await updateAdmin(data);
-    set({ admin: updatedAdmin });
-  }
-  
+    user: [],
+    isChange:false,
+    updateChange:(isChange)=>{
+      set({isChange:!isChange})
+    },
+    getLogin: async (datas) => {
+      const data = await getLogin(datas);
+    
+      set({ user: data }); 
+      // localStorage.setItem("token", data.token);
+      // localStorage.setItem("user", data.userType);
+    },
+    fetchLogin:async()=>{
+      const fetch = await getLoginById();
+      set({ user: fetch?.data });
+    },
+    updateUser:async(data)=>{
+      const updatedUser=await updateUser(data);
+      set({ user: updatedUser });
+    }
 }));
 
 export { useAdminStore };
