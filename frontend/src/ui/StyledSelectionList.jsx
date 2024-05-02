@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { ReactComponent as UpDownIcon } from "../assets/icons/UpDownIcon.svg";
 
-const StyledSelectionList = ({ options, label, onChange = () => {},listname }) => {
-  const [selected, setSelected] = useState(null);
-
+const StyledSelectionList = ({ options, label, onChange = () => {},listname,selectedOption }) => {
+  const [selected, setSelected] = useState(selectedOption);
+  useEffect(() => {
+    setSelected(selectedOption);
+  }, [selectedOption]);
   const handleChange = (value) => {
     setSelected(value);
     onChange(value.value); 

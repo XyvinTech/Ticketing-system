@@ -15,7 +15,7 @@ exports.createDepartment = async function (req, res) {
     .json({ status: true, message: "Department added successfully" });
 };
 
-exports.editDepartment = async function (req, res) {
+exports.editDepartmentMember = async function (req, res) {
   const { departmentId } = req.params;
   const { members } = req.body;
   const { action } = req.query;
@@ -39,22 +39,7 @@ exports.editDepartment = async function (req, res) {
     .json({ status: true, message: "Department updated", department });
 };
 
-exports.removeMember = async (req, res) => {
-  const { departmentId } = req.params;
-  const memberId = Object.keys(req.body)[0];
-  
-  const department = await Department.findById(departmentId);
-  if (!department) {
-    return res.status(404).json({ message: "Department not found" });
-  }
-  department.members.pull(memberId);
-  const updatedDepartment = await department.save();
-  res.status(200).json({
-    status: true,
-    message: "Member removed from department successfully",
-    department: updatedDepartment,
-  });
-};
+
 
 exports.getDepartments = async function (req, res) {
   const query = {};
@@ -81,4 +66,14 @@ exports.deleteDepartment = async function (req, res) {
   res
     .status(200)
     .json({ status: true, message: "Department deleted successfully" });
+};
+exports.updateDepartment = async function (req, res) {
+  const depId = req.params.id;
+  const update = req.body;
+  const dep = await Department.findByIdAndUpdate(depId, update, { new: true });
+
+  if (!dep) {
+    throw createError(404, "Department not found");
+  }
+  res.status(200).json({ status: true, message: "ok" });
 };

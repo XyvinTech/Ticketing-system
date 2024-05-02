@@ -3,28 +3,27 @@ import StyledTable from "../../ui/StyledTable";
 import { Link } from "react-router-dom";
 import TableInfo from "../../ui/TableInfo";
 import TicketGrid from "../../ui/TicketGrid";
-import { ReactComponent as SearcIcon } from "../../assets/icons/SearchIcon.svg";
+import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
 import StyledButton from "../../ui/StyledButton";
 import StyledInput from "../../ui/StyledInput";
 import Pagination from "../../ui/Pagination";
 import ClientBoard from "./ClientBoard";
 import { useTicketStore } from "../../store/TicketStore";
+import DropDown from "../../ui/DropDown";
 const ClientTicket = () => {
-  
-  const [showClientBoard, setShowClientBoard] = useState(false);
-  const handleBoardButtonClick = () => {
-    setShowClientBoard(true); 
-  };
-  
-
   const { tickets, fetchTickets } = useTicketStore();
-
+  const [search, setSearch] = useState();
+  const [status, setStatus] = useState();
   useEffect(() => {
-    fetchTickets();
-  }, []); 
-  
-  
-  
+    let filter = {};
+    if (status && status !== "all") {
+      filter.inStatus = status;
+    }
+    if (search) {
+      filter.searchQuery = search;
+    }
+    fetchTickets(filter);
+  }, [search, status]);
 
   const headers = ["Ticket", "Status"];
 
@@ -35,8 +34,9 @@ const ClientTicket = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const item = Array.isArray(tickets) ? tickets.slice(indexOfFirstItem, indexOfLastItem) : [];
-
+  const item = Array.isArray(tickets)
+    ? tickets.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -54,13 +54,28 @@ const ClientTicket = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-  
+
+  const pendingCount = tickets.filter(
+    (ticket) => ticket.status === "pending"
+  ).length;
+  const progressCount = tickets.filter(
+    (ticket) => ticket.status === "progress"
+  ).length;
+  const completedCount = tickets.filter(
+    (ticket) => ticket.status === "completed"
+  ).length;
   const items = [
-    { name: "Total", count: tickets.length },
-    { name: "Assigned", count: 7 },
-    { name: "Unassigned", count: 0 },
-    { name: "Resolved", count: 0 },
+    { name: "Total", count: tickets?.length },
+    { name: "Pending", count: pendingCount },
+    { name: "Progress", count: progressCount },
+    { name: "Completed", count: completedCount },
     { name: "Closed", count: 0 },
+  ];
+  const Status = [
+    { value: "all", name: "all" },
+    { value: "pending", name: "pending" },
+    { value: "progress", name: "progress" },
+    { value: "completed", name: "completed" },
   ];
   return (
     <div>
@@ -70,40 +85,35 @@ const ClientTicket = () => {
           <TicketGrid item={items} />
         </div>
         <div className="flex gap-0 justify-between max-md:flex-wrap">
-          <div className="flex flex-auto gap-3 pr-20 max-md:flex-wrap">
-            <div className="flex flex-col grow shrink-0 justify-center text-sm text-gray-500 whitespace-nowrap rounded-md shadow-sm basis-0 bg-white bg-opacity-0 w-fit">
-              <StyledInput placeholder="Search" Icon={SearcIcon} />
-            </div>
-            <div className="flex overflow-hidden relative flex-col justify-center w-24 aspect-[2.53]">
-              <button className="relative shrink-0 bg-gray-50 rounded-md border border-gray-300 border-solid h-[42px]">
-                Filter
-              </button>
-            </div>
-            <div className="flex overflow-hidden relative flex-col justify-center w-24 aspect-[2.53]">
-              {" "}
-              <button
-                className="relative shrink-0 bg-gray-50 rounded-md border border-gray-300 border-solid h-[42px]"
-                onClick={handleBoardButtonClick} 
-              >
-                Board
-              </button>
-            </div>
+          <div className="mt-4 flex flex-col md:flex-row items-center gap-3 md:items-center md:flex">
+            <StyledInput
+              placeholder="Search"
+              Icon={SearchIcon}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+
+            <DropDown
+              label="Status"
+              options={Status}
+              onChange={(value) => setStatus(value)}
+            />
           </div>
           <div className="flex gap-0 justify-center pb-4 text-sm font-medium leading-5 text-white whitespace-nowrap rounded-md shadow-sm">
-            <Link to={'/Client/Ticket/ClientNewTicket'}>
+            <Link to={"/Client/Ticket/ClientNewTicket"}>
               <StyledButton text="New Ticket" />
             </Link>
           </div>
         </div>
-        {showClientBoard && <ClientBoard />}{" "}
-        {!showClientBoard && (
+
         <StyledTable header={headers}>
-          
           {item?.map((tickets) => (
             <tr key={tickets?._id}>
               <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
-              {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
-                <Link to={`/Client/Ticket/SingleTicket/${tickets?._id}`}  className="text-lg font-semibold text-purple-600 hover:text-purple-800">
+                {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
+                <Link
+                  to={`/Client/Ticket/SingleTicket/${tickets?._id}`}
+                  className="text-lg font-semibold text-purple-600 hover:text-purple-800"
+                >
                   {tickets?.subject}
                 </Link>
                 <TableInfo
@@ -147,7 +157,7 @@ const ClientTicket = () => {
               />
             </td>
           </tr>
-        </StyledTable>)}
+        </StyledTable>
       </section>
     </div>
   );

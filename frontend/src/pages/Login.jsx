@@ -29,10 +29,10 @@ const Login = () => {
       if (user?.userType) {
         switch (user?.userType) {
           case "projectManager":
-            navigate("/projectManager/Ticket");
+            navigate("/ProjectManager/Ticket");
             break;
           case "projectLead":
-            navigate("/projectLead/Ticket");
+            navigate("/ProjectLead/Ticket");
             break;
           case "client":
             navigate("/Client/Ticket");

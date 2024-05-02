@@ -42,7 +42,7 @@ const AdminConversation = ({ ticketId, isChange, setIsChange }) => {
               <h1 className="mb-3 mt-3 text-xl font-semibold">New Reply</h1>
               <UpIcon
                 className={`h-5 w-5 text-gray-500 ${
-                  open ? "rotate-180 transform" : ""
+                  open ? "" : "rotate-180 transform"
                 }`}
               />
             </Disclosure.Button>

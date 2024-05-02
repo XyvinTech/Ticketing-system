@@ -4,7 +4,7 @@ const adminController = require("../controllers/adminController");
 const asyncHandler = require("../utils/asyncHandler");
 router.post("/add", asyncHandler(adminController.addAdmin));
 router.get("/get", asyncHandler(adminController.getAdmin));
-router.put("/update", asyncHandler(adminController.updateAdmin));
+router.put("/update/:id", asyncHandler(adminController.updateAdminUser));
 router.delete("/delete/:id", asyncHandler(adminController.deleteAdmin));
 router.post("/add-user", asyncHandler(adminController.addUser));
 router.delete("/delete-user/:id", asyncHandler(adminController.deleteUser));

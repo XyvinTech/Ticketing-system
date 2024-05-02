@@ -44,13 +44,7 @@ const  ProjectLeadNavbar = () => {
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <div className="flex items-center lg:hidden">
-                  <button
-                    type="button"
-                    className="mr-4 block rounded-full p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                  >
-                    <span className="sr-only">search</span>
-                    <SearchIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
+        
                   <Disclosure.Button className=" inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-1 focus:ring-1  focus:ring-purple-500">
                     <span className="absolute -inset-0.5" />
                     <span className="sr-only">Open main menu</span>
@@ -64,10 +58,7 @@ const  ProjectLeadNavbar = () => {
                 </div>
 
                 <div className="hidden lg:ml-4 lg:flex lg:items-center">
-                  <Link className="mr-4 block rounded-full p-1 text-gray-400 hover:text-purple-500">
-                    <span className="sr-only">search</span>
-                    <SearchIcon className="h-6 w-6" />
-                  </Link>
+                
                   <Link
                     to={"/ProjectLead/Notification"}
                     className="mr-4 block rounded-full p-1 text-gray-400 hover:text-purple-500 "

@@ -7,13 +7,14 @@ import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg"
 import { ReactComponent as PhoneIcon } from "../../assets/icons/PhoneIcon.svg";
 import { ReactComponent as LockClosedIcon } from "../../assets/icons/LockClosedIcon.svg";
 import { ReactComponent as EnvelopeIcon } from "../../assets/icons/EnvelopeIcon.svg";
-import { ReactComponent as DeleteIcon } from "../../assets/icons/DeleteIcon.svg";
+import { ReactComponent as MenuIcon } from "../../assets/icons/MenuVerticalIcon.svg";
 import StyledInput from "../../ui/StyledInput";
 import StyledButton from "../../ui/StyledButton";
 import { Controller, useForm } from "react-hook-form";
 import StyledMultipleSelection from "../../ui/StyledMultipleSelection";
 import { useProjectStore } from "../../store/projectStore";
 import { useUserStore } from "../../store/UserStore";
+import { Menu } from "@headlessui/react";
 
 const AddPeople = () => {
   const {
@@ -21,18 +22,19 @@ const AddPeople = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm();
   const { projects, fetchProject } = useProjectStore();
-  const { users, fetchUser, addUser, deleteUser } = useUserStore();
+  const { users, fetchUser, addUser, deleteUser, updateUser } = useUserStore();
   const [isChange, setIsChange] = useState(false);
 
   const [search, setSearch] = useState();
   const [role, setRole] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [editedUser, setEditedUser] = useState(null);
   useEffect(() => {
     let filter = {};
-    
+
     if (search) {
       filter.searchQuery = search;
     }
@@ -46,6 +48,16 @@ const AddPeople = () => {
   useEffect(() => {
     fetchProject();
   }, []);
+  useEffect(() => {
+    if (editedUser) {
+      setValue("userName", editedUser.userName);
+      setValue("email", editedUser.email);
+      setValue("phoneNumber", editedUser.phoneNumber);
+      // setValue("password", editedUser.password);
+      setValue("usertype", editedUser.usertype);
+      setValue("projectId", editedUser.projectId);
+    }
+  }, [editedUser, setValue]);
   const selectOptions = projects.map((project) => ({
     value: project._id,
     label: project.projectName,
@@ -61,7 +73,13 @@ const AddPeople = () => {
   ];
   const onSubmit = async (data) => {
     try {
-      await addUser(data);
+      if (editedUser) {
+        console.log("updated data", data);
+        await updateUser(editedUser._id, data);
+        toast.success("Project updated successfully!");
+      } else {
+        await addUser(data);
+      }
       setIsChange(!isChange);
       setIsModalOpen(false);
       reset();
@@ -210,7 +228,18 @@ const AddPeople = () => {
               defaultValue=""
               render={({ field }) => (
                 <>
-                  <StyledMultipleSelection options={selectOptions} {...field} />
+                  <StyledMultipleSelection
+                    options={selectOptions}
+                    initialValues={
+                      editedUser
+                        ? editedUser.projectId.map((project) => ({
+                            value: project._id,
+                            label: project.projectName,
+                          }))
+                        : []
+                    }
+                    {...field}
+                  />
                   {errors.projectId && (
                     <span className="text-red-500">
                       {errors.projectId.message}
@@ -265,7 +294,8 @@ const AddPeople = () => {
                   <td className="px-3 py-3 pt-5">Name</td>
                   <td className="px-3 py-3 pt-5 ">Email</td>
                   <td className="px-3 py-3  pt-5 ">User Type</td>
-                  <td className="px-3 py-3  pt-5 ">Delete</td>
+                  <td className="px-3 py-3  pt-5 ">Projects</td>
+                  <td className="px-3 py-3  pt-5 ">Action</td>
                 </tr>
               </thead>
               <tbody>
@@ -303,10 +333,57 @@ const AddPeople = () => {
                           : "Unknown"}
                       </td>
                       <td className="px-3 py-3 text-sm text-gray-900 text-left">
-                        <DeleteIcon
-                          className="h-5 w-5"
-                          onClick={() => handleDeleteUser(person?._id)}
-                        />
+                        {person?.projectId?.map((project, index) => (
+                          <span key={project._id}>
+                            {project.projectName}
+                            {index !== person.projectId.length - 1 && ","}
+                          </span>
+                        ))}
+                      </td>
+                      <td className="px-3 py-3 text-left text-sm text-gray-900 ">
+                        <Menu>
+                          <Menu.Button className="focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <MenuIcon className="w-6 h-6 text-gray-600 hover:text-gray-900" />
+                          </Menu.Button>
+
+                          <Menu.Items className="absolute right-0 sm:right-auto w-40 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div className="py-1">
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    className={`${
+                                      active
+                                        ? "bg-purple-600 text-white"
+                                        : "text-gray-700"
+                                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                    onClick={() => {
+                                      setEditedUser(person);
+                                      setIsModalOpen(true);
+                                    }}
+                                  >
+                                    Edit
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    className={`${
+                                      active
+                                        ? "bg-purple-600 text-white"
+                                        : "text-gray-700"
+                                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                    onClick={() =>
+                                      handleDeleteUser(person?._id)
+                                    }
+                                  >
+                                    Delete
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            </div>
+                          </Menu.Items>
+                        </Menu>
                       </td>
                     </tr>
                   ))

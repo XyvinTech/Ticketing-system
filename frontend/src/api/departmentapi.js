@@ -34,9 +34,9 @@ export const addDepartment = async (depData) => {
       console.error("Error caught:", error);
     }
   };
-  export const removeMember = async (departmentId,memberId) => {
+  export const editDepartment = async (departmentId,updateData) => {
     try {
-      const response = await axiosInstance.put(`/department/removeMember/${departmentId}`,memberId);
+      const response = await axiosInstance.put(`/department/update/${departmentId}`,updateData);
       return response.data;
     } catch (error) {
       console.error("Error caught:", error);

@@ -28,24 +28,23 @@ const AdminTicket = () => {
   const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [ticketId, setTicketId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [isChange, setIsChange] = useState(false);
   const [search, setSearch] = useState();
   const [status, setStatus] = useState();
   const [dep, setDep] = useState();
   useEffect(() => {
     let filter = {};
-    if (status && status !=="all") {
+    if (status && status !== "all") {
       filter.inStatus = status;
     }
-    if (dep) {
+    if (dep && dep !== "all") {
       filter.inDep = dep;
     }
     if (search) {
       filter.searchQuery = search;
     }
     fetchTickets(filter);
-  }, [isChange,search,status,dep]);
+  }, [isChange, search, status, dep]);
   useEffect(() => {
     let filter = {};
     filter.withOutClient = true;
@@ -54,18 +53,30 @@ const AdminTicket = () => {
   useEffect(() => {
     fetchDepartment();
   }, []);
+  const pendingCount = tickets.filter(
+    (ticket) => ticket.status === "pending"
+  ).length;
+  const progressCount = tickets.filter(
+    (ticket) => ticket.status === "progress"
+  ).length;
+  const completedCount = tickets.filter(
+    (ticket) => ticket.status === "completed"
+  ).length;
   const items = [
     { name: "Total", count: tickets?.length },
-    { name: "Assigned", count: 7 },
-    { name: "Unassigned", count: 0 },
-    { name: "Resolved", count: 0 },
+    { name: "Pending", count: pendingCount },
+    { name: "Progress", count: progressCount },
+    { name: "Completed", count: completedCount },
     { name: "Closed", count: 0 },
   ];
-  const selectOptions = users && Array.isArray(users) ? users.map((user) => ({
-    value: user?._id,
-    label: user?.email,
-  })) : [];
-  
+  const selectOptions =
+    users && Array.isArray(users)
+      ? users.map((user) => ({
+          value: user?._id,
+          label: user?.email,
+        }))
+      : [];
+
   const headers = ["Ticket", "Assigned To", "Status", "Assign"];
 
   // Pagination state
@@ -99,18 +110,14 @@ const AdminTicket = () => {
     setShowAdminBoard(true);
   };
 
-  const Manager = [
-    { value: "all", name: "All" },
-    { value: "admin", name: "my tickt"},
-    { value: "projectManager", name: "Project Manager" },
-    { value: "projectLead", name: "Project Lead" },
-    { value: "member", name: "Member" },
-    { value: "client", name: "Client" },
+  const options = [
+    { value: "all", name: "All" }, // Adding the "All" option
+    ...departments.map((project) => ({
+      value: project._id,
+      name: project.departmentName,
+    })),
   ];
-  const options =departments.map((project) => ({
-    value: project._id,
-    name: project.departmentName,
-  }));
+
   const Status = [
     { value: "all", name: "all" },
     { value: "pending", name: "pending" },
@@ -136,10 +143,22 @@ const AdminTicket = () => {
         </div>
         <div className="flex flex-col md:flex-row justify-between gap-3 pb-4 max-md:flex-wrap">
           <div className="mt-4 flex flex-col md:flex-row items-center gap-3 md:items-center md:flex">
-            <StyledInput placeholder="Search" Icon={SearchIcon}onChange={(e) => setSearch(e.target.value)} />
-            <DropDown label="Department" options={options} onChange={(value) => setDep(value)}/>
-            <DropDown label="Status" options={Status }onChange={(value) => setStatus(value)} />
-            <DropDown label="Manager" options={Manager} />
+            <StyledInput
+              placeholder="Search"
+              Icon={SearchIcon}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <DropDown
+              label="Department"
+              options={options}
+              onChange={(value) => setDep(value)}
+            />
+            <DropDown
+              label="Status"
+              options={Status}
+              onChange={(value) => setStatus(value)}
+            />
+
             <button
               className="mt-1 cursor-default rounded-md border bg-white py-2 pl-3 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500"
               onClick={handleBoardButtonClick}
@@ -208,60 +227,8 @@ const AdminTicket = () => {
                     projectName={tickets?.projectId?.projectName}
                   />
                 </td>
-                <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                  <button
-                    onClick={() =>
-                      setIsNotifyOpen(
-                        tickets?.assignedto === "Notify ProjectManager"
-                      )
-                    }
-                  >
-                    <span
-                      className={`rounded-full px-3 py-px text-sm
-      ${
-        tickets?.assignedTo === "Assign a member Now"
-          ? "bg-indigo-100 text-indigo-800"
-          : tickets?.assignedto === "Notify ProjectManager"
-          ? "bg-red-100 text-red-800"
-          : ""
-      }`}
-                    >
-                      {tickets?.assignedTo?.email}
-                    </span>
-                  </button>
-                  {isNotifyOpen &&
-                    tickets?.assignedto === "Notify ProjectManager" && (
-                      <Modal closeModal={() => setIsNotifyOpen(false)}>
-                        <h1 className="flex-auto font-semibold text-black">
-                          Notify Project Manager
-                        </h1>
-
-                        <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                          To
-                        </h1>
-                        <StyledInput placeholder="eg:Maria, maria@gmail.com" />
-                        <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
-                          Sub
-                        </h1>
-                        <StyledInput placeholder="Notify admin about new ticket" />
-
-                        <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-                          Notes
-                        </h1>
-
-                        <StyledInput placeholder="Enter Your Notes" />
-
-                        <div className="flex  justify-end gap-4">
-                          <button
-                            className="font-semibold  mt-3 text-black"
-                            onClick={() => setIsNotifyOpen(false)}
-                          >
-                            Cancel
-                          </button>
-                          <StyledButton text="Notify" />
-                        </div>
-                      </Modal>
-                    )}
+                <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-4">
+                  {tickets?.assignedTo?.email}
                 </td>
 
                 <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
@@ -284,7 +251,7 @@ const AdminTicket = () => {
                 </td>
                 <td>
                   <StyledButton
-                    text="Assign Ticket"
+                    text={tickets?.assignedTo?.email ? "Reassign" : "Assign"}
                     onClick={() => {
                       setIsModalOpen(true);
                       setTicketId(tickets?._id);

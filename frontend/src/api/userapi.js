@@ -64,3 +64,11 @@ export const updatePassword = async (data) => {
     throw error; // Rethrow the error to handle it elsewhere if needed
   }
 };
+export const updateAdminUser = async (userId,data) => {
+  try {
+    const response = await axiosInstance.put(`/admin/update/${userId}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error caught:", error);
+  }
+};

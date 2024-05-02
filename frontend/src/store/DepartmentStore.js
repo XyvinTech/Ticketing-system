@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { addDepartment, deleteDepartment, fetchDepartment, updateDepartment } from "../api/departmentapi";
+import { addDepartment, deleteDepartment, editDepartment, fetchDepartment } from "../api/departmentapi";
 import { toast } from "react-toastify";
 
 const useDepartmentStore = create((set) => ({
@@ -13,13 +13,9 @@ const useDepartmentStore = create((set) => ({
       set((state) => ({ departments: [...state.departments, newData] }));
       toast.success(newData.message);
     },
-    updateDepartment: async (departmentId, updateData,filter) => {
-      const updatedep = updateDepartment(departmentId, updateData,filter);
-      set((state) => ({
-        departments: state.departments.map((dep) =>
-          dep._id === departmentId ? { ...dep, ...updatedep } : dep
-        ),
-      })); 
+    editDepartment: async (departmentId, updateData) => {
+      const updatedep = editDepartment(departmentId, updateData);
+      set({departments:updatedep}); 
     },
     deleteDepartment:async(departmentId)=>{
       await deleteDepartment(departmentId);

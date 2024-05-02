@@ -100,7 +100,7 @@ exports.getUsers = async function (req, res) {
     ];
   }
 
-  const data = await User.find(query).select("-password");
+  const data = await User.find(query).populate("projectId");
 
   res.status(200).json({ status: true, message: "Users list", data });
 };
@@ -119,4 +119,16 @@ exports.updatePassword = async function (req, res) {
   } else {
     return res.status(401).json({ message: "Current password is invalid" });
   }
+};
+exports.updateAdminUser = async function (req, res) {
+  const userId = req.params.id;
+  const update = req.body;
+
+  const updatedUser = await User.findByIdAndUpdate(userId, update, { new: true });
+
+  if (!updatedUser) {
+    throw createError(404, "User not found");
+  }
+
+  res.status(200).json({ status: true, message: "ok" });
 };

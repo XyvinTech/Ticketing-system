@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { addUser, fetchUsers,deleteUser, getLogin, getLoginById, updateUser } from "../api/userapi";
+import { addUser, fetchUsers,deleteUser, updateAdminUser } from "../api/userapi";
 import { toast } from "react-toastify";
 
 const useUserStore = create((set) => ({
@@ -16,6 +16,10 @@ const useUserStore = create((set) => ({
     deleteUser:async(userId)=>{
         await deleteUser(userId);
     },
+    updateUser:async(userId,data)=>{
+      const newData=await updateAdminUser (userId,data);
+      set({ users: newData });
+    }
 }));
 
 export { useUserStore };

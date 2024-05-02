@@ -1,7 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 
-const StyledMultipleSelection = ({options,onChange = () => {}}) => {
+const StyledMultipleSelection = ({options,onChange = () => {}, initialValues }) => {
   const handleChange = (selectedOptions) => {
     const selectedValues = selectedOptions.map(option => option.value);
     // Call the onChange prop with the selected values
@@ -23,6 +23,7 @@ const StyledMultipleSelection = ({options,onChange = () => {}}) => {
             },
           })}
           onChange={handleChange}
+          defaultValue={initialValues}
         classNamePrefix="select"
       />
     </div>

@@ -27,27 +27,47 @@ const ManagerTicket = () => {
   const [ticketId, setTicketId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChange, setIsChange] = useState(false);
-
+  const [search, setSearch] = useState();
+  const [status, setStatus] = useState();
   useEffect(() => {
-    fetchTickets();
-  }, [isChange]);
+    let filter = {};
+    if (status && status !== "all") {
+      filter.inStatus = status;
+    }
+    if (search) {
+      filter.searchQuery = search;
+    }
+    fetchTickets(filter);
+  }, [isChange, search, status]);
   useEffect(() => {
     let filter = {};
     filter.inManager = true;
     fetchUser(filter);
   }, []);
+  const pendingCount = tickets.filter(
+    (ticket) => ticket.status === "pending"
+  ).length;
+  const progressCount = tickets.filter(
+    (ticket) => ticket.status === "progress"
+  ).length;
+  const completedCount = tickets.filter(
+    (ticket) => ticket.status === "completed"
+  ).length;
   const items = [
     { name: "Total", count: tickets?.length },
-    { name: "Assigned", count: 7 },
-    { name: "Unassigned", count: 0 },
-    { name: "Resolved", count: 0 },
+    { name: "Pending", count: pendingCount },
+    { name: "Progress", count: progressCount },
+    { name: "Completed", count: completedCount },
     { name: "Closed", count: 0 },
   ];
-  const selectOptions = users && Array.isArray(users) ? users.map((user) => ({
-    value: user?._id,
-    label: user?.email,
-  })) : [];
-  
+  const selectOptions =
+    users && Array.isArray(users)
+      ? users.map((user) => ({
+          value: user?._id,
+          label: user?.email,
+        }))
+      : [];
+
   const headers = ["Ticket", "Assigned To", "Status", "Assign"];
 
   // Pagination state
@@ -93,10 +113,10 @@ const ManagerTicket = () => {
     { name: "Developer" },
   ];
   const Status = [
-    { name: "assigned" },
-    { name: "In progress" },
-    { name: "completed" },
-    { name: "Archived" },
+    { value: "all", name: "all" },
+    { value: "pending", name: "pending" },
+    { value: "progress", name: "progress" },
+    { value: "completed", name: "completed" },
   ];
 
   const onSubmit = async (data, ticketId) => {
@@ -117,10 +137,18 @@ const ManagerTicket = () => {
         </div>
         <div className="flex flex-col md:flex-row justify-between gap-3 pb-4 max-md:flex-wrap">
           <div className="mt-4 flex flex-col md:flex-row items-center gap-3 md:items-center md:flex">
-            <StyledInput placeholder="Search" Icon={SearchIcon} />
+            <StyledInput
+              placeholder="Search"
+              Icon={SearchIcon}
+              onChange={(e) => setSearch(e.target.value)}
+            />
             <DropDown label="Manager" options={Manager} />
-            <DropDown label="Status" options={Status} />
-           
+            <DropDown
+              label="Status"
+              options={Status}
+              onChange={(value) => setStatus(value)}
+            />
+
             <button
               className="mt-1 cursor-default rounded-md border bg-white py-2 pl-3 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500"
               onClick={handleBoardButtonClick}
@@ -190,19 +218,8 @@ const ManagerTicket = () => {
                   />
                 </td>
                 <td className="whitespace-nowrap text-sm text-left text-gray-500">
-               
-                    <span
-                      className={`rounded-full px-3 py-px text-sm
-      ${
-        tickets?.assignedTo === "Assign a member Now"
-          ? "bg-indigo-100 text-indigo-800"
-          : tickets?.assignedto === "Notify ProjectManager"
-          ? "bg-red-100 text-red-800"
-          : ""
-      }`}
-                    >
-                      {tickets?.assignedTo?.email}
-                    </span>
+                
+                    {tickets?.assignedTo?.email}
                   
                 </td>
 
@@ -226,7 +243,7 @@ const ManagerTicket = () => {
                 </td>
                 <td>
                   <StyledButton
-                    text="Assign Ticket"
+                   text={tickets?.assignedTo?.email ? "Reassign" : "Assign"}
                     onClick={() => {
                       setIsModalOpen(true);
                       setTicketId(tickets?._id);
