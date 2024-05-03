@@ -22,13 +22,14 @@ const ManagerTicket = () => {
     formState: { errors },
   } = useForm();
   const { tickets, fetchTickets, updateTicket } = useTicketStore();
-  const { users, fetchUser } = useUserStore();
+  const { users, getUserByProject } = useUserStore();
   const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [ticketId, setTicketId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChange, setIsChange] = useState(false);
   const [search, setSearch] = useState();
   const [status, setStatus] = useState();
+  const [project, setProject] = useState();
   useEffect(() => {
     let filter = {};
     if (status && status !== "all") {
@@ -43,8 +44,8 @@ const ManagerTicket = () => {
   useEffect(() => {
     let filter = {};
     filter.inLead = true;
-    fetchUser(filter);
-  }, []);
+    getUserByProject(project,filter);
+  }, [project]);
   const pendingCount = tickets.filter(
     (ticket) => ticket.status === "pending"
   ).length;
@@ -253,6 +254,7 @@ const ManagerTicket = () => {
                     onClick={() => {
                       setIsModalOpen(true);
                       setTicketId(tickets?._id);
+                      setProject(tickets?.projectId._id);
                     }}
                   />
                 </td>

@@ -23,7 +23,7 @@ const AdminTicket = () => {
     formState: { errors },
   } = useForm();
   const { tickets, fetchTickets, updateTicket } = useTicketStore();
-  const { users, fetchUser } = useUserStore();
+  const { users, getUserByProject } = useUserStore();
   const { departments, fetchDepartment } = useDepartmentStore();
   const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [ticketId, setTicketId] = useState();
@@ -32,6 +32,7 @@ const AdminTicket = () => {
   const [search, setSearch] = useState();
   const [status, setStatus] = useState();
   const [dep, setDep] = useState();
+  const [project, setProject] = useState();
   useEffect(() => {
     let filter = {};
     if (status && status !== "all") {
@@ -48,8 +49,8 @@ const AdminTicket = () => {
   useEffect(() => {
     let filter = {};
     filter.withOutClient = true;
-    fetchUser(filter);
-  }, []);
+    getUserByProject(project, filter);
+  }, [project]);
   useEffect(() => {
     fetchDepartment();
   }, []);
@@ -255,6 +256,7 @@ const AdminTicket = () => {
                     onClick={() => {
                       setIsModalOpen(true);
                       setTicketId(tickets?._id);
+                      setProject(tickets?.projectId._id);
                     }}
                   />
                 </td>

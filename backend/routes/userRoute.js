@@ -10,4 +10,5 @@ const asyncHandler = require("../utils/asyncHandler");
 router.get("/get", asyncHandler(userController.getUser));
 router.put("/update", asyncHandler(userController.updateUser));
 router.put("/passwordupdate/", asyncHandler(userController.passwordupdate));
+router.get("/getUser/:id", asyncHandler(userController.getUserByProjectId));
 module.exports = router;

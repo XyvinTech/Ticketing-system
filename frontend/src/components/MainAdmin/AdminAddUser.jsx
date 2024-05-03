@@ -53,7 +53,6 @@ const AdminAddUser = () => {
       setValue("userName", editedUser.userName);
       setValue("email", editedUser.email);
       setValue("phoneNumber", editedUser.phoneNumber);
-      setValue("password", editedUser.password);
       setValue("usertype", editedUser.usertype);
       setValue(
         "projectId",
@@ -190,6 +189,8 @@ const AdminAddUser = () => {
             {errors.email && (
               <span className="text-red-500">{errors.email.message}</span>
             )}
+            {!editedUser && (
+              <>
             <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
               Password
             </h1>
@@ -209,8 +210,8 @@ const AdminAddUser = () => {
             />
             {errors.password && (
               <span className="text-red-500">{errors.password.message}</span>
-            )}
-
+            )}</>
+          )}
             <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
               User Type
             </h1>

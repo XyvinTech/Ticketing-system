@@ -56,8 +56,10 @@ const AddPeople = () => {
       // setValue("password", editedUser.password);
       setValue("usertype", editedUser.usertype);
       setValue("projectId", editedUser.projectId);
+    } else {
+      reset();
     }
-  }, [editedUser, setValue]);
+  }, [editedUser, setValue, reset]);
   const selectOptions = projects.map((project) => ({
     value: project._id,
     label: project.projectName,
@@ -109,7 +111,12 @@ const AddPeople = () => {
       </div>
 
       {isModalOpen && (
-        <Modal closeModal={() => setIsModalOpen(false)}>
+        <Modal
+          closeModal={() => {
+            setEditedUser(null);
+            setIsModalOpen(false);
+          }}
+        >
           <form onSubmit={handleSubmit(onSubmit)}>
             <h1 className="flex-auto font-semibold">Add User</h1>
 
@@ -174,27 +181,32 @@ const AddPeople = () => {
             {errors.email && (
               <span className="text-red-500">{errors.email.message}</span>
             )}
-            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-              Password
-            </h1>
-            <Controller
-              name="password"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <StyledInput
-                  type="password"
-                  placeholder="********"
-                  Icon={LockClosedIcon}
-                  {...field}
+            {!editedUser && (
+              <>
+                <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
+                  Password
+                </h1>
+                <Controller
+                  name="password"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <StyledInput
+                      type="password"
+                      placeholder="********"
+                      Icon={LockClosedIcon}
+                      {...field}
+                    />
+                  )}
+                  rules={{ required: "Password is required" }}
                 />
-              )}
-              rules={{ required: "Password is required" }}
-            />
-            {errors.password && (
-              <span className="text-red-500">{errors.password.message}</span>
+                {errors.password && (
+                  <span className="text-red-500">
+                    {errors.password.message}
+                  </span>
+                )}
+              </>
             )}
-
             <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
               User Type
             </h1>
@@ -252,7 +264,10 @@ const AddPeople = () => {
             <div className="flex  justify-end gap-4">
               <button
                 className="font-semibold  mt-3"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setEditedUser(null);
+                  setIsModalOpen(false);
+                }}
               >
                 Cancel
               </button>

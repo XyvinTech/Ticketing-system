@@ -72,3 +72,14 @@ export const updateAdminUser = async (userId,data) => {
     console.error("Error caught:", error);
   }
 };
+export const getUserByProjectId = async (project, filter) => {
+  try {
+    const response = await axiosInstance.get(`/user/getUser/${project}`, {
+      params: filter // Pass the filter as query parameters
+    });
+    console.log("response", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error caught:", error);
+  }
+};

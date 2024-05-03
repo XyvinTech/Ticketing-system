@@ -1,11 +1,15 @@
 import { create } from "zustand";
-import { addUser, fetchUsers,deleteUser, updateAdminUser } from "../api/userapi";
+import { addUser, fetchUsers,deleteUser, updateAdminUser, getUserByProjectId } from "../api/userapi";
 import { toast } from "react-toastify";
 
 const useUserStore = create((set) => ({
     users: [],
     fetchUser:async(filter)=>{
       const data=await fetchUsers(filter);
+      set({ users: data?.data });
+    },
+    getUserByProject:async(project,filter)=>{
+      const data=await getUserByProjectId(project,filter);
       set({ users: data?.data });
     },
     addUser: async (userData) => {
