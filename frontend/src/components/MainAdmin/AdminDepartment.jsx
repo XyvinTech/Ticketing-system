@@ -13,7 +13,6 @@ import StyledText from "../../ui/StyledText";
 import { useDepartmentStore } from "../../store/DepartmentStore";
 import { useUserStore } from "../../store/UserStore";
 import StyledMultipleSelection from "../../ui/StyledMultipleSelection";
-// import { updateDepartment } from "../../api/departmentapi";
 import { Menu } from "@headlessui/react";
 import { updateDepartment } from "../../api/departmentapi";
 
@@ -52,7 +51,7 @@ const AdminDepartment = () => {
       // If editedProject is not null, set form field values
       setValue("departmentName", editedDepartment.departmentName);
       setValue("description", editedDepartment.description);
-      setValue("members", editedDepartment.members);
+      // setValue("members", editedDepartment.members);
     }
     else {
       reset();
@@ -365,14 +364,14 @@ const AdminDepartment = () => {
                       <>
                        <StyledMultipleSelection
                     options={selectOptions}
-                    initialValues={
-                      editedDepartment
-                        ? editedDepartment.members.map((member) => ({
-                            value: member._id,
-                            label: member.email,
-                          }))
-                        : []
-                    }
+                    // initialValues={
+                    //   editedDepartment
+                    //     ? editedDepartment.members.map((member) => ({
+                    //         value: member._id,
+                    //         label: member.email,
+                    //       }))
+                    //     : []
+                    // }
                     {...field}
                   />
                         {errors.members && (

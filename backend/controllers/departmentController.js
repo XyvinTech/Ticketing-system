@@ -19,7 +19,7 @@ exports.editDepartmentMember = async function (req, res) {
   const { departmentId } = req.params;
   const { members } = req.body;
   const { action } = req.query;
-
+  console.log(members);
   let department = await Department.findById(departmentId);
   if (!department) {
     return res.status(404).json({ message: "Department not found" });
@@ -29,17 +29,26 @@ exports.editDepartmentMember = async function (req, res) {
       department.members.push(memberId);
     });
   } else if (action === "pop") {
-    const userId = department.members.findIndex((user) => user === members);
-    department.members.splice(userId, 1);
+    const memberId = Object.keys(req.body)[0];
+
+    const userIdx = department.members.findIndex((user) =>
+      user.equals(memberId)
+    );
+    if (userIdx !== -1) {
+      department.members.splice(userIdx, 1);
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Member not found in department" });
+    }
   }
+
   department = await department.save();
 
   return res
     .status(200)
     .json({ status: true, message: "Department updated", department });
 };
-
-
 
 exports.getDepartments = async function (req, res) {
   const query = {};

@@ -91,22 +91,24 @@ const AdminSingleTicket = () => {
                 <h1 className="mb-6 text-xl font-semibold text-purple-600">{item?.senderId?.userName}</h1>
                 <div className=" text-gray-700  max-md:max-w-full" dangerouslySetInnerHTML={{ __html: item.message ? item.message : "" }}></div>
               </div>
-                {item?.attachment?.map((i, index) => (
+              {item?.attachment && item.attachment.length > 0 && (
                   <div className="py-3 pr-3 pl-3">
                     <div className="flex items-center gap-1 font-semibold text-gray-500">
                       <PaperIcon className="h-4 w-4" />
                       <h2>Attachments</h2>
                     </div>
                     <div className="px-4 mt-3 flex flex-wrap gap-3">
-                      <img
-                        key={index}
-                        src={i}
-                        alt={`Attachment ${index}`}
-                        className="h-20 w-20 rounded-lg border object-cover"
-                      />
+                      {item.attachment.map((i, index) => (
+                        <img
+                          key={index}
+                          src={i}
+                          alt={`Attachment ${index}`}
+                          className="h-20 w-20 rounded-lg border object-cover"
+                        />
+                      ))}
                     </div>
                   </div>
-                ))}
+                )}
               </div>
             ))}
           </div>
