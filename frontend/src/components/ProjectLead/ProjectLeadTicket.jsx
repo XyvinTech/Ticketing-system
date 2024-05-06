@@ -46,15 +46,21 @@ const ManagerTicket = () => {
     filter.inLead = true;
     getUserByProject(project,filter);
   }, [project]);
-  const pendingCount = tickets.filter(
-    (ticket) => ticket.status === "pending"
-  ).length;
-  const progressCount = tickets.filter(
-    (ticket) => ticket.status === "progress"
-  ).length;
-  const completedCount = tickets.filter(
-    (ticket) => ticket.status === "completed"
-  ).length;
+  let pendingCount = 0;
+  let progressCount = 0;
+  let completedCount = 0;
+  
+  if (Array.isArray(tickets)) {
+    tickets.forEach(ticket => {
+      if (ticket.status === "pending") {
+        pendingCount++;
+      } else if (ticket.status === "progress") {
+        progressCount++;
+      } else if (ticket.status === "completed") {
+        completedCount++;
+      }
+    });
+  }
   const items = [
     { name: "Total", count: tickets?.length },
     { name: "Pending", count: pendingCount },

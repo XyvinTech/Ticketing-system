@@ -1,0 +1,76 @@
+paths:
+  /ticket/add:
+    post:
+      summary: Create a new ticket
+      tags: [Ticket]
+      security:
+        - bearerAuth: [] 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+      responses:
+        '201':
+          description: Ticket created successfully
+        '500':
+          description: Internal server error
+
+  /ticket/get:
+    get:
+      summary: Get all tickets
+      tags: [Ticket]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: searchQuery
+          schema:
+            type: string
+          description: Search by ticket subject
+        - in: query
+          name: inStatus
+          schema:
+            type: string
+          description: Filter by ticket status
+        - in: query
+          name: inDep
+          schema:
+            type: string
+          description: Filter by department ID
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+
+  /ticket/get/{id}:
+    get:
+      summary: Get a ticket by ID
+      tags: [Ticket]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '400':
+          description: Invalid ticket ID
+        '404':
+          description: Ticket not found
+
+ 

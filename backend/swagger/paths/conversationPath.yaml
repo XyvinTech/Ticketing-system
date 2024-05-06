@@ -1,0 +1,45 @@
+paths:
+  /conversation/add:
+    post:
+      summary: Create a new conversation
+      tags: [Conversation]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Conversation'
+      responses:
+        '201':
+          description: Conversation created successfully
+        '500':
+          description: Internal server error
+
+  /conversation/fetch/{id}:
+    get:
+      summary: Get all conversations by ticket ID
+      tags: [Conversation]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
+        '400':
+          description: Invalid ticket ID
+        '404':
+          description: Conversations not found
+

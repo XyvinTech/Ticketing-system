@@ -1,0 +1,102 @@
+paths:
+  /admin/update/{id}:
+    put:
+      summary: Update admin user by ID
+      tags: 
+        - Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Admin user updated successfully
+        '404':
+          description: Admin user not found
+
+  /admin/add-user:
+    post:
+      summary: Add a new user by admin
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User added successfully
+        '409':
+          description: User already exists
+
+  /admin/delete-user/{id}:
+    delete:
+      summary: Delete a user by admin
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+      responses:
+        '200':
+          description: User deleted successfully
+        '404':
+          description: User not found
+
+  /admin/get-user:
+    get:
+      summary: Get all users with query
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: usertype
+          schema:
+            type: string
+          description: Filter users by type (e.g., projectManager, projectLead, client, member)
+        - in: query
+          name: searchQuery
+          schema:
+            type: string
+          description: Search users by name or email
+        - in: query
+          name: withOutClient
+          schema:
+            type: boolean
+          description: Exclude clients from the results
+        - in: query
+          name: inManager
+          schema:
+            type: boolean
+          description: Filter users except project managers
+        - in: query
+          name: inLead
+          schema:
+            type: boolean
+          description: Filter users except project leads
+      responses:
+        '200':
+          description: List of users retrieved successfully
