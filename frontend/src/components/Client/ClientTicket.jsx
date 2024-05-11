@@ -7,7 +7,6 @@ import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg"
 import StyledButton from "../../ui/StyledButton";
 import StyledInput from "../../ui/StyledInput";
 import Pagination from "../../ui/Pagination";
-import ClientBoard from "./ClientBoard";
 import { useTicketStore } from "../../store/TicketStore";
 import DropDown from "../../ui/DropDown";
 const ClientTicket = () => {
@@ -26,7 +25,24 @@ const ClientTicket = () => {
   }, [search, status]);
 
   const headers = ["Ticket", "Status"];
-
+  const sortedTickets = tickets && Array.isArray(tickets)
+  ? [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  : [];
+  let pendingCount = 0;
+  let progressCount = 0;
+  let completedCount = 0;
+  
+  if (Array.isArray(sortedTickets)) {
+    sortedTickets.forEach((ticket) => {
+      if (ticket.status === "pending") {
+        pendingCount++;
+      } else if (ticket.status === "progress") {
+        progressCount++;
+      } else if (ticket.status === "completed") {
+        completedCount++;
+      }
+    });
+  }
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
@@ -34,8 +50,8 @@ const ClientTicket = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const item = Array.isArray(tickets)
-    ? tickets.slice(indexOfFirstItem, indexOfLastItem)
+  const item = Array.isArray(sortedTickets)
+    ? sortedTickets.slice(indexOfFirstItem, indexOfLastItem)
     : [];
 
   // Change page
@@ -54,28 +70,12 @@ const ClientTicket = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-
-  let pendingCount = 0;
-  let progressCount = 0;
-  let completedCount = 0;
-  
-  if (Array.isArray(tickets)) {
-    tickets.forEach(ticket => {
-      if (ticket.status === "pending") {
-        pendingCount++;
-      } else if (ticket.status === "progress") {
-        progressCount++;
-      } else if (ticket.status === "completed") {
-        completedCount++;
-      }
-    });
-  }
+ 
   const items = [
-    { name: "Total", count: tickets?.length },
+    { name: "Total", count: sortedTickets?.length },
     { name: "Pending", count: pendingCount },
     { name: "Progress", count: progressCount },
-    { name: "Completed", count: completedCount },
-    { name: "Closed", count: 0 },
+    { name: "Closed", count: completedCount },
   ];
   const Status = [
     { value: "all", name: "all" },
@@ -146,7 +146,7 @@ const ClientTicket = () => {
                       : ""
                   }`}
                 >
-                  {tickets.status}
+               {tickets?.status === "completed" ? "Closed" : tickets?.status}
                 </span>
               </td>
             </tr>

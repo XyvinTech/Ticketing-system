@@ -20,7 +20,7 @@ components:
           type: string
         usertype:
           type: string
-          enum: ["projectManager", "projectLead", "client", "member"]
+          enum: ["manager", "projectLead", "client", "member"]
         projectId:
           type: array
           items:

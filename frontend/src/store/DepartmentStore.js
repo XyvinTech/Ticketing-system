@@ -4,8 +4,8 @@ import { toast } from "react-toastify";
 
 const useDepartmentStore = create((set) => ({
     departments: [],
-    fetchDepartment:async()=>{
-      const data=await fetchDepartment();
+    fetchDepartment:async(filter)=>{
+      const data=await fetchDepartment(filter);
       set({ departments: data.data });
     },
     addDepartment: async (depData) => {

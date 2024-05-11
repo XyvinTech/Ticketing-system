@@ -28,8 +28,8 @@ const Login = () => {
       // localStorage.setItem("user", user.userType);
       if (user?.userType) {
         switch (user?.userType) {
-          case "projectManager":
-            navigate("/ProjectManager/Ticket");
+          case "manager":
+            navigate("/Manager/Ticket");
             break;
           case "projectLead":
             navigate("/ProjectLead/Ticket");
@@ -106,9 +106,9 @@ const Login = () => {
           </div>
           <StyledButton type="submit" text="Login" className="mt-8 w-full" />
         </form>
-        <div className="mt-3  block text-center">or continue with</div>
+        {/* <div className="mt-3  block text-center">or continue with</div> */}
 
-        <div className="mt-1">
+        {/* <div className="mt-1">
           <p className="text-center text-gray-500">
             Don't have an account?
             <Link
@@ -118,7 +118,7 @@ const Login = () => {
               Sign up
             </Link>
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ import { useTicketStore } from "../../store/TicketStore";
 import { useUserStore } from "../../store/UserStore";
 import { Controller, useForm } from "react-hook-form";
 import StyledSearch from "../../ui/StyledSearch";
-import ManagerBoard from "./ManagerBoard";
+
 
 const ManagerTicket = () => {
   const {
@@ -23,34 +23,41 @@ const ManagerTicket = () => {
   } = useForm();
   const { tickets, fetchTickets, updateTicket } = useTicketStore();
   const { users, getUserByProject } = useUserStore();
-  const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [ticketId, setTicketId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChange, setIsChange] = useState(false);
   const [search, setSearch] = useState();
   const [status, setStatus] = useState();
+  const [dep, setDep] = useState();
   const [project, setProject] = useState();
   useEffect(() => {
     let filter = {};
     if (status && status !== "all") {
       filter.inStatus = status;
     }
+    if (dep && dep !== "all") {
+      filter.inDep = dep;
+    }
     if (search) {
       filter.searchQuery = search;
     }
     fetchTickets(filter);
-  }, [isChange, search, status]);
+  }, [isChange, search, status,dep]);
+  console.log("dep",dep)
   useEffect(() => {
     let filter = {};
     filter.inManager = true;
     getUserByProject(project,filter);
   }, [project]);
+  const sortedTickets = tickets && Array.isArray(tickets)
+  ? [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  : [];
   let pendingCount = 0;
   let progressCount = 0;
   let completedCount = 0;
   
-  if (Array.isArray(tickets)) {
-    tickets.forEach(ticket => {
+  if (Array.isArray(sortedTickets)) {
+    sortedTickets.forEach((ticket) => {
       if (ticket.status === "pending") {
         pendingCount++;
       } else if (ticket.status === "progress") {
@@ -63,17 +70,17 @@ const ManagerTicket = () => {
   
   
   const items = [
-    { name: "Total", count: tickets?.length },
+    { name: "Total", count: sortedTickets?.length },
     { name: "Pending", count: pendingCount },
     { name: "Progress", count: progressCount },
-    { name: "Completed", count: completedCount },
-    { name: "Closed", count: 0 },
+    { name: "Closed", count: completedCount},
   ];
   const selectOptions =
     users && Array.isArray(users)
       ? users.map((user) => ({
           value: user?._id,
           label: user?.email,
+          userType: user?.usertype 
         }))
       : [];
 
@@ -86,8 +93,8 @@ const ManagerTicket = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const item = Array.isArray(tickets)
-    ? tickets.slice(indexOfFirstItem, indexOfLastItem)
+  const item = Array.isArray(sortedTickets)
+    ? sortedTickets.slice(indexOfFirstItem, indexOfLastItem)
     : [];
 
   // Change page
@@ -106,21 +113,12 @@ const ManagerTicket = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-  const handleBoardButtonClick = () => {
-    setShowAdminBoard(true);
-  };
 
   const Manager = [
-    { name: "All" },
-    { name: "My Tickets" },
-    { name: "Project Manager" },
-    { name: "Project Lead" },
+    { value: "all", name: "All" },
+    { value: "myticket", name: "My Ticket" },
   ];
-  const Role = [
-    { name: "Member" },
-    { name: "Designer" },
-    { name: "Developer" },
-  ];
+
   const Status = [
     { value: "all", name: "all" },
     { value: "pending", name: "pending" },
@@ -151,22 +149,18 @@ const ManagerTicket = () => {
               Icon={SearchIcon}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <DropDown label="Manager" options={Manager} />
+            <DropDown label="All" options={Manager}
+             onChange={(value) => setDep(value)} />
             <DropDown
               label="Status"
               options={Status}
               onChange={(value) => setStatus(value)}
             />
 
-            <button
-              className="mt-1 cursor-default rounded-md border bg-white py-2 pl-3 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500"
-              onClick={handleBoardButtonClick}
-            >
-              Board
-            </button>
+           
           </div>
         </div>
-        {showAdminBoard && <ManagerBoard />}{" "}
+       {" "}
         {isModalOpen && (
           <Modal closeModal={() => setIsModalOpen(false)}>
             <form onSubmit={handleSubmit((data) => onSubmit(data, ticketId))}>
@@ -205,14 +199,14 @@ const ManagerTicket = () => {
             </form>
           </Modal>
         )}
-        {!showAdminBoard && (
+       
           <StyledTable header={headers}>
             {item?.map((tickets) => (
               <tr key={tickets?._id}>
                 <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
                   {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
                   <Link
-                    to={`/ProjectManager/SingleTicket/${tickets?._id}`}
+                    to={`/Manager/SingleTicket/${tickets?._id}`}
                     className="text-lg font-semibold text-purple-600 hover:text-purple-800"
                   >
                     {tickets?.subject}
@@ -247,10 +241,11 @@ const ManagerTicket = () => {
                           : ""
                       }`}
                   >
-                    {tickets?.status}
+                    {tickets?.status === "completed" ? "Closed" : tickets?.status}
                   </span>
                 </td>
                 <td>
+                {tickets.status !== "completed" && (
                   <StyledButton
                    text={tickets?.assignedTo?.email ? "Reassign" : "Assign"}
                     onClick={() => {
@@ -258,7 +253,7 @@ const ManagerTicket = () => {
                       setTicketId(tickets?._id);
                       setProject(tickets?.projectId._id);
                     }}
-                  />
+                  />)}
                 </td>
               </tr>
             ))}
@@ -275,7 +270,7 @@ const ManagerTicket = () => {
               </td>
             </tr>
           </StyledTable>
-        )}
+       
       </section>
     </div>
   );

@@ -3,19 +3,24 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { ReactComponent as MenuIcon } from "../assets/icons/MenuIcon.svg";
 import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
 import Logo from "../assets/Logo.png";
-import { ReactComponent as SearchIcon } from "../assets/icons/SearchIcon.svg";
 import { Link, useLocation } from "react-router-dom";
 import { useAdminStore } from "../store/AdminStore";
+import { useNotificationStore } from "../store/NotificationStore";
 
 const navigation = [{ name: "Tickets", to: "Admin/Ticket", current: true }];
 
 const AdminNavbar = () => {
-  const { user, fetchLogin ,isChange} = useAdminStore();
+  const { user, fetchLogin, isChange } = useAdminStore();
+  const { notification, fetchNotification,change } = useNotificationStore();
+
+  useEffect(() => {
+    fetchNotification();
+  }, [change]);
   useEffect(() => {
     fetchLogin();
   }, [isChange]);
   const location = useLocation();
-  
+  const unreadNotificationCount = Array.isArray(notification) ? notification.filter((not) => !not.isRead).length : 0;
   return (
     <Disclosure as="nav" className="bg-white">
       {({ open }) => (
@@ -24,7 +29,11 @@ const AdminNavbar = () => {
             <div className="relative flex h-16 items-center justify-between">
               <div className="flex">
                 <div className="flex flex-shrink-0 items-center">
-                <img src={Logo} alt="Logo" className="mx-auto mb-4 h-5 w-5 "/>
+                  <img
+                    src={Logo}
+                    alt="Logo"
+                    className="mx-auto mb-4 h-5 w-5 "
+                  />
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="hidden lg:ml-6 lg:flex lg:space-x-8">
@@ -45,13 +54,6 @@ const AdminNavbar = () => {
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <div className="flex items-center lg:hidden">
-                  <button
-                    type="button"
-                    className="mr-4 block rounded-full p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                  >
-                    <span className="sr-only">search</span>
-                    <SearchIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
                   <Disclosure.Button className=" inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-1 focus:ring-1  focus:ring-purple-500">
                     <span className="absolute -inset-0.5" />
                     <span className="sr-only">Open main menu</span>
@@ -65,21 +67,31 @@ const AdminNavbar = () => {
                 </div>
 
                 <div className="hidden lg:ml-4 lg:flex lg:items-center">
-                  
+                  <div className="text-base mr-4 font-medium text-purple-700">
+                    {user?.userName}
+                  </div>
                   <Link
                     to={"/Admin/AdminNotifications"}
-                    className="mr-4 block rounded-full p-1 text-gray-400 hover:text-purple-500 "
+                    className="mr-4 block relative rounded-full p-1 text-gray-400 hover:text-purple-500"
                   >
                     <span className="sr-only">View Notification</span>
                     <BellIcon className="h-6 w-6" />
+                    {/* Badge */}
+                    {unreadNotificationCount > 0 && (
+                      <span className="absolute top-0 right-0 bg-purple-700 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
+                        {unreadNotificationCount}
+                      </span>
+                    )}
                   </Link>
+
                   <Menu as="div" className="relative flex-shrink-0">
                     <Menu.Button className="flex rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
-                        src={user?.profilePicture}alt=""
+                        src={user?.profilePicture}
+                        alt=""
                       />
                     </Menu.Button>
 
@@ -201,7 +213,10 @@ const AdminNavbar = () => {
                     Change Password
                   </Disclosure.Button>
                 </Link>
-                <Link to={"/logout"} className="block  py-2 text-sm text-gray-700">
+                <Link
+                  to={"/logout"}
+                  className="block  py-2 text-sm text-gray-700"
+                >
                   <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
                     Logout
                   </Disclosure.Button>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import StyledSelectionList from "../../ui/StyledSelectionList";
@@ -22,13 +22,17 @@ const ManagerNewTicket = () => {
   const { addTicket } = useTicketStore();
   const { departments, fetchDepartment } = useDepartmentStore();
   const { projects, fetchProjectById } = useProjectStore();
-
+  const [dep, setDep] = useState();
   useEffect(() => {
     fetchDepartment();
   }, []);
   useEffect(() => {
-    fetchProjectById();
-  }, []);
+    let filter = {};
+    if (dep) {
+      filter.inDep = dep;
+    }
+    fetchProjectById(filter);
+  }, [dep]);
   const Priority = [
     { value: "low", name: "Low" },
     { value: "medium", name: "Medium" },
@@ -54,7 +58,7 @@ const ManagerNewTicket = () => {
       await addTicket(data);
       toast.success("Ticket created successfully!");
       reset();
-      navigate("/ProjectManager/Ticket");
+      navigate("/Manager/Ticket");
     } catch (error) {
       console.error("Error adding ticket:", error);
       toast.error("Error!");
@@ -102,6 +106,10 @@ const ManagerNewTicket = () => {
                           label="Department"
                           options={Department}
                           {...field}
+                          onChange={(value) => {
+                            setDep(value); // Set selected user type inline
+                            field.onChange(value);
+                          }}
                         />
                         {errors.department && (
                           <span className="text-red-500">

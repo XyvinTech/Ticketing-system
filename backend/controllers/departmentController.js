@@ -1,4 +1,5 @@
 const Department = require("../models/department");
+const User = require("../models/user");
 
 exports.createDepartment = async function (req, res) {
   const { departmentName } = req.body;
@@ -19,7 +20,7 @@ exports.editDepartmentMember = async function (req, res) {
   const { departmentId } = req.params;
   const { members } = req.body;
   const { action } = req.query;
-  console.log(members);
+  // console.log(members);
   let department = await Department.findById(departmentId);
   if (!department) {
     return res.status(404).json({ message: "Department not found" });
@@ -51,16 +52,28 @@ exports.editDepartmentMember = async function (req, res) {
 };
 
 exports.getDepartments = async function (req, res) {
+  const { withDep } = req.query;
+  // console.log("withDep", withDep);
   const query = {};
 
-  const data = await Department.find(query).populate({
-    path: "members",
-    select: "-password",
-    populate: {
-      path: "projectId",
-      select: "projectName",
-    },
-  });
+  const user = await User.findById(req.user);
+  if (user.usertype === "manager") {
+
+    query.departmentManager = req.user;
+  }
+  if(withDep==="manager"){
+    query.departmentManager=null
+  }
+  const data = await Department.find(query)
+    .populate("departmentManager")
+    .populate({
+      path: "members",
+      select: "-password",
+      populate: {
+        path: "projectId",
+        select: "projectName",
+      },
+    });
 
   res.status(200).json({ status: true, message: "Departments list", data });
 };

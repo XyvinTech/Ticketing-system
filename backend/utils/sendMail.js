@@ -35,13 +35,20 @@ const sendMail = async (receiverMail, ticketObject, role) => {
               <p style="padding-top: 10px; padding-bottom: 25px">Dear,</p>
               <p>
                 We are glad to inform you that you have a new ticket from one of Your client
-                <a style="color: #9d46d9; text-decoration: none" href=${ticketObject.mail}
+                <a style="color: #9d46d9; text-decoration: none" href=${
+                  ticketObject.mail
+                }
                   >${ticketObject.mail}</a
                 >
               </p>
             </div>
             <a
-              href=${"http://localhost:3000/" + role + "/SingleTicket/" + ticketObject._id}
+              href=${
+                "http://localhost:3000/" +
+                role +
+                "/SingleTicket/" +
+                ticketObject._id
+              }
               target="_blank"
               style="
                 background-color: #9d46d9;
@@ -60,11 +67,11 @@ const sendMail = async (receiverMail, ticketObject, role) => {
               Note
               <br />
               <br />
-              You can refuse to accept a shipment if the outer packaging is
-              tampered/damaged//torn/pressed/disturbed. Please mention the same reason on the POD slip.
-              For questions, you can reach out to us at
+         ${ticketObject.description}
               <span>
-                <a style="color: #9d46d9; text-decoration: none" href=${ticketObject.mail}
+                <a style="color: #9d46d9; text-decoration: none" href=${
+                  ticketObject.mail
+                }
                   >${ticketObject.mail}</a
                 ></span
               >

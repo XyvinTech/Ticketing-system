@@ -1,22 +1,36 @@
 const Admin = require("../models/admin");
 const createError = require("http-errors");
 const User = require("../models/user");
+const Department = require("../models/department");
+const Project = require("../models/project");
 /* The `exports.addUser` function is responsible for adding a new user to the system. Here's a
 breakdown of what it does: */
 
-
 exports.addUser = async function (req, res) {
-  const { email, userName, projectId } = req.body;
-
-  if (!projectId) return res.status(409).json({ message: "Project Id is required" });
+  const { email, userName, department, usertype } = req.body;
+  // if (usertype === "member") {
+  //   console.log("usertye", usertype);
+  // }
+  // if (!projectId) return res.status(409).json({ message: "Project Id is required" });
 
   const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
   if (existingUser) {
-    return res.status(409).json({ message: "User already exists with this email or username" });
+    return res
+      .status(409)
+      .json({ message: "User already exists with this email or username" });
   }
 
-  await User.create(req.body);
+  const newUser = await User.create(req.body);
+  if (department) {
+    const targetDepartment = await Department.findById(department);
 
+    if (targetDepartment) {
+      targetDepartment.departmentManager = newUser._id; // Assuming departmentManager is a reference to the user
+      await targetDepartment.save();
+    } else {
+      console.error(`Department ${department} not found.`);
+    }
+  }
   res.status(201).json({ status: true, message: "User added successfully" });
 };
 
@@ -34,34 +48,62 @@ exports.deleteUser = async function (req, res) {
 };
 
 exports.getUsers = async function (req, res) {
-  const { usertype, searchQuery, withOutClient, inManager,inLead} = req.query;
+  const { usertype, searchQuery, withOutClient, inManager, inLead } = req.query;
 
-  const query = {};
+  const matchStage = {};
 
   if (usertype) {
-    query.usertype = usertype;
+    matchStage.usertype = usertype;
   }
 
   if (withOutClient) {
-    query.usertype = { $nin: ["client", "admin"] };
+    matchStage.usertype = { $nin: ["client", "admin"] };
   }
-  
+
   if (inManager) {
-    query.usertype = { $nin: ["client", "admin","projectManager"] };
+    matchStage.usertype = { $nin: ["client", "admin", "manager"] };
   }
-  if(inLead){
-    query.usertype={$nin :["client","admin","projectManager","projectLead"]}
+
+  if (inLead) {
+    matchStage.usertype = {
+      $nin: ["client", "admin", "manager", "projectLead"],
+    };
   }
+
   if (searchQuery) {
-    query.$or = [
+    matchStage.$or = [
       { name: { $regex: searchQuery, $options: "i" } },
       { email: { $regex: searchQuery, $options: "i" } },
     ];
   }
 
-  const data = await User.find(query).populate("projectId");
+  const users = await User.aggregate([
+    { $match: matchStage },
+    {
+      $lookup: {
+        from: "projects",
+        localField: "projectId",
+        foreignField: "_id",
+        as: "projectId",
+      },
+    },
+    {
+      $lookup: {
+        from: "departments",
+        localField: "_id",
+        foreignField: "departmentManager",
+        as: "department",
+      },
+    },
+    // ,{
+    //   $project:{
+    //     _id:1,
+    //     departmentName:"$department.departmentName"
+    //   }
+    // }
+  ]);
 
-  res.status(200).json({ status: true, message: "Users list", data });
+  res.status(200).json({ status: true, message: "Users list", data: users });
 };
 
 // exports.updatePassword = async function (req, res) {
@@ -83,11 +125,21 @@ exports.updateAdminUser = async function (req, res) {
   const userId = req.params.id;
   const update = req.body;
 
-  const updatedUser = await User.findByIdAndUpdate(userId, update, { new: true });
+  const isDepartmentManager = await Department.exists({
+    departmentManager: userId,
+  });
+ 
+  if (isDepartmentManager) {
+    return res
+      .status(400)
+      .json({ status: false, message: "User is already a department manager" });
+  }
 
+  const updatedUser = await User.findByIdAndUpdate(userId, update, {
+    new: true,
+  });
   if (!updatedUser) {
     throw createError(404, "User not found");
   }
-
-  res.status(200).json({ status: true, message: "ok" });
+  res.status(200).json({ status: true, message: "User updated successfully" });
 };

@@ -76,7 +76,7 @@ paths:
           name: usertype
           schema:
             type: string
-          description: Filter users by type (e.g., projectManager, projectLead, client, member)
+          description: Filter users by type (e.g., manager, projectLead, client, member)
         - in: query
           name: searchQuery
           schema:

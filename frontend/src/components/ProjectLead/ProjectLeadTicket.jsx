@@ -13,7 +13,6 @@ import { useTicketStore } from "../../store/TicketStore";
 import { useUserStore } from "../../store/UserStore";
 import { Controller, useForm } from "react-hook-form";
 import StyledSearch from "../../ui/StyledSearch";
-import ProjectLeadBoard from "./ProjectLeadBoard";
 
 const ManagerTicket = () => {
   const {
@@ -23,35 +22,43 @@ const ManagerTicket = () => {
   } = useForm();
   const { tickets, fetchTickets, updateTicket } = useTicketStore();
   const { users, getUserByProject } = useUserStore();
-  const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [ticketId, setTicketId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChange, setIsChange] = useState(false);
   const [search, setSearch] = useState();
   const [status, setStatus] = useState();
+  const [dep, setDep] = useState();
   const [project, setProject] = useState();
   useEffect(() => {
     let filter = {};
     if (status && status !== "all") {
       filter.inStatus = status;
     }
-
+    if (dep && dep !== "all") {
+      filter.inDep = dep;
+    }
     if (search) {
       filter.searchQuery = search;
     }
     fetchTickets(filter);
-  }, [isChange, search, status]);
+  }, [isChange, search, status, dep]);
   useEffect(() => {
     let filter = {};
     filter.inLead = true;
-    getUserByProject(project,filter);
+    getUserByProject(project, filter);
   }, [project]);
+  const sortedTickets =
+    tickets && Array.isArray(tickets)
+      ? [...tickets].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        )
+      : [];
   let pendingCount = 0;
   let progressCount = 0;
   let completedCount = 0;
-  
-  if (Array.isArray(tickets)) {
-    tickets.forEach(ticket => {
+
+  if (Array.isArray(sortedTickets)) {
+    sortedTickets.forEach((ticket) => {
       if (ticket.status === "pending") {
         pendingCount++;
       } else if (ticket.status === "progress") {
@@ -62,17 +69,18 @@ const ManagerTicket = () => {
     });
   }
   const items = [
-    { name: "Total", count: tickets?.length },
+    { name: "Total", count: sortedTickets?.length },
     { name: "Pending", count: pendingCount },
     { name: "Progress", count: progressCount },
-    { name: "Completed", count: completedCount },
-    { name: "Closed", count: 0 },
+    ,
+    { name: "Closed", count: completedCount },
   ];
   const selectOptions =
     users && Array.isArray(users)
       ? users.map((user) => ({
           value: user?._id,
           label: user?.email,
+          userType: user?.usertype,
         }))
       : [];
 
@@ -85,8 +93,8 @@ const ManagerTicket = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const item = Array.isArray(tickets)
-    ? tickets.slice(indexOfFirstItem, indexOfLastItem)
+  const item = Array.isArray(sortedTickets)
+    ? sortedTickets.slice(indexOfFirstItem, indexOfLastItem)
     : [];
 
   // Change page
@@ -105,15 +113,10 @@ const ManagerTicket = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-  const handleBoardButtonClick = () => {
-    setShowAdminBoard(true);
-  };
 
   const Manager = [
-    { name: "All" },
-    { name: "My Tickets" },
-    { name: "Project Manager" },
-    { name: "Project Lead" },
+    { value: "all", name: "All" },
+    { value: "myticket", name: "My Ticket" },
   ];
 
   const Status = [
@@ -146,22 +149,19 @@ const ManagerTicket = () => {
               Icon={SearchIcon}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <DropDown label="Manager" options={Manager} />
+            <DropDown
+              label="Manager"
+              options={Manager}
+              onChange={(value) => setDep(value)}
+            />
             <DropDown
               label="Status"
               options={Status}
               onChange={(value) => setStatus(value)}
             />
-
-            <button
-              className="mt-1 cursor-default rounded-md border bg-white py-2 pl-3 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500"
-              onClick={handleBoardButtonClick}
-            >
-              Board
-            </button>
           </div>
         </div>
-        {showAdminBoard && <ProjectLeadBoard />}{" "}
+
         {isModalOpen && (
           <Modal closeModal={() => setIsModalOpen(false)}>
             <form onSubmit={handleSubmit((data) => onSubmit(data, ticketId))}>
@@ -200,45 +200,38 @@ const ManagerTicket = () => {
             </form>
           </Modal>
         )}
-        {!showAdminBoard && (
-          <StyledTable header={headers}>
-            {item?.map((tickets) => (
-              <tr key={tickets?._id}>
-                <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
-                  {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
-                  <Link
-                    to={`/ProjectLead/SingleTicket/${tickets?._id}`}
-                    className="text-lg font-semibold text-purple-600 hover:text-purple-800"
-                  >
-                    {tickets?.subject}
-                  </Link>
-                  <TableInfo
-                    reference={tickets?.ticket_Id}
-                    priority={tickets?.priority}
-                    createdAt={tickets?.createdAt}
-                    category={tickets?.department?.departmentName}
-                    // last_reply_on={i.replies[0]?.created_at}
-                    projectName={tickets?.projectId?.projectName}
-                  />
-                </td>
-                <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                  <span
-                    className={`rounded-full px-3 py-px text-sm
-      ${
-        tickets?.assignedTo === "Assign a member Now"
-          ? "bg-indigo-100 text-indigo-800"
-          : tickets?.assignedto === "Notify ProjectManager"
-          ? "bg-red-100 text-red-800"
-          : ""
-      }`}
-                  >
-                    {tickets?.assignedTo?.email}
-                  </span>
-                </td>
 
-                <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                  <span
-                    className={`rounded-full px-3 py-px text-sm
+        <StyledTable header={headers}>
+          {item?.map((tickets) => (
+            <tr key={tickets?._id}>
+              <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
+                {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
+                <Link
+                  to={`/ProjectLead/SingleTicket/${tickets?._id}`}
+                  className="text-lg font-semibold text-purple-600 hover:text-purple-800"
+                >
+                  {tickets?.subject}
+                </Link>
+                <TableInfo
+                  reference={tickets?.ticket_Id}
+                  priority={tickets?.priority}
+                  createdAt={tickets?.createdAt}
+                  category={tickets?.department?.departmentName}
+                  // last_reply_on={i.replies[0]?.created_at}
+                  projectName={tickets?.projectId?.projectName}
+                />
+              </td>
+              <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
+                <span
+                  className={`rounded-full px-3 py-px text-sm`}
+                >
+                  {tickets?.assignedTo?.email}
+                </span>
+              </td>
+
+              <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
+                <span
+                  className={`rounded-full px-3 py-px text-sm
                       ${
                         tickets?.status === "progress"
                           ? "bg-indigo-100 text-indigo-800"
@@ -250,12 +243,13 @@ const ManagerTicket = () => {
                           ? "bg-green-100 text-green-800"
                           : ""
                       }`}
-                  >
-                    {tickets?.status}
-                  </span>
-                </td>
-                <td>
-                <StyledButton
+                >
+                 {tickets?.status === "completed" ? "Closed" : tickets?.status}
+                </span>
+              </td>
+              <td>
+                {tickets.status !== "completed" && (
+                  <StyledButton
                     text={tickets?.assignedTo?.email ? "Reassign" : "Assign"}
                     onClick={() => {
                       setIsModalOpen(true);
@@ -263,23 +257,23 @@ const ManagerTicket = () => {
                       setProject(tickets?.projectId._id);
                     }}
                   />
-                </td>
-              </tr>
-            ))}
-            <tr>
-              <td colSpan="2" className="px-4 py-2">
-                <Pagination
-                  currentPage={currentPage}
-                  totalItems={tickets?.length}
-                  itemsPerPage={itemsPerPage}
-                  paginate={paginate}
-                  goToPreviousPage={goToPreviousPage}
-                  goToNextPage={goToNextPage}
-                />
+                )}
               </td>
             </tr>
-          </StyledTable>
-        )}
+          ))}
+          <tr>
+            <td colSpan="2" className="px-4 py-2">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={tickets?.length}
+                itemsPerPage={itemsPerPage}
+                paginate={paginate}
+                goToPreviousPage={goToPreviousPage}
+                goToNextPage={goToNextPage}
+              />
+            </td>
+          </tr>
+        </StyledTable>
       </section>
     </div>
   );

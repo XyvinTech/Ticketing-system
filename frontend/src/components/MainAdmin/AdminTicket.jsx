@@ -7,7 +7,6 @@ import TableInfo from "../../ui/TableInfo";
 import { Link } from "react-router-dom";
 import Pagination from "../../ui/Pagination";
 import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
-import AdminBoard from "./AdminBoard";
 import Modal from "../../ui/Modal";
 import DropDown from "../../ui/DropDown";
 import { useTicketStore } from "../../store/TicketStore";
@@ -25,7 +24,6 @@ const AdminTicket = () => {
   const { tickets, fetchTickets, updateTicket } = useTicketStore();
   const { users, getUserByProject } = useUserStore();
   const { departments, fetchDepartment } = useDepartmentStore();
-  const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [ticketId, setTicketId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChange, setIsChange] = useState(false);
@@ -54,12 +52,16 @@ const AdminTicket = () => {
   useEffect(() => {
     fetchDepartment();
   }, []);
+const sortedTickets = tickets && Array.isArray(tickets)
+  ? [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  : [];
+
   let pendingCount = 0;
   let progressCount = 0;
   let completedCount = 0;
-  
-  if (Array.isArray(tickets)) {
-    tickets.forEach(ticket => {
+
+  if (Array.isArray(sortedTickets)) {
+    sortedTickets.forEach((ticket) => {
       if (ticket.status === "pending") {
         pendingCount++;
       } else if (ticket.status === "progress") {
@@ -70,17 +72,17 @@ const AdminTicket = () => {
     });
   }
   const items = [
-    { name: "Total", count: tickets?.length },
+    { name: "Total", count: sortedTickets?.length },
     { name: "Pending", count: pendingCount },
     { name: "Progress", count: progressCount },
-    { name: "Completed", count: completedCount },
-    { name: "Closed", count: 0 },
+    { name: "Closed",  count: completedCount},
   ];
   const selectOptions =
     users && Array.isArray(users)
       ? users.map((user) => ({
           value: user?._id,
           label: user?.email,
+          userType:user?.usertype
         }))
       : [];
 
@@ -93,8 +95,8 @@ const AdminTicket = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const item = Array.isArray(tickets)
-    ? tickets.slice(indexOfFirstItem, indexOfLastItem)
+  const item = Array.isArray(sortedTickets)
+    ? sortedTickets.slice(indexOfFirstItem, indexOfLastItem)
     : [];
 
   // Change page
@@ -113,12 +115,10 @@ const AdminTicket = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-  const handleBoardButtonClick = () => {
-    setShowAdminBoard(true);
-  };
 
   const options = [
-    { value: "all", name: "All" }, // Adding the "All" option
+    { value: "all", name: "All" },
+    { value: "myticket", name: "My Ticket" }, // Adding the "All" option
     ...departments.map((project) => ({
       value: project._id,
       name: project.departmentName,
@@ -156,7 +156,7 @@ const AdminTicket = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
             <DropDown
-              label="Department"
+              label="All"
               options={options}
               onChange={(value) => setDep(value)}
             />
@@ -165,22 +165,13 @@ const AdminTicket = () => {
               options={Status}
               onChange={(value) => setStatus(value)}
             />
-
-            <button
-              className="mt-1 cursor-default rounded-md border bg-white py-2 pl-3 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500"
-              onClick={handleBoardButtonClick}
-            >
-              Board
-            </button>
           </div>
         </div>
-        {showAdminBoard && <AdminBoard />}{" "}
+        {/* {showAdminBoard && <AdminBoard />}{" "} */}
         {isModalOpen && (
           <Modal closeModal={() => setIsModalOpen(false)}>
             <form onSubmit={handleSubmit((data) => onSubmit(data, ticketId))}>
-              <h1 className="flex-auto font-semibold">
-                Add People to My Project
-              </h1>
+              <h1 className="flex-auto font-semibold">Assign People</h1>
 
               <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
                 Names or emails
@@ -213,34 +204,34 @@ const AdminTicket = () => {
             </form>
           </Modal>
         )}
-        {!showAdminBoard && (
-          <StyledTable header={headers}>
-            {item?.map((tickets) => (
-              <tr key={tickets?._id}>
-                <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
-                  {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
-                  <Link
-                    to={`/Admin/SingleTicket/${tickets?._id}`}
-                    className="text-lg font-semibold text-purple-600 hover:text-purple-800"
-                  >
-                    {tickets?.subject}
-                  </Link>
-                  <TableInfo
-                    reference={tickets?.ticket_Id}
-                    priority={tickets?.priority}
-                    createdAt={tickets?.createdAt}
-                    category={tickets?.department?.departmentName}
-                    // last_reply_on={i.replies[0]?.created_at}
-                    projectName={tickets?.projectId?.projectName}
-                  />
-                </td>
-                <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-4">
-                  {tickets?.assignedTo?.email}
-                </td>
 
-                <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                  <span
-                    className={`rounded-full px-3 py-px text-sm
+        <StyledTable header={headers}>
+          {item?.map((tickets) => (
+            <tr key={tickets?._id}>
+              <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
+                {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
+                <Link
+                  to={`/Admin/SingleTicket/${tickets?._id}`}
+                  className="text-lg font-semibold text-purple-600 hover:text-purple-800"
+                >
+                  {tickets?.subject}
+                </Link>
+                <TableInfo
+                  reference={tickets?.ticket_Id}
+                  priority={tickets?.priority}
+                  createdAt={tickets?.createdAt}
+                  category={tickets?.department?.departmentName}
+                  // last_reply_on={i.replies[0]?.created_at}
+                  projectName={tickets?.projectId?.projectName}
+                />
+              </td>
+              <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-4">
+                {tickets?.assignedTo?.email}
+              </td>
+
+              <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
+                <span
+                  className={`rounded-full px-3 py-px text-sm
                       ${
                         tickets?.status === "progress"
                           ? "bg-indigo-100 text-indigo-800"
@@ -252,11 +243,12 @@ const AdminTicket = () => {
                           ? "bg-green-100 text-green-800"
                           : ""
                       }`}
-                  >
-                    {tickets?.status}
-                  </span>
-                </td>
-                <td>
+                >
+                 {tickets?.status === "completed" ? "Closed" : tickets?.status}
+                </span>
+              </td>
+              <td>
+                {tickets.status !== "completed" && (
                   <StyledButton
                     text={tickets?.assignedTo?.email ? "Reassign" : "Assign"}
                     onClick={() => {
@@ -265,23 +257,23 @@ const AdminTicket = () => {
                       setProject(tickets?.projectId._id);
                     }}
                   />
-                </td>
-              </tr>
-            ))}
-            <tr>
-              <td colSpan="2" className="px-4 py-2">
-                <Pagination
-                  currentPage={currentPage}
-                  totalItems={tickets?.length}
-                  itemsPerPage={itemsPerPage}
-                  paginate={paginate}
-                  goToPreviousPage={goToPreviousPage}
-                  goToNextPage={goToNextPage}
-                />
+                )}
               </td>
             </tr>
-          </StyledTable>
-        )}
+          ))}
+          <tr>
+            <td colSpan="2" className="px-4 py-2">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={tickets?.length}
+                itemsPerPage={itemsPerPage}
+                paginate={paginate}
+                goToPreviousPage={goToPreviousPage}
+                goToNextPage={goToNextPage}
+              />
+            </td>
+          </tr>
+        </StyledTable>
       </section>
     </div>
   );

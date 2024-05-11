@@ -8,6 +8,7 @@ const sendMail = require("../utils/sendMail");
 //create New Ticket
 exports.createTicket = async function (req, res) {
   const getProject = await Project.findById(req.body.projectId);
+
   const ticketCount = await Ticket.countDocuments({
     projectId: req.body.projectId,
   });
@@ -19,10 +20,22 @@ exports.createTicket = async function (req, res) {
   const data = await Ticket.create(req.body);
 
   const findUser = await User.find({
-    usertype: { $in: ["projectManager", "projectLead"] },
-    projectId: req.body.projectId,
+    $and: [
+      { _id: { $ne: req.user } }, // Exclude the reporter user
+      {
+        $or: [
+          { usertype: "admin" }, // Find admin users
+          {
+            $and: [
+              { usertype: { $in: ["projectLead", "manager"] } }, // Find projectLead and manager users
+              { projectId: req.body.projectId }, // Filter by the projectId of the sender
+            ],
+          },
+        ],
+      },
+    ],
   });
-
+  console.log("users", findUser);
   // * Uncomment the following line for production
   let populatedTicket = await data.populate("reporter");
   populatedTicket = await populatedTicket.populate("department");
@@ -30,7 +43,7 @@ exports.createTicket = async function (req, res) {
   const tickeObj = {
     _id: populatedTicket._id,
     ticket_Id: populatedTicket.ticket_Id,
-    mail: populatedTicket.reporter ? populatedTicket.reporter.email : admin,
+    mail: populatedTicket.reporter && populatedTicket.reporter.email,
     department: populatedTicket.department.departmentName,
     description: populatedTicket.description,
     updatedAt: populatedTicket.updatedAt,
@@ -38,22 +51,22 @@ exports.createTicket = async function (req, res) {
   };
 
   const notifications = [];
+  if (findUser) {
+    findUser.forEach((user) => {
+      const notification = new Notification({
+        user: user._id,
+        message: `A new ticket (#${req.body.ticket_Id}) has been created`,
+        ticketId: data._id,
+      });
 
-  findUser.forEach((user) => {
-    const notification = new Notification({
-      user: user._id,
-      message: `A new ticket (#${req.body.ticket_Id}) has been created`,
-      ticketId: data._id,
+      // * Uncomment the following line for production
+      sendMail(user.email, tickeObj, user.usertype);
+
+      notifications.push(notification);
     });
 
-    // * Uncomment the following line for production
-    sendMail(user.email, tickeObj, user.usertype);
-
-    notifications.push(notification);
-  });
-
-  await Notification.insertMany(notifications);
-
+    await Notification.insertMany(notifications);
+  }
   res
     .status(201)
     .json({ status: true, message: "Ticket created successfully", data });
@@ -61,17 +74,23 @@ exports.createTicket = async function (req, res) {
 
 //get all tickets
 exports.getAll = async function (req, res) {
-  const { searchQuery, inStatus,inDep } = req.query;
+  const { searchQuery, inStatus, inDep } = req.query;
+
   const query = {
-    status: { $ne: "deleted" }
+    status: { $ne: "deleted" },
   };
 
   if (inStatus) {
     query.status = inStatus;
   }
   if (inDep) {
-    query.department = inDep;
+    if (inDep === "myticket") {
+      query.reporter = req.user;
+    } else {
+      query.department = inDep;
+    }
   }
+
   if (searchQuery) {
     query.$or = [{ subject: { $regex: searchQuery, $options: "i" } }];
   }
@@ -84,14 +103,54 @@ exports.getAll = async function (req, res) {
       .populate("assignedTo");
 
     res.status(200).json({ status: true, data: tickets });
+  } else if (user.usertype === "member") {
+    const query = {
+      assignedTo: req.user,
+      status: { $ne: "deleted" },
+    };
+    if (inStatus) {
+      query.status = inStatus;
+    }
+
+    if (searchQuery) {
+      query.$or = [{ subject: { $regex: searchQuery, $options: "i" } }];
+    }
+    const tickets = await Ticket.find(query)
+      .populate("department", "departmentName")
+      .populate("projectId")
+      .populate("assignedTo");
+
+    res.status(200).json({ status: true, data: tickets });
+  } else if (user.usertype === "client") {
+    const query = {
+      reporter: req.user,
+      status: { $ne: "deleted" },
+    };
+    if (inStatus) {
+      query.status = inStatus;
+    }
+
+    if (searchQuery) {
+      query.$or = [{ subject: { $regex: searchQuery, $options: "i" } }];
+    }
+    const tickets = await Ticket.find(query)
+      .populate("department", "departmentName")
+      .populate("projectId")
+      .populate("assignedTo");
+
+    res.status(200).json({ status: true, data: tickets });
   } else {
     const projectIds = user.projectId.map((id) => id.toString());
 
     const query = {
       projectId: { $in: projectIds },
-      status: { $ne: "deleted" }
+      status: { $ne: "deleted" },
     };
-
+    if (inDep) {
+      if (inDep === "myticket") {
+        query.reporter = req.user;
+      }
+    }
     if (inStatus) {
       query.status = inStatus;
     }
@@ -108,7 +167,6 @@ exports.getAll = async function (req, res) {
     res.status(200).json({ status: true, data: tickets });
   }
 };
-
 
 //get ticket by id
 exports.getTicket = async function (req, res) {
@@ -130,6 +188,12 @@ exports.getTicket = async function (req, res) {
 exports.updateTicket = async function (req, res) {
   const updateId = req.params.id;
   const update = req.body;
+  // console.log("Update boidt", update);
+  // console.log("Update boidt", updateId);
+  if (update.assignedTo) {
+    update.status = "progress";
+  }
+
   const updateTicket = await Ticket.findByIdAndUpdate(updateId, update, {
     new: true,
   });
@@ -137,8 +201,51 @@ exports.updateTicket = async function (req, res) {
   if (!updateTicket) {
     throw createError(404, "Ticket not found");
   }
+
+  const notification = new Notification({
+    user: updateTicket.reporter, // Assuming assignedTo contains the user ID
+    message: `Ticket #${updateTicket.ticket_Id} status changed to ${updateTicket.status}`,
+    ticketId: updateTicket._id,
+  });
+
+  // Save the notification
+  await notification.save();
+  if (update.assignedTo) {
+    const memberNotification = new Notification({
+      user: updateTicket.assignedTo, // Assuming assignedTo contains the user ID
+      message: `Ticket #${updateTicket.ticket_Id} has been assigned`,
+      ticketId: updateTicket._id,
+    });
+    await memberNotification.save();
+  }
+  const findUser = await User.find({
+    $and: [
+      { _id: { $ne: req.user } },{
+    $or: [
+      { usertype: "admin" }, // Find admin users
+      {
+        $and: [
+          { usertype: { $in: ["projectLead", "manager"] } }, // Find projectLead and manager users
+          { projectId: req.body.projectId }, // Filter by the projectId of the sender
+        ],
+      },
+    ],
+  },
+],
+});
+
+  console.log("notusers", findUser);
+  findUser.forEach(async (user) => {
+    const managerNotification = new Notification({
+      user: user._id,
+      message: `Ticket #${updateTicket.ticket_Id} status changed to ${updateTicket.status}`,
+      ticketId: updateTicket._id,
+    });
+    await managerNotification.save();
+  });
   res.status(200).json({ status: true, message: "ok", data: updateTicket });
 };
+
 //delete Ticket
 exports.deleteTicket = async function (req, res) {
   const ticketId = req.params.id;

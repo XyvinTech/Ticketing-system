@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import StyledSelectionList from "../../ui/StyledSelectionList";
@@ -22,13 +22,17 @@ const ProjectLeadNewTicket = () => {
   const { addTicket } = useTicketStore();
   const { departments, fetchDepartment } = useDepartmentStore();
   const { projects, fetchProjectById } = useProjectStore();
-
+  const [dep, setDep] = useState();
   useEffect(() => {
     fetchDepartment();
   }, []);
   useEffect(() => {
-    fetchProjectById();
-  }, []);
+    let filter = {};
+    if (dep) {
+      filter.inDep = dep;
+    }
+    fetchProjectById(filter);
+  }, [dep]);
   const Priority = [
     { value: "low", name: "Low" },
     { value: "medium", name: "Medium" },
@@ -102,6 +106,10 @@ const ProjectLeadNewTicket = () => {
                           label="Department"
                           options={Department}
                           {...field}
+                          onChange={(value) => {
+                            setDep(value); // Set selected user type inline
+                            field.onChange(value);
+                          }}
                         />
                         {errors.department && (
                           <span className="text-red-500">
@@ -114,28 +122,34 @@ const ProjectLeadNewTicket = () => {
                   />
                 </div>
               </div>
-              <div>
-                <Controller
-                  name="projectId"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <>
-                      <StyledSelectionList
-                        label="Project"
-                        options={Project}
-                        {...field}
-                      />
-                      {errors.project && (
-                        <span className="text-red-500">
-                          {errors.project.message}
-                        </span>
-                      )}
-                    </>
-                  )}
-                  rules={{ required: "Project is required" }}
-                />
-              </div>
+              {Project.length > 0 ? (
+                <div>
+                  <Controller
+                    name="projectId"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <>
+                        <StyledSelectionList
+                          label="Project"
+                          options={Project}
+                          {...field}
+                        />
+                        {errors.project && (
+                          <span className="text-red-500">
+                            {errors.project.message}
+                          </span>
+                        )}
+                      </>
+                    )}
+                    rules={{ required: "Project is required" }}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <span className="text-red-500">No Projects available</span>
+                </div>
+              )}
               <div>
                 <Controller
                   name="subject"

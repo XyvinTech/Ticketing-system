@@ -16,9 +16,9 @@ export const addProject = async (projectData) => {
       console.error('Error caught:', error);
     }
   };
-  export const fetchProjectById = async () => {
+  export const fetchProjectById = async (filter) => {
     try {
-      const response = await axiosInstance.get("/project/fetchId");
+      const response = await axiosInstance.get("/project/fetchId",{params:filter});
       return response.data; 
     } catch (error) {
       console.error('Error caught:', error);

@@ -1,5 +1,6 @@
 import axios from "axios";
 import axiosInstance from "./axiosintercepter";
+import { toast } from "react-toastify";
 export const getLogin = async (datas) => {
   try {
     const response = await axios.post(
@@ -70,6 +71,7 @@ export const updateAdminUser = async (userId,data) => {
     return response.data;
   } catch (error) {
     console.error("Error caught:", error);
+    toast.error(error.response.data.message)
   }
 };
 export const getUserByProjectId = async (project, filter) => {

@@ -4,6 +4,7 @@ const createError = require("http-errors");
 exports.getUser = async function (req, res) {
   const userId = req.user;
   const user = await User.findById(userId);
+  
 
   if (!user) {
     throw createError(404, "User not found");
@@ -45,7 +46,7 @@ exports.passwordupdate = async function (req, res) {
   }
 };
 exports.getUserByProjectId = async function (req, res) {
-  const { withOutClient,inManager,inLead } = req.query;
+  const { withOutClient,inManager,inLead} = req.query;
   const projectId = req.params.id;
   if (projectId === "undefined") {
     return res
@@ -57,10 +58,10 @@ exports.getUserByProjectId = async function (req, res) {
     query.usertype = { $nin: ["client", "admin"] };
   }
   if (inManager) {
-    query.usertype = { $nin: ["client", "admin","projectManager"] };
+    query.usertype = { $nin: ["client", "admin","manager"] };
   }
   if(inLead){
-    query.usertype={$nin :["client","admin","projectManager","projectLead"]}
+    query.usertype={$nin :["client","admin","manager","projectLead"]}
   }
   const data = await User.find(query);
   if (!data || data.length === 0) {

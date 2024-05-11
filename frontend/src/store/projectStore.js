@@ -8,8 +8,8 @@ const useProjectStore = create((set) => ({
     const data=await fetchProjects(filter);
     set({ projects: data.data });
   },
-  fetchProjectById:async()=>{
-    const data=await fetchProjectById();
+  fetchProjectById:async(filter)=>{
+    const data=await fetchProjectById(filter);
     set({ projects: data.data });
   },
   addProject: async (projectData) => {

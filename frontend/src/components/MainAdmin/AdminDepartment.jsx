@@ -20,15 +20,16 @@ const AdminDepartment = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },reset,
+    formState: { errors },
+    reset,
     setValue,
   } = useForm();
   const {
     departments,
     fetchDepartment,
     addDepartment,
-    deleteDepartment,editDepartment
-   
+    deleteDepartment,
+    editDepartment,
   } = useDepartmentStore();
   const { users, fetchUser } = useUserStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,29 +43,34 @@ const AdminDepartment = () => {
   }, [isChange]);
   useEffect(() => {
     let filter = {};
-    filter.withOutClient = true;
+    filter.inLead = true;
     fetchUser(filter);
   }, []);
-  console.log("department",editedDepartment)
+  // console.log("department", editedDepartment);
   useEffect(() => {
     if (editedDepartment) {
       // If editedProject is not null, set form field values
       setValue("departmentName", editedDepartment.departmentName);
       setValue("description", editedDepartment.description);
       // setValue("members", editedDepartment.members);
-    }
-    else {
+    } else {
       reset();
     }
-  }, [editedDepartment, setValue,reset]);
+  }, [editedDepartment, setValue, reset]);
   const selectOptions =
     users && Array.isArray(users)
       ? users.map((user) => ({
           value: user?._id,
           label: user?.email,
+          // Add user type as note
+          note: user?.usertype,
         }))
       : [];
 
+  const options = users?.map((project) => ({
+    value: project._id,
+    name: project.email,
+  }));
   const handleExpand = (index) => {
     setExpandedRows((prevState) => ({
       ...prevState,
@@ -75,13 +81,13 @@ const AdminDepartment = () => {
   const onSubmit = async (data) => {
     try {
       if (editedDepartment) {
-        // Update existing project
-        // Implement updateProject function in useProjectStore
-        console.log("updated data",data)
+        
+        console.log("updated data", data);
         await editDepartment(editedDepartment._id, data);
         toast.success("Updated successfully!");
       } else {
-      await addDepartment(data);
+        await addDepartment(data);
+        reset();
       }
       setIsChange(!isChange);
       setIsModalOpen(false);
@@ -123,8 +129,12 @@ const AdminDepartment = () => {
       </div>
 
       {isModalOpen && (
-        <Modal closeModal={() => {setEditedDepartment(null)
-        setIsModalOpen(false)}}>
+        <Modal
+          closeModal={() => {
+            setEditedDepartment(null);
+            setIsModalOpen(false);
+          }}
+        >
           <form onSubmit={handleSubmit(onSubmit)}>
             <h1 className="flex-auto font-semibold">
               {editedDepartment ? "Edit Department" : "New Department"}
@@ -145,6 +155,36 @@ const AdminDepartment = () => {
                 {errors.departmentName.message}
               </span>
             )}
+               {/* <h1 className="mt-4 mb-1 text-xs font-semibold leading-4 text-slate-500">
+               Manager
+            </h1>
+            <Controller
+              name="departmentManager"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <>
+                  <StyledSelectionList
+                    listname="Manager"
+                    options={options}
+                    selectedOption={
+                      editedDepartment
+                        ? {
+                            value: editedDepartment?.departmentManager?._id,
+                            name: editedDepartment?.departmentManager?.email,
+                          }
+                        : null
+                    }
+                    {...field}
+                  />
+                  {errors.departmentManager && (
+                    <span className="text-red-500">
+                      {errors.departmentManager.message}
+                    </span>
+                  )}
+                </>
+              )}
+            /> */}
             <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
               Description
             </h1>
@@ -155,15 +195,14 @@ const AdminDepartment = () => {
               render={({ field }) => <StyledText field={field} />}
               rules={{ required: "Description is required" }}
             />
-
+         
             <div className="flex mt-12  justify-start gap-4">
               <button
                 className="font-semibold  mt-3"
                 onClick={() => {
-                  setIsModalOpen(false)
+                  setIsModalOpen(false);
                   setEditedDepartment(null);
                 }}
-
               >
                 Cancel
               </button>
@@ -186,9 +225,9 @@ const AdminDepartment = () => {
 
                 <tr className="text-left font-semibold  text-sm  text-gray-900">
                   <td className="px-3 py-3 ">Name</td>
-                  <td className="px-3 py-3  ">Asssigned to</td>
-                  <td className="px-3 py-3  ">Assign</td>{" "}
-                  <td className="px-3 py-3  ">Delete</td>
+                  <td className="px-3 py-3  ">Department Manager</td>
+                  <td className="px-3 py-3  ">Members</td>{" "}
+                  <td className="px-3 py-3  ">Action</td>
                   <td className="px-3 py-3  "></td>
                 </tr>
               </thead>
@@ -203,6 +242,9 @@ const AdminDepartment = () => {
                         /> */}
                         {user?.departmentName}
                       </td>
+                      <td className="px-2 py-2 text-sm text-gray-900 text-left">
+                      {user?.departmentManager?.userName}
+                       </td>
                       <td className="text-sm text-gray-900">
                         <div className="flex flex-wrap">
                           {user?.members &&
@@ -244,14 +286,16 @@ const AdminDepartment = () => {
                                     >
                                       <div className="flex rounded-full px-2 py-1 text-sm items-center mr-2 mt-3 bg-purple-100">
                                         <span>{member.email}</span>
-                                        <button className="ml-1"
-                                         onClick={() =>
-                                          handleUpdateUser(
-                                            user._id,
-                                            member._id,
-                                            "pop"
-                                          )
-                                        }>
+                                        <button
+                                          className="ml-1"
+                                          onClick={() =>
+                                            handleUpdateUser(
+                                              user._id,
+                                              member._id,
+                                              "pop"
+                                            )
+                                          }
+                                        >
                                           <CloseIcon className="h-4 w-4 text-purple-500" />
                                         </button>
                                       </div>
@@ -260,10 +304,7 @@ const AdminDepartment = () => {
                               </div>
                             )}
                           </div>
-                        )}
-                      </td>
-
-                      <td className="px-2 py-2 text-sm text-gray-900 text-left">
+                        )}{" "}
                         <PlusIcon
                           className="h-5 w-5 text-green-500 cursor-pointer"
                           onClick={() => {
@@ -273,6 +314,7 @@ const AdminDepartment = () => {
                           }}
                         />
                       </td>
+
                       <td className="px-3 py-3 text-left text-sm text-gray-900 ">
                         <Menu>
                           <Menu.Button className="focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
@@ -349,9 +391,7 @@ const AdminDepartment = () => {
                     handleUpdateUser(departmentId, data, "push")
                   )}
                 >
-                  <h1 className="flex-auto font-semibold">
-                    Assign to Project Manager
-                  </h1>
+                  <h1 className="flex-auto font-semibold">Add Members</h1>
 
                   <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
                     Names or emails
@@ -362,18 +402,18 @@ const AdminDepartment = () => {
                     defaultValue=""
                     render={({ field }) => (
                       <>
-                       <StyledMultipleSelection
-                    options={selectOptions}
-                    // initialValues={
-                    //   editedDepartment
-                    //     ? editedDepartment.members.map((member) => ({
-                    //         value: member._id,
-                    //         label: member.email,
-                    //       }))
-                    //     : []
-                    // }
-                    {...field}
-                  />
+                        <StyledMultipleSelection
+                          options={selectOptions}
+                          // initialValues={
+                          //   editedDepartment
+                          //     ? editedDepartment.members.map((member) => ({
+                          //         value: member._id,
+                          //         label: member.email,
+                          //       }))
+                          //     : []
+                          // }
+                          {...field}
+                        />
                         {errors.members && (
                           <span className="text-red-500">
                             {errors.members.message}

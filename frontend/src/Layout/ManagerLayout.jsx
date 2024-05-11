@@ -8,9 +8,9 @@ import ManagerNavbar from "../ui/ManagerNavbar";
 const SubNavigation = () => {
   const location = useLocation();
   const subNavigation = [
-    { name: "Tickets", to: "ProjectManager/Ticket", icon: TicketIcon },
-    { name: "New Ticket", to: "ProjectManager/ManagerNewTicket", icon: PlusIcon },
-    { name: "Add Member",to: "ProjectManager/AddPeople",icon: UsersIcon,},
+    { name: "Tickets", to: "Manager/Ticket", icon: TicketIcon },
+    { name: "New Ticket", to: "Manager/ManagerNewTicket", icon: PlusIcon },
+    { name: "Add Member",to: "Manager/AddPeople",icon: UsersIcon,},
   ];
 
   return (

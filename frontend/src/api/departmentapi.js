@@ -8,9 +8,9 @@ export const addDepartment = async (depData) => {
       console.error('Error caught:', error);
     }
   };
-  export const fetchDepartment = async () => {
+  export const fetchDepartment = async (filter) => {
     try {
-      const response = await axiosInstance.get("/department/get");
+      const response = await axiosInstance.get("/department/get",{params:filter});
       return response.data; 
     } catch (error) {
       console.error('Error caught:', error);

@@ -2,19 +2,25 @@ import React, { useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { ReactComponent as MenuIcon } from "../assets/icons/MenuIcon.svg";
 import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
-import { ReactComponent as SearchIcon } from "../assets/icons/SearchIcon.svg";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import { useAdminStore } from "../store/AdminStore";
+import { useNotificationStore } from "../store/NotificationStore";
 
 const navigation = [{ name: "Tickets", to: "Client/Ticket", current: true }];
 
 const ClientNavbar = () => {
   const { user, fetchLogin ,isChange} = useAdminStore();
+  const { notification, fetchNotification,change } = useNotificationStore();
+
+  useEffect(() => {
+    fetchNotification();
+  }, [change]);
   useEffect(() => {
     fetchLogin();
   }, [isChange]);
   const location = useLocation();
+  const unreadNotificationCount = Array.isArray(notification) ? notification.filter((not) => !not.isRead).length : 0;
   return (
     <Disclosure as="nav" className="bg-white">
       {({ open }) => (
@@ -45,13 +51,7 @@ const ClientNavbar = () => {
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <div className="flex items-center lg:hidden">
-                  <button
-                    type="button"
-                    className="mr-4 block rounded-full p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                  >
-                    <span className="sr-only">search</span>
-                    <SearchIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
+                
                   <Disclosure.Button className=" inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-1 focus:ring-1  focus:ring-purple-500">
                     <span className="absolute -inset-0.5" />
                     <span className="sr-only">Open main menu</span>
@@ -65,16 +65,20 @@ const ClientNavbar = () => {
                 </div>
 
                 <div className="hidden lg:ml-4 lg:flex lg:items-center">
-                  <Link className="mr-4 block rounded-full p-1 text-gray-400 hover:text-purple-500">
-                    <span className="sr-only">search</span>
-                    <SearchIcon className="h-6 w-6" />
-                  </Link>
+                <div className="text-base mr-4 font-medium text-purple-700">
+                    {user?.userName}
+                  </div>
                   <Link
                     to={"/Client/Ticket/ClientNotifications"}
-                    className="mr-4 block rounded-full p-1 text-gray-400 hover:text-purple-500 "
+                    className="mr-4 block relative rounded-full p-1 text-gray-400 hover:text-purple-500 "
                   >
                     <span className="sr-only">View Notification</span>
                     <BellIcon className="h-6 w-6" />
+                    {unreadNotificationCount > 0 && (
+                      <span className="absolute top-0 right-0 bg-purple-700 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
+                        {unreadNotificationCount}
+                      </span>
+                    )}
                   </Link>
                   <Menu as="div" className="relative flex-shrink-0">
                     <Menu.Button className="flex rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">

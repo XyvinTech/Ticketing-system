@@ -6,39 +6,53 @@ import { ReactComponent as CalendarIcon } from "../../assets/icons/CalendarIcon.
 import { Menu } from "@headlessui/react";
 import Pagination from "../../ui/Pagination";
 import { useNotificationStore } from "../../store/NotificationStore";
+import { Link } from "react-router-dom";
 
 const ManagerNotification = () => {
   const [showUnread, setShowUnread] = useState(false);
-  const { notification, fetchNotification } = useNotificationStore();
+  const [change, setChange] = useState(false);
+  const { notification, fetchNotification, updateNotification, updateChange } =
+    useNotificationStore();
 
   useEffect(() => {
     fetchNotification();
-  }, []);
+  }, [change]);
+  const sortedNotifications = Array.isArray(notification)
+    ? [...notification].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      )
+    : [];
+  console.log("Motification", notification);
   const headers = ["Message"];
-  
+  const handleMarkAllAsRead = async () => {
+    await updateNotification();
+    updateChange();
+    setChange(!change);
+  };
 
   // Pagination state for all notifications
   const [allCurrentPage, setAllCurrentPage] = useState(1);
-  const allItemsPerPage = 2;
+  const allItemsPerPage = 7;
 
   // Pagination state for unread notifications
   const [unreadCurrentPage, setUnreadCurrentPage] = useState(1);
-  const unreadItemsPerPage = 1;
+  const unreadItemsPerPage = 7;
 
   // Pagination logic for all notifications
   const allIndexOfLastItem = allCurrentPage * allItemsPerPage;
   const allIndexOfFirstItem = allIndexOfLastItem - allItemsPerPage;
-  const allCurrentItems = notification?.slice(
-    allIndexOfFirstItem,
-    allIndexOfLastItem
-  );
+  const allCurrentItems = Array.isArray(sortedNotifications)
+    ? sortedNotifications?.slice(allIndexOfFirstItem, allIndexOfLastItem)
+    : [];
 
   // Pagination logic for unread notifications
   const unreadIndexOfLastItem = unreadCurrentPage * unreadItemsPerPage;
   const unreadIndexOfFirstItem = unreadIndexOfLastItem - unreadItemsPerPage;
-  const unreadCurrentItems = notification
-    .filter((notification) => !notification?.isRead)
-    .slice(unreadIndexOfFirstItem, unreadIndexOfLastItem);
+  const unreadCurrentItems = Array.isArray(sortedNotifications)
+    ? sortedNotifications
+        .filter((sortedNotifications) => !sortedNotifications?.isRead)
+        .slice(unreadIndexOfFirstItem, unreadIndexOfLastItem)
+    : [];
 
   // Change page for all notifications
   const allPaginate = (pageNumber) => setAllCurrentPage(pageNumber);
@@ -55,7 +69,9 @@ const ManagerNotification = () => {
 
   // Go to next page for all notifications
   const goToAllNextPage = () => {
-    if (allCurrentPage < Math.ceil(notification?.length / allItemsPerPage)) {
+    if (
+      allCurrentPage < Math.ceil(sortedNotifications?.length / allItemsPerPage)
+    ) {
       setAllCurrentPage(allCurrentPage + 1);
     }
   };
@@ -72,7 +88,7 @@ const ManagerNotification = () => {
     if (
       unreadCurrentPage <
       Math.ceil(
-        notification.filter((n) => !n?.isRead).length /
+        sortedNotifications.filter((n) => !n?.isRead).length /
           unreadItemsPerPage
       )
     ) {
@@ -81,15 +97,15 @@ const ManagerNotification = () => {
   };
   function formatDate(dateTimeString) {
     if (!dateTimeString) return ""; // handle null or undefined value
-    
+
     const date = new Date(dateTimeString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month starts from 0
-    const day = String(date.getDate()).padStart(2, '0');
-    
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Month starts from 0
+    const day = String(date.getDate()).padStart(2, "0");
+
     return `${year}-${month}-${day}`;
   }
-  
+
   return (
     <div className="px-4 py-6 sm:p-6 lg:pb-8">
       <h1 className="mb-6 text-xl font-semibold">Notifications</h1>
@@ -117,7 +133,10 @@ const ManagerNotification = () => {
               <MenuIcon className="h-5 w-5 text-gray-700 hover:text-gray-800" />
             </Menu.Button>
             <Menu.Items className="absolute right-0 z-10 mt-5 w-36 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-              <Menu.Item className="w-full cursor-pointer">
+              <Menu.Item
+                className="w-full cursor-pointer"
+                onClick={handleMarkAllAsRead}
+              >
                 <div className="block w-fit px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                   Mark all as read
                 </div>
@@ -133,11 +152,16 @@ const ManagerNotification = () => {
                 <div className="group flex items-center justify-between gap-12 px-3 py-4 hover:bg-gray-50">
                   <div className="text-base">
                     <div className="font-semibold text-purple-600">
-                      {notification?.message}
+                      <Link
+                        to={`/Manager/SingleTicket/${notification?.ticketId}`}
+                        className="text-lg font-semibold text-purple-600 hover:text-purple-800"
+                      >
+                        {notification?.message}
+                      </Link>
                     </div>
                     <div className="flex items-center gap-1 text-xs">
                       <CalendarIcon className="h-4 w-4 text-gray-400" />
-                      <span>{notification?.createdAt}</span>
+                      <span>{formatDate(notification?.createdAt)}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -153,7 +177,12 @@ const ManagerNotification = () => {
                 <div className="group flex items-center justify-between gap-12 px-3 py-4 hover:bg-gray-50">
                   <div className="text-base">
                     <div className="font-semibold text-purple-600">
-                      {notification?.message}
+                      <Link
+                        to={`/Manager/SingleTicket/${notification?.ticketId}`}
+                        className="text-lg font-semibold text-purple-600 hover:text-purple-800"
+                      >
+                        {notification?.message}
+                      </Link>
                     </div>
                     <div className="flex items-center gap-1 text-xs">
                       <CalendarIcon className="h-4 w-4 text-gray-400" />
@@ -174,8 +203,9 @@ const ManagerNotification = () => {
               <Pagination
                 currentPage={unreadCurrentPage}
                 totalItems={
-                  notification.filter((n) => !n?.isRead)
-                    .length
+                  Array.isArray(notification)
+                    ? notification.filter((n) => !n?.isRead).length
+                    : 0
                 }
                 itemsPerPage={unreadItemsPerPage}
                 paginate={unreadPaginate}

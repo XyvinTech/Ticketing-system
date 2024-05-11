@@ -7,6 +7,14 @@ const projectSchema = new Schema(
       type: String,
       required: true,
     },
+    departmentId: {
+      type: Schema.Types.ObjectId,
+      ref: "departments",
+    },
+    projectLead: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+    }
   },
   { timestamps: true }
 );

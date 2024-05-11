@@ -338,8 +338,8 @@ const ProjectLeadAddPeople = () => {
                         {person?.email}
                       </td>
                       <td className="px-3 py-3 text-sm text-gray-900 text-left">
-                        {person?.usertype === "projectManager"
-                          ? "Project Manager"
+                        {person?.usertype === "manager"
+                          ? "Manager"
                           : person?.usertype === "member"
                           ? "Member"
                           : person?.usertype === "projectLead"

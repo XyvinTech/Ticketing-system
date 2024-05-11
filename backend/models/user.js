@@ -30,7 +30,7 @@ const userSchema = new Schema(
     usertype: {
       type: String,
       required: true,
-      enum: ["projectManager", "projectLead", "client", "member"],
+      enum: ["manager", "projectLead", "client", "member","admin"],
     },
     projectId: [
       {

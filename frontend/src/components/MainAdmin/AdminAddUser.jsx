@@ -16,6 +16,7 @@ import StyledMultipleSelection from "../../ui/StyledMultipleSelection";
 import { useProjectStore } from "../../store/projectStore";
 import { useUserStore } from "../../store/UserStore";
 import { Menu } from "@headlessui/react";
+import { useDepartmentStore } from "../../store/DepartmentStore";
 
 const AdminAddUser = () => {
   const {
@@ -33,7 +34,9 @@ const AdminAddUser = () => {
   const [role, setRole] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedUser, setEditedUser] = useState(null);
-
+  const [selectedUserType, setSelectedUserType] = useState("");
+  const [dep, setDep] = useState("");
+  const { departments, fetchDepartment } = useDepartmentStore();
   useEffect(() => {
     let filter = {};
     if (search) {
@@ -44,39 +47,57 @@ const AdminAddUser = () => {
     }
     fetchUser(filter);
   }, [isChange, search, role]);
+  console.log(users);
   useEffect(() => {
-    fetchProject();
-  }, []);
-  console.log("department",editedUser)
+    let filter = {};
+    if (dep) {
+      filter.inDep = dep;
+    }
+
+    fetchProject(filter);
+  }, [dep]);
+  // console.log("selectedUserType", selectedUserType);
+  useEffect(() => {
+    let filter = {};
+    if (selectedUserType) {
+      filter.withDep = selectedUserType;
+    }
+    fetchDepartment(filter);
+  }, [selectedUserType]);
+
   useEffect(() => {
     if (editedUser) {
+      console.log(editedUser);
       setValue("userName", editedUser.userName);
       setValue("email", editedUser.email);
       setValue("phoneNumber", editedUser.phoneNumber);
       setValue("usertype", editedUser.usertype);
+      setValue("department", editedUser.department[0]?.departmentName);
       setValue(
         "projectId",
         editedUser.projectId.map((project) => project._id)
       );
+      setSelectedUserType(editedUser.usertype);
+      setDep(editedUser.department[0]);
     } else {
       reset();
     }
   }, [editedUser, setValue, reset]);
-  
 
   const selectOptions = projects.map((project) => ({
     value: project._id,
     label: project.projectName,
   }));
+
   const Role = [
     { value: "all", name: "All" },
-    { value: "projectManager", name: "Project Manager" },
+    { value: "manager", name: "Manager" },
     { value: "projectLead", name: "Project Lead" },
     { value: "member", name: "Member" },
     { value: "client", name: "Client" },
   ];
   const Roles = [
-    { value: "projectManager", name: "Project Manager" },
+    { value: "manager", name: "Manager" },
     { value: "projectLead", name: "Project Lead" },
     { value: "member", name: "Member" },
     { value: "client", name: "Client" },
@@ -85,20 +106,28 @@ const AdminAddUser = () => {
     try {
       if (editedUser) {
         console.log("updated data", data);
-        await updateUser(editedUser._id, data);
-        toast.success("Project updated successfully!");
+        const response = await updateUser(editedUser._id, data);
+        if (response) {
+          toast.success("Project updated successfully!");
+        }
       } else {
         await addUser(data);
+        reset();
       }
 
       setIsChange(!isChange);
+      setSelectedUserType("");
       setIsModalOpen(false);
       reset();
     } catch (error) {
       console.error("Error adding user:", error);
     }
   };
-  console.log("Users List", users);
+
+  const options = departments.map((project) => ({
+    value: project._id,
+    name: project.departmentName,
+  }));
   const handleDeleteUser = async (userId) => {
     try {
       await deleteUser(userId);
@@ -120,8 +149,13 @@ const AdminAddUser = () => {
       </div>
 
       {isModalOpen && (
-        <Modal closeModal={() => { setEditedUser(null)
-        setIsModalOpen(false)}}>
+        <Modal
+          closeModal={() => {
+            setEditedUser(null);
+            setIsModalOpen(false);
+            setSelectedUserType(null);
+          }}
+        >
           <form onSubmit={handleSubmit(onSubmit)}>
             <h1 className="flex-auto font-semibold">
               {" "}
@@ -191,27 +225,30 @@ const AdminAddUser = () => {
             )}
             {!editedUser && (
               <>
-            <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
-              Password
-            </h1>
-            <Controller
-              name="password"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <StyledInput
-                  type="password"
-                  placeholder="********"
-                  Icon={LockClosedIcon}
-                  {...field}
+                <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
+                  Password
+                </h1>
+                <Controller
+                  name="password"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <StyledInput
+                      type="password"
+                      placeholder="********"
+                      Icon={LockClosedIcon}
+                      {...field}
+                    />
+                  )}
+                  rules={{ required: "Password is required" }}
                 />
-              )}
-              rules={{ required: "Password is required" }}
-            />
-            {errors.password && (
-              <span className="text-red-500">{errors.password.message}</span>
-            )}</>
-          )}
+                {errors.password && (
+                  <span className="text-red-500">
+                    {errors.password.message}
+                  </span>
+                )}
+              </>
+            )}
             <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
               User Type
             </h1>
@@ -233,6 +270,10 @@ const AdminAddUser = () => {
                         : null
                     }
                     {...field}
+                    onChange={(value) => {
+                      setSelectedUserType(value);
+                      field.onChange(value);
+                    }}
                   />
                   {errors.usertype && (
                     <span className="text-red-500">
@@ -243,6 +284,47 @@ const AdminAddUser = () => {
               )}
               rules={{ required: "UserType is required" }}
             />
+
+            {selectedUserType === "manager" ||
+            editedUser?.usertype === "manager" ? (
+              <>
+                <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
+                  Department
+                </h1>
+                <Controller
+                  name="department"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <>
+                      <StyledSelectionList
+                        listname="Department"
+                        options={options}
+                        selectedOption={
+                          editedUser
+                            ? {
+                                value: editedUser?.department[0]?._id,
+                                name: editedUser?.department[0]?.departmentName,
+                              }
+                            : {}
+                        }
+                        {...field}
+                        onChange={(value) => {
+                          setDep(value); // Set selected user type inline
+                          field.onChange(value);
+                        }}
+                      />
+                      {errors.department && (
+                        <span className="text-red-500">
+                          {errors.department.message}
+                        </span>
+                      )}
+                    </>
+                  )}
+                  rules={{ required: "Department is required" }}
+                />
+              </>
+            ) : null}
 
             <h1 className="mt-5 mb-1 text-xs font-semibold leading-4 text-slate-500">
               Project Name
@@ -273,7 +355,7 @@ const AdminAddUser = () => {
                   )}
                 </>
               )}
-              rules={{ required: "Project name is required" }}
+              // rules={{ required: "Project name is required" }}
             />
             <div className="flex  justify-end gap-4">
               <button
@@ -281,7 +363,7 @@ const AdminAddUser = () => {
                 onClick={() => {
                   setEditedUser(null);
                   setIsModalOpen(false);
-                  
+                  setSelectedUserType(null);
                 }}
               >
                 Cancel
@@ -357,8 +439,8 @@ const AdminAddUser = () => {
                             {person?.email}
                           </td>
                           <td className="px-3 py-3 text-sm text-gray-900 text-left">
-                            {person?.usertype === "projectManager"
-                              ? "Project Manager"
+                            {person?.usertype === "manager"
+                              ? "Manager"
                               : person?.usertype === "member"
                               ? "Member"
                               : person?.usertype === "projectLead"

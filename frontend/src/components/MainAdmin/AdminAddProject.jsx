@@ -9,12 +9,17 @@ import { ReactComponent as MenuIcon } from "../../assets/icons/MenuVerticalIcon.
 import { useProjectStore } from "../../store/projectStore";
 import { toast } from "react-toastify";
 import { Menu } from "@headlessui/react";
+import { useDepartmentStore } from "../../store/DepartmentStore";
+import StyledSearch from "../../ui/StyledSearch";
+import StyledSelectionList from "../../ui/StyledSelectionList";
+import DropDown from "../../ui/DropDown";
 const AdminAddProject = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-    setValue,reset
+    setValue,
+    reset,
   } = useForm();
   const { projects, fetchProject, addProject, deleteProject, updateProject } =
     useProjectStore();
@@ -22,23 +27,39 @@ const AdminAddProject = () => {
   const [isChange, setIsChange] = useState(false);
   const [search, setSearch] = useState();
   const [editedProject, setEditedProject] = useState(null);
-
+  const { departments, fetchDepartment } = useDepartmentStore();
+  const [dep, setDep] = useState();
   useEffect(() => {
     if (editedProject) {
-      
       setValue("projectName", editedProject.projectName);
-    }
-    else {
+    } else {
       reset();
     }
-  }, [editedProject, setValue,reset]);
+  }, [editedProject, setValue, reset]);
   useEffect(() => {
     let filter = {};
     if (search) {
       filter.searchQuery = search;
     }
+    if (dep && dep !== "all") {
+      filter.inDep = dep;
+    }
     fetchProject(filter);
-  }, [isChange, search]);
+  }, [isChange, search,dep]);
+  useEffect(() => {
+    fetchDepartment();
+  }, []);
+  const options = departments.map((project) => ({
+    value: project._id,
+    name: project.departmentName,
+  }));
+  const Manager = [
+    { value: "all", name: "All" },, // Adding the "All" option
+    ...departments.map((project) => ({
+      value: project._id,
+      name: project.departmentName,
+    })),
+  ];
   const onSubmit = async (data) => {
     try {
       if (editedProject) {
@@ -102,7 +123,36 @@ const AdminAddProject = () => {
             {errors.projectName && (
               <span className="text-red-500">{errors.projectName.message}</span>
             )}
-
+            <h1 className="mt-4 mb-1 text-xs font-semibold leading-4 text-slate-500">
+              Department
+            </h1>
+            <Controller
+              name="departmentId"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <>
+                  <StyledSelectionList
+                    listname="Department"
+                    options={options}
+                    selectedOption={
+                      editedProject
+                        ? {
+                            value: editedProject?.departmentId?._id,
+                            name: editedProject?.departmentId?.departmentName,
+                          }
+                        : null
+                    }
+                    {...field}
+                  />
+                  {errors.departmentId && (
+                    <span className="text-red-500">
+                      {errors.departmentId.message}
+                    </span>
+                  )}
+                </>
+              )}
+            />
             <div className="flex  justify-end gap-4">
               <button
                 className="font-semibold  mt-3"
@@ -139,12 +189,15 @@ const AdminAddProject = () => {
                           onChange={(e) => setSearch(e.target.value)}
                         />
                       </div>
+                      <DropDown label="All" options={Manager}
+             onChange={(value) => setDep(value)} />
                     </div>
                   </td>
                 </tr>
 
                 <tr className="font-semibold  text-sm text-left text-gray-900">
                   <td className="px-3 py-3 ">Name</td>
+                  <td className="px-3 py-3 ">Department</td>
                   <td className="px-3 py-3  ">Action</td>
                 </tr>
               </thead>
@@ -154,6 +207,9 @@ const AdminAddProject = () => {
                     <tr key={project?._id} className="border-b border-gray-200">
                       <td className="px-3 py-4 text-left text-sm text-gray-900">
                         {project?.projectName}
+                      </td>
+                      <td className="px-3 py-4 text-left text-sm text-gray-900">
+                        {project?.departmentId?.departmentName}
                       </td>
                       <td className="px-3 py-3 text-left text-sm text-gray-900 ">
                         <Menu>

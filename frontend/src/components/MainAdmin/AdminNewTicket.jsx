@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import StyledSelectionList from "../../ui/StyledSelectionList";
@@ -22,13 +22,17 @@ const AdminNewTicket = () => {
   const { addTicket } = useTicketStore();
   const { departments, fetchDepartment } = useDepartmentStore();
   const { projects, fetchProject } = useProjectStore();
-
+  const [dep, setDep] = useState();
   useEffect(() => {
     fetchDepartment();
   }, []);
   useEffect(() => {
-    fetchProject();
-  }, []);
+    let filter = {};
+    if (dep) {
+      filter.inDep = dep;
+    }
+    fetchProject(filter);
+  }, [dep]);
   const Priority = [
     { value: "low", name: "Low" },
     { value: "medium", name: "Medium" },
@@ -102,6 +106,10 @@ const AdminNewTicket = () => {
                           label="Department"
                           options={Department}
                           {...field}
+                          onChange={(value) => {
+                            setDep(value); // Set selected user type inline
+                            field.onChange(value);
+                          }}
                         />
                         {errors.department && (
                           <span className="text-red-500">

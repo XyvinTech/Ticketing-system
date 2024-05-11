@@ -7,13 +7,10 @@ import { Link } from "react-router-dom";
 import Pagination from "../../ui/Pagination";
 
 import { ReactComponent as SearchIcon } from "../../assets/icons/SearchIcon.svg";
-import MemberBoard from "./MemberBoard";
-import Modal from "../../ui/Modal";
 import { useTicketStore } from "../../store/TicketStore";
 import DropDown from "../../ui/DropDown";
 
 const MemberTicket = () => {
-  const [showMemberBoard, setShowMemberBoard] = useState(false);
   const { tickets, fetchTickets } = useTicketStore();
   const [search, setSearch] = useState();
   const [status, setStatus] = useState();
@@ -27,12 +24,15 @@ const MemberTicket = () => {
     }
     fetchTickets(filter);
   }, [search, status]);
+  const sortedTickets = tickets && Array.isArray(tickets)
+  ? [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  : [];
   let pendingCount = 0;
   let progressCount = 0;
   let completedCount = 0;
   
-  if (Array.isArray(tickets)) {
-    tickets.forEach(ticket => {
+  if (Array.isArray(sortedTickets)) {
+    sortedTickets.forEach((ticket) => {
       if (ticket.status === "pending") {
         pendingCount++;
       } else if (ticket.status === "progress") {
@@ -43,11 +43,10 @@ const MemberTicket = () => {
     });
   }
   const items = [
-    { name: "Total", count: tickets?.length },
+    { name: "Total", count: sortedTickets?.length  },
     { name: "Pending", count: pendingCount },
     { name: "Progress", count: progressCount },
-    { name: "Completed", count: completedCount },
-    { name: "Closed", count: 0 },
+    { name: "Closed", count: completedCount },
   ];
 
   const headers = ["Ticket", "Status"];
@@ -59,9 +58,9 @@ const MemberTicket = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = Array.isArray(tickets)
-    ? tickets.slice(indexOfFirstItem, indexOfLastItem)
-    : [];
+  const currentItems = Array.isArray(sortedTickets)
+  ? sortedTickets.slice(indexOfFirstItem, indexOfLastItem)
+  : [];
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -79,9 +78,7 @@ const MemberTicket = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-  const handleBoardButtonClick = () => {
-    setShowMemberBoard(true); // Show AnotherBoard when the button is clicked
-  };
+
   // const [isStatusOpen, setIsStatusOpen] = useState(false);
 
   //  const statuses = ["assigned", "unassigned", "closed", "resolved"];
@@ -111,41 +108,33 @@ const MemberTicket = () => {
               options={Status}
               onChange={(value) => setStatus(value)}
             />
-
-            <button
-              className="mt-1 cursor-default rounded-md border bg-white py-2 pl-3 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500"
-              onClick={handleBoardButtonClick}
-            >
-              Board
-            </button>
           </div>
         </div>
-        {showMemberBoard && <MemberBoard />}{" "}
-        {!showMemberBoard && (
-          <StyledTable header={headers}>
-            {currentItems?.map((i) => (
-              <tr key={i._id}>
-                <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
-                  {/* <input type="checkbox" className="mr-2 checkbox-purple" /> */}
-                  <Link
-                    to={`/Member/SingleTicket/${i?._id}`}
-                    className="text-lg font-semibold text-purple-600 hover:text-purple-800"
-                  >
-                    {i?.subject}
-                  </Link>
-                  <TableInfo
-                    reference={i?.ticket_Id}
-                    priority={i?.priority}
-                    createdAt={i?.createdAt}
-                    category={i?.department?.departmentName}
-                    projectName={i?.projectId?.projectName}
-                    // last_reply_on={i.replies[0]?.created_at}
-                  />
-                </td>
-                <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
-                  {/* <button onClick={() => setIsStatusOpen(true)} > */}
-                  <span
-                    className={`rounded-full px-3 py-px text-sm
+
+        <StyledTable header={headers}>
+          {currentItems?.map((i) => (
+            <tr key={i._id}>
+              <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
+                {/* <input type="checkbox" className="mr-2 checkbox-purple" /> */}
+                <Link
+                  to={`/Member/SingleTicket/${i?._id}`}
+                  className="text-lg font-semibold text-purple-600 hover:text-purple-800"
+                >
+                  {i?.subject}
+                </Link>
+                <TableInfo
+                  reference={i?.ticket_Id}
+                  priority={i?.priority}
+                  createdAt={i?.createdAt}
+                  category={i?.department?.departmentName}
+                  projectName={i?.projectId?.projectName}
+                  // last_reply_on={i.replies[0]?.created_at}
+                />
+              </td>
+              <td className="whitespace-nowrap text-sm text-left text-gray-500 px-3 py-3.5">
+                {/* <button onClick={() => setIsStatusOpen(true)} > */}
+                <span
+                  className={`rounded-full px-3 py-px text-sm
                       ${
                         i?.status === "progress"
                           ? "bg-indigo-100 text-indigo-800"
@@ -157,11 +146,11 @@ const MemberTicket = () => {
                           ? "bg-green-100 text-green-800"
                           : ""
                       }`}
-                  >
-                    {i?.status}
-                  </span>
-                  {/* </button> */}
-                  {/* {isStatusOpen && (
+                >
+                  {i?.status === "completed" ? "Closed" : i?.status}
+                </span>
+                {/* </button> */}
+                {/* {isStatusOpen && (
                     <Modal  closeModal={() => setIsStatusOpen(false)}>
                          <div className="grid gap-2">
           {statuses.map((status) => (
@@ -190,23 +179,22 @@ const MemberTicket = () => {
         </div>
                     </Modal>
                   )} */}
-                </td>
-              </tr>
-            ))}
-            <tr>
-              <td colSpan="2" className="px-4 py-2">
-                <Pagination
-                  currentPage={currentPage}
-                  totalItems={tickets?.length}
-                  itemsPerPage={itemsPerPage}
-                  paginate={paginate}
-                  goToPreviousPage={goToPreviousPage}
-                  goToNextPage={goToNextPage}
-                />
               </td>
             </tr>
-          </StyledTable>
-        )}
+          ))}
+          <tr>
+            <td colSpan="2" className="px-4 py-2">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={tickets?.length}
+                itemsPerPage={itemsPerPage}
+                paginate={paginate}
+                goToPreviousPage={goToPreviousPage}
+                goToNextPage={goToNextPage}
+              />
+            </td>
+          </tr>
+        </StyledTable>
       </section>
     </div>
   );

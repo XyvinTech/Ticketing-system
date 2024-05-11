@@ -17,7 +17,12 @@ const departmentSchema = new Schema(
         ref: "users",
         required: true,
       },
+      
     ],
+    departmentManager: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+    }
   },
   { timestamps: true }
 );
