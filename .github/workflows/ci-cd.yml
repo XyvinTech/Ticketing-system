@@ -14,6 +14,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}        
         AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID}}
+        ECR_REGISTRY: public.ecr.aws/e8k8d6k3
         ECR_REPOSITORY: ticketing-system
         IMAGE_TAG: latest
         SERVICE_NAME: backend
@@ -41,9 +42,6 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build and Push Docker image
-      env:        
-         ECR_REGISTRY: public.ecr.aws/e8k8d6k3
-
       run: |    
         cd ${{env.SERVICE_NAME}}
         docker build -t ${{env.ECR_REGISTRY}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
@@ -54,9 +52,8 @@ jobs:
 
           SSH_KEY: ${{ secrets.XYVIN_INTERNAL_SSH }}
           EC2_INSTANCE_IP:  ${{ secrets.EC2_INSTANCE_IP}}
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: latest
-          USERNAME: ubuntu
+          USERNAME: ec2-user
           CONTAINER_NAME: ticketing-system-container
           PORT: 4000
 
@@ -68,10 +65,10 @@ jobs:
           script: |
 
             # Refresh ECR login
-            aws ecr get-login-password --region ${{ env.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+            aws ecr get-login-password --region ${{ env.AWS_REGION }} | sudo docker login --username AWS --password-stdin  ${{ env.ECR_REGISTRY }}
            
             # Pull Docker Image
-            sudo docker pull ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+            sudo docker pull ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
             sudo docker stop ${{ env.CONTAINER_NAME }} || true
             sudo docker rm ${{ env.CONTAINER_NAME }} || true
@@ -80,7 +77,7 @@ jobs:
               -p ${{ env.PORT }}:${{ env.PORT }}\
               --name ${{ env.CONTAINER_NAME }} \
               -e ENVIRONMENT=production \
-               ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+              ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
               
             # Clean up old Docker images
             sudo docker system prune -af
