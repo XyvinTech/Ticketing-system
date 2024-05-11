@@ -31,7 +31,10 @@ jobs:
         cd frontend
         npm install
         npm run build
-        mv build ../backend/
+        
+    - name: Move Build to Backend
+      run: |
+          mv frontend/build backend/
 
     - name: Login to Amazon ECR
       id: login-ecr
