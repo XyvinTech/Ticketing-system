@@ -20,7 +20,9 @@ jobs:
         SERVICE_NAME: backend
 
     steps:
-        
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
@@ -35,9 +37,6 @@ jobs:
     - name: Move Build to Backend
       run: |
           mv frontend/build backend/
-
-    - name: Checkout repository
-      uses: actions/checkout@v3
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
