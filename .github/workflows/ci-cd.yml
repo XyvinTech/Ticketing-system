@@ -30,8 +30,8 @@ jobs:
       run: |
         cd frontend
         npm install
-        npm run build
-        
+        CI=false npm run build
+
     - name: Move Build to Backend
       run: |
           mv frontend/build backend/

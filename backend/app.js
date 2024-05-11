@@ -31,7 +31,7 @@ app.post(
   verifyToken,
   asyncHandler(uploadController.uploadImage)
 );
-
+//.
 
 
 app.get('*',(req,res)=>{
