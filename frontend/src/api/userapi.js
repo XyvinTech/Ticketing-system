@@ -3,11 +3,9 @@ import axiosInstance from "./axiosintercepter";
 import { toast } from "react-toastify";
 export const getLogin = async (datas) => {
   try {
-    const response = await axios.post(
-      "http://52.66.160.202/auth/login",
-      datas
-    );
-    console.log("data",response.data)
+    const response = await axiosInstance.post("/auth/login", datas);
+    
+    console.log("data", response.data)
     return response.data;
   } catch (error) {
     console.error("Error caught:", error);
@@ -65,7 +63,7 @@ export const updatePassword = async (data) => {
     throw error; // Rethrow the error to handle it elsewhere if needed
   }
 };
-export const updateAdminUser = async (userId,data) => {
+export const updateAdminUser = async (userId, data) => {
   try {
     const response = await axiosInstance.put(`/admin/update/${userId}`, data);
     return response.data;
