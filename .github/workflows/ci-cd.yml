@@ -44,8 +44,9 @@ jobs:
     - name: Build and Push Docker image
       run: |    
         cd ${{env.SERVICE_NAME}}
-        docker build -t ${{env.ECR_REGISTRY}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
-        docker push ${{env.ECR_REGISTRY}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+        docker build -t ticketing-system
+        docker tag ticketing-system:latest public.ecr.aws/e8k8d6k3/ticketing-system:latest
+        docker push ticketing-system:latest public.ecr.aws/e8k8d6k3/ticketing-system:latest
 
     - name: Deploy to EC2
       env:
