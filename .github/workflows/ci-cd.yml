@@ -20,8 +20,7 @@ jobs:
         SERVICE_NAME: backend
 
     steps:
-    - uses: actions/checkout@v2
-    
+        
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
@@ -37,6 +36,12 @@ jobs:
       run: |
           mv frontend/build backend/
 
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
@@ -44,9 +49,8 @@ jobs:
     - name: Build and Push Docker image
       run: |    
         cd ${{env.SERVICE_NAME}}
-        docker build -t ticketing-system
-        docker tag ticketing-system:latest public.ecr.aws/e8k8d6k3/ticketing-system:latest
-        docker push ticketing-system:latest public.ecr.aws/e8k8d6k3/ticketing-system:latest
+        docker build -t ${{env.ECR_REGISTRY}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
+        docker push ${{env.ECR_REGISTRY}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
     - name: Deploy to EC2
       env:
