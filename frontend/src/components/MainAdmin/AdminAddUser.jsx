@@ -108,7 +108,7 @@ const AdminAddUser = () => {
         console.log("updated data", data);
         const response = await updateUser(editedUser._id, data);
         if (response) {
-          toast.success("Project updated successfully!");
+          toast.success("Updated successfully!");
         }
       } else {
         await addUser(data);
@@ -130,8 +130,11 @@ const AdminAddUser = () => {
   }));
   const handleDeleteUser = async (userId) => {
     try {
-      await deleteUser(userId);
-      toast.success("User deleted successfully!");
+      const data = await deleteUser(userId);
+      if (data) {
+        toast.success("User deleted successfully!");
+      }
+
       setIsChange(!isChange);
     } catch (error) {
       console.error("Error deleting user:", error);

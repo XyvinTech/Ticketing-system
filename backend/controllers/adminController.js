@@ -38,6 +38,14 @@ exports.addUser = async function (req, res) {
 provided user ID. Here's a breakdown of what it does: */
 exports.deleteUser = async function (req, res) {
   const UserId = req.params.id;
+  const isDepartmentManager = await Department.find({ departmentManager: UserId });
+  // console.log("isDepartmentManager",isDepartmentManager)
+  if(isDepartmentManager){
+    await Department.updateOne(
+      { departmentManager: UserId },
+      { $unset: { departmentManager: "" } }
+    );
+  }
   const deletedAdmin = await User.findByIdAndDelete(UserId);
 
   if (!deletedAdmin) {

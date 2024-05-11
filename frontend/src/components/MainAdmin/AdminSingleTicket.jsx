@@ -7,7 +7,6 @@ import { useParams } from "react-router-dom";
 import { useConversationStore } from "../../store/ConversationStore";
 import { useAdminStore } from "../../store/AdminStore";
 import { updateTicket } from "../../api/ticketapi";
-import { useNotificationStore } from "../../store/NotificationStore";
 
 const AdminSingleTicket = () => {
   const { id } = useParams();

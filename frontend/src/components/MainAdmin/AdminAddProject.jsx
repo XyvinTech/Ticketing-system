@@ -10,7 +10,6 @@ import { useProjectStore } from "../../store/projectStore";
 import { toast } from "react-toastify";
 import { Menu } from "@headlessui/react";
 import { useDepartmentStore } from "../../store/DepartmentStore";
-import StyledSearch from "../../ui/StyledSearch";
 import StyledSelectionList from "../../ui/StyledSelectionList";
 import DropDown from "../../ui/DropDown";
 const AdminAddProject = () => {
@@ -45,7 +44,7 @@ const AdminAddProject = () => {
       filter.inDep = dep;
     }
     fetchProject(filter);
-  }, [isChange, search,dep]);
+  }, [isChange, search, dep]);
   useEffect(() => {
     fetchDepartment();
   }, []);
@@ -54,7 +53,7 @@ const AdminAddProject = () => {
     name: project.departmentName,
   }));
   const Manager = [
-    { value: "all", name: "All" },, // Adding the "All" option
+    { value: "all", name: "All" }, // Adding the "All" option
     ...departments.map((project) => ({
       value: project._id,
       name: project.departmentName,
@@ -63,11 +62,12 @@ const AdminAddProject = () => {
   const onSubmit = async (data) => {
     try {
       if (editedProject) {
-        // Update existing project
-        // Implement updateProject function in useProjectStore
-        console.log("updated data", data);
-        await updateProject(editedProject._id, data);
-        toast.success("Project updated successfully!");
+        // console.log("updated data", data);
+
+        const res = await updateProject(editedProject._id, data);
+        if (res) {
+          toast.success("Project updated successfully!");
+        }
       } else {
         await addProject(data);
       }
@@ -81,8 +81,11 @@ const AdminAddProject = () => {
 
   const handleDeleteProject = async (projectId) => {
     try {
-      await deleteProject(projectId);
-      toast.success("Project deleted successfully!");
+      const data = await deleteProject(projectId);
+      if (data) {
+        toast.success("Project deleted successfully!");
+      }
+
       setIsChange(!isChange);
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -189,8 +192,11 @@ const AdminAddProject = () => {
                           onChange={(e) => setSearch(e.target.value)}
                         />
                       </div>
-                      <DropDown label="All" options={Manager}
-             onChange={(value) => setDep(value)} />
+                      <DropDown
+                        label="All"
+                        options={Manager}
+                        onChange={(value) => setDep(value)}
+                      />
                     </div>
                   </td>
                 </tr>

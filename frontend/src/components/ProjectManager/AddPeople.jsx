@@ -76,9 +76,11 @@ const AddPeople = () => {
   const onSubmit = async (data) => {
     try {
       if (editedUser) {
-        console.log("updated data", data);
-        await updateUser(editedUser._id, data);
-        toast.success("Project updated successfully!");
+        // console.log("updated data", data);
+        const res = await updateUser(editedUser._id, data);
+        if (res) {
+          toast.success("Updated successfully!");
+        }
       } else {
         await addUser(data);
       }
