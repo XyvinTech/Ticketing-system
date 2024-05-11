@@ -17,5 +17,8 @@ router.use("/ticket", verifyToken, ticketRoutes);
 router.use("/notification",verifyToken, notificationRoutes);
 router.use("/auth", authRoutes);
 router.use("/department", verifyToken, departmentRoutes);
+router.get("/",async (req,res)=>{
+res.send('Server Active')
+})
 //..
 module.exports = router;
