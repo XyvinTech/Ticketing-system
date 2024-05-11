@@ -18,5 +18,5 @@ router.use("/notification",verifyToken, notificationRoutes);
 router.use("/auth", authRoutes);
 router.use("/department", verifyToken, departmentRoutes);
 
-//..,
+//..
 module.exports = router;

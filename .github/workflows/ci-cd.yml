@@ -33,13 +33,13 @@ jobs:
         npm install
         CI=false npm run build
 
+    - name: Check frontend build output
+      run: |
+         ls -al frontend/build/
+
     - name: Move Build to Backend
       run: |
           mv frontend/build backend/
-
-    - name: Check frontend build output
-      run: |
-          ls -al frontend/build/
         
     - name: Check backend directory after move
       run: |
