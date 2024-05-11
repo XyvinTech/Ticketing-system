@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 export const getLogin = async (datas) => {
   try {
     const response = await axios.post(
-      "http://localhost:4000/auth/login",
+      "http://52.66.160.202/auth/login",
       datas
     );
     console.log("data",response.data)
