@@ -37,7 +37,7 @@ const Login = () => {
             navigate("/Member/Ticket");
             break;
           case "admin":
-            navigate("/Admin/Ticket");
+            navigate("/Dep/Ticket");
             break;
           default:
             navigate("/");
