@@ -10,6 +10,15 @@ FROM node:${NODE_VERSION}-alpine
 
 # Use production node environment by default.
 ENV NODE_ENV production
+ENV PORT=4000
+ENV MONGODB_URL="mongodb+srv://tijotjoseph:4CHkgnaHODjH0RIR@loyaltycarddb.3o6xb60.mongodb.net/ticket_db"
+ENV JWT_SECRET="QVXxot9A5oCOXsY"
+ENV AWS_REGION="ap-south-1"
+ENV AWS_ACCESS_KEY="AKIAUQ2PXSHKH5ZODZJT"
+ENV AWS_SECRET_ACCESS_KEY="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"
+ENV AWS_BUCKET_NAME="image-upload-oxium/tickets"
+ENV EMAIL_ID="spptacute@gmail.com"
+ENV PASSWORD="vkew dimh egai gszi"
 
 
 WORKDIR /usr/src/app
