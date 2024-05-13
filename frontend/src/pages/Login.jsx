@@ -51,7 +51,7 @@ const Login = () => {
       toast.success("Login successfully!");
     } catch (error) {
       console.error("Login Error:", error);
-      toast.error("Login Error");
+      // toast.error("Login Error");
     }
   };
 

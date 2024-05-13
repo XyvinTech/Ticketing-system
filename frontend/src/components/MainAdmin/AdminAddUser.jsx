@@ -47,7 +47,7 @@ const AdminAddUser = () => {
     }
     fetchUser(filter);
   }, [isChange, search, role]);
-  console.log(users);
+  // console.log("users", departments);
   useEffect(() => {
     let filter = {};
     if (dep) {
@@ -67,7 +67,13 @@ const AdminAddUser = () => {
 
   useEffect(() => {
     if (editedUser) {
-      console.log(editedUser);
+      if (editedUser.usertype === "manager") {
+        setSelectedUserType("manager");
+        setDep(editedUser.department[0]);
+      } else {
+        setSelectedUserType("");
+      }
+
       setValue("userName", editedUser.userName);
       setValue("email", editedUser.email);
       setValue("phoneNumber", editedUser.phoneNumber);
@@ -77,8 +83,6 @@ const AdminAddUser = () => {
         "projectId",
         editedUser.projectId.map((project) => project._id)
       );
-      setSelectedUserType(editedUser.usertype);
-      setDep(editedUser.department[0]);
     } else {
       reset();
     }
@@ -88,7 +92,7 @@ const AdminAddUser = () => {
     value: project._id,
     label: project.projectName,
   }));
-
+  console.log("selectedOption", selectOptions);
   const Role = [
     { value: "all", name: "All" },
     { value: "manager", name: "Manager" },
@@ -105,7 +109,7 @@ const AdminAddUser = () => {
   const onSubmit = async (data) => {
     try {
       if (editedUser) {
-        console.log("updated data", data);
+        // console.log("updated data", data);
         const response = await updateUser(editedUser._id, data);
         if (response) {
           toast.success("Updated successfully!");
@@ -128,6 +132,7 @@ const AdminAddUser = () => {
     value: project._id,
     name: project.departmentName,
   }));
+  console.log("dep",options)
   const handleDeleteUser = async (userId) => {
     try {
       const data = await deleteUser(userId);
@@ -140,6 +145,15 @@ const AdminAddUser = () => {
       console.error("Error deleting user:", error);
     }
   };
+  useEffect(() => {
+    if (selectedUserType === "manager") {
+      setDep(editedUser ? editedUser.department[0] : "");
+    } else {
+      setDep("");
+    }
+  }, [selectedUserType, editedUser]);
+
+  console.log("Dep", selectedUserType);
   return (
     <div className="py-6 px-4 sm:p-6 lg:pb-8">
       <h1 className="text-xl font-semibold">Users</h1>
@@ -288,8 +302,7 @@ const AdminAddUser = () => {
               rules={{ required: "UserType is required" }}
             />
 
-            {selectedUserType === "manager" ||
-            editedUser?.usertype === "manager" ? (
+            { selectedUserType === "manager" ? (
               <>
                 <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
                   Department
@@ -328,38 +341,48 @@ const AdminAddUser = () => {
                 />
               </>
             ) : null}
-
-            <h1 className="mt-5 mb-1 text-xs font-semibold leading-4 text-slate-500">
-              Project Name
-            </h1>
-            <Controller
-              name="projectId"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
+            {selectOptions.length > 0 &&
+              (dep || selectedUserType !== "manager") && (
                 <>
-                  <StyledMultipleSelection
-                    options={selectOptions}
-                    initialValues={
-                      editedUser
-                        ? editedUser.projectId.map((project) => ({
-                            value: project._id,
-                            label: project.projectName,
-                          }))
-                        : []
-                    }
-                    {...field}
-                  />
+                  <h1 className="mt-5 mb-1 text-xs font-semibold leading-4 text-slate-500">
+                    Project Name
+                  </h1>
+                  <Controller
+                    name="projectId"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <>
+                        <StyledMultipleSelection
+                          options={selectOptions}
+                          initialValues={
+                            editedUser
+                              ? editedUser.projectId.map((project) => ({
+                                  value: project._id,
+                                  label: project.projectName,
+                                }))
+                              : []
+                          }
+                          {...field}
+                        />
 
-                  {errors.projectId && (
-                    <span className="text-red-500">
-                      {errors.projectId.message}
-                    </span>
-                  )}
+                        {errors.projectId && (
+                          <span className="text-red-500">
+                            {errors.projectId.message}
+                          </span>
+                        )}
+                      </>
+                    )}
+                    // rules={{ required: "Project name is required" }}
+                  />
                 </>
               )}
-              // rules={{ required: "Project name is required" }}
-            />
+      {(!selectOptions.length && (dep || selectedUserType !== "manager")) && (
+  <p className="text-red-500">This department currently has no projects.</p>
+)}
+
+
+
             <div className="flex  justify-end gap-4">
               <button
                 className="font-semibold  mt-3"

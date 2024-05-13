@@ -4,13 +4,14 @@ import { toast } from "react-toastify";
 export const getLogin = async (datas) => {
   try {
     const response = await axios.post(
-      "http://localhost:3001/auth/login",
+      "http://localhost:4000/auth/login",
       datas
     );
     console.log("data",response.data)
     return response.data;
   } catch (error) {
     console.error("Error caught:", error);
+    toast.error(error.response.data.message)
   }
 };
 export const getLoginById = async () => {
@@ -28,6 +29,7 @@ export const addUser = async (userData) => {
     return response.data;
   } catch (error) {
     console.error("Error caught:", error);
+    toast.error(error.response.data.message)
   }
 };
 export const fetchUsers = async (filter) => {

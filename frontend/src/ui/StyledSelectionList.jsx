@@ -4,7 +4,7 @@ import { ReactComponent as UpDownIcon } from "../assets/icons/UpDownIcon.svg";
 
 const StyledSelectionList = ({ options, label, onChange = () => {},listname,selectedOption }) => {
   const [selected, setSelected] = useState(selectedOption);
-  console.log("selected",selected)
+  // console.log("selected",selected)
   useEffect(() => {
     setSelected(selectedOption);
   }, [selectedOption]);
