@@ -9,14 +9,14 @@ const notificationRoutes = require("./routes/notificationRoute");
 const authRoutes = require("./routes/authRoute");
 const departmentRoutes = require("./routes/departmentRoute");
 const verifyToken = require("./middlewares/verifyUser");
-router.use("/admin", adminRoutes);
-router.use("/conversation", conversationRoutes);
-router.use("/user", userRoutes);
-router.use("/project", projectRoutes);
-router.use("/ticket", ticketRoutes);
-router.use("/notification", notificationRoutes);
+router.use("/admin", verifyToken, adminRoutes);
+router.use("/conversation", verifyToken,conversationRoutes);
+router.use("/user", verifyToken,userRoutes);
+router.use("/project", verifyToken, projectRoutes);
+router.use("/ticket", verifyToken, ticketRoutes);
+router.use("/notification",verifyToken, notificationRoutes);
 router.use("/auth", authRoutes);
-router.use("/department", departmentRoutes);
+router.use("/department", verifyToken, departmentRoutes);
 
 //...
 module.exports = router;

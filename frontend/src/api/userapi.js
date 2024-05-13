@@ -25,6 +25,7 @@ export const getLoginById = async () => {
   }
 };
 export const addUser = async (userData) => {
+  console.log(axiosInstance)
   try {
     const response = await axiosInstance.post("/admin/add-user", userData);
     return response.data;
