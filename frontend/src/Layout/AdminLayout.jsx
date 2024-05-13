@@ -12,10 +12,10 @@ const SubNavigation = () => {
   const location = useLocation();
   const subNavigation = [
     { name: "Tickets", to: "Support/Ticket", icon: TicketIcon },
-    { name: "New Ticket", to: "Ticket/AdminNewTicket", icon: PlusIcon },
-    { name: "Department",to: "Ticket/Department",icon: DepartmentIcon,},
-    { name: "Add Project",to: "Ticket/AddProject",icon: SquareIcon,},
-    { name: "Add User",to: "Ticket/AddUser",icon: UsersIcon,},
+    { name: "New Ticket", to: "Support/AdminNewTicket", icon: PlusIcon },
+    { name: "Department",to: "Support/Department",icon: DepartmentIcon,},
+    { name: "Add Project",to: "Support/AddProject",icon: SquareIcon,},
+    { name: "Add User",to: "Support/AddUser",icon: UsersIcon,},
     
   ];
 

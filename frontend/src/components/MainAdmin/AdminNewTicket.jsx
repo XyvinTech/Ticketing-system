@@ -58,7 +58,7 @@ const AdminNewTicket = () => {
       await addTicket(data);
       toast.success("Ticket created successfully!");
       reset();
-      navigate("/Ticket/Admin");
+      navigate("/Support/Ticket");
     } catch (error) {
       console.error("Error adding ticket:", error);
       toast.error("Error!");

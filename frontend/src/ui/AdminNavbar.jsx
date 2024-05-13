@@ -7,7 +7,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAdminStore } from "../store/AdminStore";
 import { useNotificationStore } from "../store/NotificationStore";
 
-const navigation = [{ name: "Tickets", to: "/Ticket/Admin", current: true }];
+const navigation = [{ name: "Tickets", to: "Support/Ticket", current: true }];
 
 const AdminNavbar = () => {
   const { user, fetchLogin, isChange } = useAdminStore();
@@ -71,7 +71,7 @@ const AdminNavbar = () => {
                     {user?.userName}
                   </div>
                   <Link
-                    to={"/Ticket/AdminNotifications"}
+                    to={"/Support/AdminNotifications"}
                     className="mr-4 block relative rounded-full p-1 text-gray-400 hover:text-purple-500"
                   >
                     <span className="sr-only">View Notification</span>
@@ -108,7 +108,7 @@ const AdminNavbar = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              to={"/Ticket/AdminProfile"}
+                              to={"/Support/AdminProfile"}
                               className={
                                 "block px-4 py-2 text-sm text-gray-700" +
                                 (active ? " bg-gray-100" : "")
@@ -121,7 +121,7 @@ const AdminNavbar = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              to={"/Ticket/AdminPassword"}
+                              to={"/Support/AdminPassword"}
                               className={
                                 "block px-4 py-2 text-sm text-gray-700" +
                                 (active ? " bg-gray-100" : "")
@@ -190,7 +190,7 @@ const AdminNavbar = () => {
                 </div>
 
                 <span className="sr-only">View notifications</span>
-                <Link to={"/Ticket/AdminNotifications"}>
+                <Link to={"/Support/AdminNotifications"}>
                   {" "}
                   <BellIcon className="h-6 w-6" />
                 </Link>
@@ -198,7 +198,7 @@ const AdminNavbar = () => {
 
               <div className="space-y-1">
                 <Link
-                  to={"/Ticket/AdminProfile"}
+                  to={"/Support/AdminProfile"}
                   className="block  py-2 text-sm text-gray-700"
                 >
                   <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
@@ -206,7 +206,7 @@ const AdminNavbar = () => {
                   </Disclosure.Button>
                 </Link>
                 <Link
-                  to={"/Ticket/AdminPassword"}
+                  to={"/Support/AdminPassword"}
                   className="block  py-2 text-sm text-gray-700"
                 >
                   <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
