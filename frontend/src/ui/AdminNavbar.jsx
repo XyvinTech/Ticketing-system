@@ -7,7 +7,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAdminStore } from "../store/AdminStore";
 import { useNotificationStore } from "../store/NotificationStore";
 
-const navigation = [{ name: "Tickets", to: "Support/Ticket", current: true }];
+const navigation = [{ name: "Tickets", to: "/Support/Ticket", current: true }];
 
 const AdminNavbar = () => {
   const { user, fetchLogin, isChange } = useAdminStore();
