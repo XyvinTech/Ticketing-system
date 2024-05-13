@@ -8,8 +8,8 @@ const useUserStore = create((set) => ({
       const data=await fetchUsers(filter);
       set({ users: data?.data });
     },
-    getUserByProject:async(project,filter)=>{
-      const data=await getUserByProjectId(project,filter);
+    getUserByProject:async(filter)=>{
+      const data=await getUserByProjectId(filter);
       set({ users: data?.data });
     },
     addUser: async (userData) => {

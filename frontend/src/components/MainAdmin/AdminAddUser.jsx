@@ -56,7 +56,7 @@ const AdminAddUser = () => {
 
     fetchProject(filter);
   }, [dep]);
-  // console.log("selectedUserType", selectedUserType);
+  console.log("selectedUserType", selectedUserType);
   useEffect(() => {
     let filter = {};
     if (selectedUserType) {

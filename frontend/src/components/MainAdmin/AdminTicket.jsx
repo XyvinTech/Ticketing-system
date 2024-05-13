@@ -47,7 +47,8 @@ const AdminTicket = () => {
   useEffect(() => {
     let filter = {};
     filter.withOutClient = true;
-    getUserByProject(project, filter);
+    filter.projectId=project
+    getUserByProject( filter);
   }, [project]);
   useEffect(() => {
     fetchDepartment();

@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { ReactComponent as UpDownIcon } from "../assets/icons/UpDownIcon.svg";
 
-const StyledSelectionList = ({ options, label, onChange = () => {},listname,selectedOption }) => {
+const StyledSelectionList = ({
+  options,
+  label,
+  onChange = () => {},
+  listname,
+  selectedOption,
+}) => {
   const [selected, setSelected] = useState(selectedOption);
   // console.log("selected",selected)
   useEffect(() => {
@@ -10,7 +16,7 @@ const StyledSelectionList = ({ options, label, onChange = () => {},listname,sele
   }, [selectedOption]);
   const handleChange = (value) => {
     setSelected(value);
-    onChange(value.value); 
+    onChange(value.value);
   };
 
   return (
@@ -21,12 +27,16 @@ const StyledSelectionList = ({ options, label, onChange = () => {},listname,sele
         </Listbox.Label>
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full cursor-default rounded-md border bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500 ">
-          <span className="block truncate">
-  {selected && selected.name ? selected.name : label ? `Select ${label}` : listname ? listname : 'select'}
-</span>
+            <span className="block truncate">
+              {selected && selected.name
+                ? selected.name
+                : label
+                ? `Select ${label}`
+                : listname
+                ? listname
+                : "select"}
+            </span>
 
-
-            
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
               <UpDownIcon className="h-5 w-5 text-gray-400" />
             </span>

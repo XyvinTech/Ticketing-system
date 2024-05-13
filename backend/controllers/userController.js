@@ -4,7 +4,6 @@ const createError = require("http-errors");
 exports.getUser = async function (req, res) {
   const userId = req.user;
   const user = await User.findById(userId);
-  
 
   if (!user) {
     throw createError(404, "User not found");
@@ -46,22 +45,20 @@ exports.passwordupdate = async function (req, res) {
   }
 };
 exports.getUserByProjectId = async function (req, res) {
-  const { withOutClient,inManager,inLead} = req.query;
-  const projectId = req.params.id;
-  if (projectId === "undefined") {
-    return res
-      .status(400)
-      .json({ status: false, message: "Invalid projectId" });
+  const { withOutClient, inManager, inLead, projectId } = req.query;
+
+  const query = {};
+  if (projectId) {
+    query.projectId = projectId;
   }
-  const query = { projectId: projectId };
   if (withOutClient) {
     query.usertype = { $nin: ["client", "admin"] };
   }
   if (inManager) {
-    query.usertype = { $nin: ["client", "admin","manager"] };
+    query.usertype = { $nin: ["client", "admin", "manager"] };
   }
-  if(inLead){
-    query.usertype={$nin :["client","admin","manager","projectLead"]}
+  if (inLead) {
+    query.usertype = { $nin: ["client", "admin", "manager", "projectLead"] };
   }
   const data = await User.find(query);
   if (!data || data.length === 0) {

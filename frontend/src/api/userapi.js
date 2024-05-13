@@ -1,9 +1,12 @@
 
+import axios from "axios";
 import axiosInstance from "./axiosintercepter";
 import { toast } from "react-toastify";
+// const baseURL= "http://localhost:4000/"
+const baseURL = "http://52.66.160.202:4000/"
 export const getLogin = async (datas) => {
   try {
-    const response = await axiosInstance.post("/auth/login", datas);
+    const response = await axios.post(`${baseURL}/auth/login`, datas);
     
     console.log("data", response.data)
     return response.data;
@@ -74,14 +77,13 @@ export const updateAdminUser = async (userId, data) => {
     toast.error(error.response.data.message)
   }
 };
-export const getUserByProjectId = async (project, filter) => {
+export const getUserByProjectId = async (filter) => {
   try {
-    const response = await axiosInstance.get(`/user/getUser/${project}`, {
-      params: filter // Pass the filter as query parameters
+    const response = await axiosInstance.get(`/user/getUser/`, {
+      params: filter
     });
-    console.log("response", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error caught:", error);
+    return { error: "Error fetching user data" };
   }
 };
