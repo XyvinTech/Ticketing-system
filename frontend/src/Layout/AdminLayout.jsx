@@ -11,7 +11,7 @@ import AdminNavbar from "../ui/AdminNavbar";
 const SubNavigation = () => {
   const location = useLocation();
   const subNavigation = [
-    { name: "Tickets", to: "Ticket/", icon: TicketIcon },
+    { name: "Tickets", to: "Support/Ticket", icon: TicketIcon },
     { name: "New Ticket", to: "Ticket/AdminNewTicket", icon: PlusIcon },
     { name: "Department",to: "Ticket/Department",icon: DepartmentIcon,},
     { name: "Add Project",to: "Ticket/AddProject",icon: SquareIcon,},
