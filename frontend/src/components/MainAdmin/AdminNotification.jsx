@@ -153,7 +153,7 @@ const AdminNotification = () => {
                   <div className="text-base">
                     <div className="font-semibold text-purple-600">
                       <Link
-                        to={`/Admin/SingleTicket/${notification?.ticketId}`}
+                        to={`/Ticket//Admin/SingleTicket/${notification?.ticketId}`}
                         className="text-lg font-semibold text-purple-600 hover:text-purple-800"
                       >
                         {notification?.message}
@@ -178,7 +178,7 @@ const AdminNotification = () => {
                   <div className="text-base">
                     <div className="font-semibold text-purple-600">
                       <Link
-                        to={`/Admin/SingleTicket/${notification?.ticketId}`}
+                        to={`/Ticket/Admin/SingleTicket/${notification?.ticketId}`}
                         className="text-lg font-semibold text-purple-600 hover:text-purple-800"
                       >
                         {notification?.message}

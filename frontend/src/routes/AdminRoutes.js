@@ -14,7 +14,7 @@ const AdminRoutes = () => {
   return (
     <AdminLayout>
       <Routes>
-        <Route path="/Ticket" element={<AdminTicket />} />
+        <Route path="/" element={<AdminTicket />} />
         <Route path="AdminNewTicket" element={<AdminNewTicket />} />
         <Route path="SingleTicket/:id" element={<AdminSingleTicket />} />
         <Route path="Department" element={<AdminDepartment />} />

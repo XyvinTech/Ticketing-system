@@ -212,7 +212,7 @@ const sortedTickets = tickets && Array.isArray(tickets)
               <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
                 {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
                 <Link
-                  to={`/Admin/SingleTicket/${tickets?._id}`}
+                  to={`/Ticket/Admin/SingleTicket/${tickets?._id}`}
                   className="text-lg font-semibold text-purple-600 hover:text-purple-800"
                 >
                   {tickets?.subject}

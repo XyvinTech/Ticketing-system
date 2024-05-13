@@ -16,7 +16,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/Register" element={<RegisterForm />} />
-        <Route path="/Dep/*" element={<RequireAuth><AdminRoutes/></RequireAuth>} />
+        <Route path="/Ticket/Admin/*" element={<RequireAuth><AdminRoutes/></RequireAuth>} />
         <Route path="/Client/Ticket/*" element={<RequireAuth><ClientRoutes /></RequireAuth>} />
         <Route path="/Manager/*" element={<RequireAuth><ProjectManagerRoutes /></RequireAuth>} />
         <Route path="/ProjectLead/*" element={<RequireAuth><ProjectLead /></RequireAuth>} />
