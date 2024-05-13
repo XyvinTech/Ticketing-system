@@ -9,12 +9,13 @@ import AdminNewTicket from "../components/MainAdmin/AdminNewTicket";
 import AdminSingleTicket from "../components/MainAdmin/AdminSingleTicket";
 import AdminAddProject from "../components/MainAdmin/AdminAddProject";
 import AdminAddUser from "../components/MainAdmin/AdminAddUser";
+import { RequireAuth } from "../utils/Auth";
 
 const AdminRoutes = () => {
   return (
     <AdminLayout>
       <Routes>
-        <Route path="/Ticket" element={<AdminTicket />} />
+        <Route path="/Ticket" element={<RequireAuth><AdminTicket /></RequireAuth>} />
         <Route path="AdminNewTicket" element={<AdminNewTicket />} />
         <Route path="SingleTicket/:id" element={<AdminSingleTicket />} />
         <Route path="Department" element={<AdminDepartment />} />
