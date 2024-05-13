@@ -72,7 +72,7 @@ const ProjectLeadAddPeople = () => {
   const onSubmit = async (data) => {
     try {
       if (editedUser) {
-        console.log("updated data", data);
+        // console.log("updated data", data);
         const res = await updateUser(editedUser._id, data);
         if (res) {
           toast.success("Updated successfully!");

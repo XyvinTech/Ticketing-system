@@ -43,7 +43,7 @@ const ManagerTicket = () => {
     }
     fetchTickets(filter);
   }, [isChange, search, status,dep]);
-  console.log("dep",dep)
+  // console.log("dep",dep)
   useEffect(() => {
     let filter = {};
     filter.inManager = true;

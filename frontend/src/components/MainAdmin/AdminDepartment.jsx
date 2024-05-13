@@ -78,7 +78,7 @@ const AdminDepartment = () => {
     try {
       if (editedDepartment) {
         
-        console.log("updated data", data);
+        // console.log("updated data", data);
         await editDepartment(editedDepartment._id, data);
         toast.success("Updated successfully!");
       } else {

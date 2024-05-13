@@ -6,9 +6,9 @@ import { toast } from "react-toastify";
 const baseURL = "https://support.acuteangle.io/"
 export const getLogin = async (datas) => {
   try {
-    const response = await axios.post(`${baseURL}/auth/login`, datas);
+    const response = await axios.post(`${baseURL}auth/login`, datas);
     
-    console.log("data", response.data)
+    // console.log("data", response.data)
     return response.data;
   } catch (error) {
     console.error("Error caught:", error);

@@ -64,7 +64,7 @@ const ClientNewTicket = () => {
       toast.error("Error!");
     }
   };
-  console.log("dep", dep);
+  // console.log("dep", dep);
   return (
     <>
       <div className="divide-y divide-gray-200">

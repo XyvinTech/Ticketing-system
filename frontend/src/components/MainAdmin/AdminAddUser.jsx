@@ -56,7 +56,7 @@ const AdminAddUser = () => {
 
     fetchProject(filter);
   }, [dep]);
-  console.log("selectedUserType", selectedUserType);
+  // console.log("selectedUserType", selectedUserType);
   useEffect(() => {
     let filter = {};
     if (selectedUserType) {
@@ -92,7 +92,7 @@ const AdminAddUser = () => {
     value: project._id,
     label: project.projectName,
   }));
-  console.log("selectedOption", selectOptions);
+  // console.log("selectedOption", selectOptions);
   const Role = [
     { value: "all", name: "All" },
     { value: "manager", name: "Manager" },
@@ -132,7 +132,7 @@ const AdminAddUser = () => {
     value: project._id,
     name: project.departmentName,
   }));
-  console.log("dep",options)
+  // console.log("dep",options)
   const handleDeleteUser = async (userId) => {
     try {
       const data = await deleteUser(userId);
@@ -153,7 +153,7 @@ const AdminAddUser = () => {
     }
   }, [selectedUserType, editedUser]);
 
-  console.log("Dep", selectedUserType);
+  // console.log("Dep", selectedUserType);
   return (
     <div className="py-6 px-4 sm:p-6 lg:pb-8">
       <h1 className="text-xl font-semibold">Users</h1>

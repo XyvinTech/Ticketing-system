@@ -22,7 +22,7 @@ const ManagerNotification = () => {
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       )
     : [];
-  console.log("Motification", notification);
+  // console.log("Motification", notification);
   const headers = ["Message"];
   const handleMarkAllAsRead = async () => {
     await updateNotification();
