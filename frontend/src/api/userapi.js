@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import axiosInstance from "./axiosintercepter";
 import { toast } from "react-toastify";
 export const getLogin = async (datas) => {
@@ -9,6 +9,7 @@ export const getLogin = async (datas) => {
     return response.data;
   } catch (error) {
     console.error("Error caught:", error);
+    toast.error(error.response.data.message)
   }
 };
 export const getLoginById = async () => {
@@ -26,6 +27,7 @@ export const addUser = async (userData) => {
     return response.data;
   } catch (error) {
     console.error("Error caught:", error);
+    toast.error(error.response.data.message)
   }
 };
 export const fetchUsers = async (filter) => {

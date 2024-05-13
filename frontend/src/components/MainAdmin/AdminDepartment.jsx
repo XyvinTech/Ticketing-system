@@ -67,10 +67,6 @@ const AdminDepartment = () => {
         }))
       : [];
 
-  const options = users?.map((project) => ({
-    value: project._id,
-    name: project.email,
-  }));
   const handleExpand = (index) => {
     setExpandedRows((prevState) => ({
       ...prevState,
