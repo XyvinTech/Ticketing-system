@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ReactComponent as EnvelopeIcon } from "../assets/icons/EnvelopeIcon.svg";
 import { ReactComponent as LockClosedIcon } from "../assets/icons/LockClosedIcon.svg";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Logo from "../assets/Logo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import StyledInput from "../ui/StyledInput";
 import StyledButton from "../ui/StyledButton";
 import { Controller, useForm } from "react-hook-form";
@@ -17,10 +17,6 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  //  const{getLogin, user}=useAdminStore();
-  //  useEffect(() => {
-  //   fetchLogin();
-  // }, []);
   const onSubmit = async (datas) => {
     try {
       const user = await getLogin(datas);
