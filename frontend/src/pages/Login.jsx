@@ -25,7 +25,7 @@ const Login = () => {
     try {
       const user = await getLogin(datas);
       localStorage.setItem("token", user.token);
-      // localStorage.setItem("user", user.userType);
+      localStorage.setItem("user", user.userType);
       if (user?.userType) {
         switch (user?.userType) {
           case "manager":
@@ -35,7 +35,7 @@ const Login = () => {
             navigate("/ProjectLead/Ticket");
             break;
           case "client":
-            navigate("/client/Ticket");
+            navigate("/Client/Ticket");
             break;
           case "member":
             navigate("/Member/Ticket");

@@ -8,8 +8,8 @@ import ClientNavbar from "../ui/ClientNavbar";
 const SubNavigation = () => {
   const location = useLocation();
   const subNavigation = [
-    { name: "Tickets", to: "client/Ticket", icon: TicketIcon },
-    { name: "New Ticket", to: "client/Ticket/ClientNewTicket", icon: PlusIcon }
+    { name: "Tickets", to: "Client/Ticket", icon: TicketIcon },
+    { name: "New Ticket", to: "Client/Ticket/ClientNewTicket", icon: PlusIcon }
   ];
 
   return (
