@@ -71,7 +71,7 @@ const AdminNavbar = () => {
                     {user?.userName}
                   </div>
                   <Link
-                    to={"/Ticket/Admin/AdminNotifications"}
+                    to={"/Ticket/AdminNotifications"}
                     className="mr-4 block relative rounded-full p-1 text-gray-400 hover:text-purple-500"
                   >
                     <span className="sr-only">View Notification</span>
@@ -108,7 +108,7 @@ const AdminNavbar = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              to={"/Ticket/Admin/AdminProfile"}
+                              to={"/Ticket/AdminProfile"}
                               className={
                                 "block px-4 py-2 text-sm text-gray-700" +
                                 (active ? " bg-gray-100" : "")
@@ -121,7 +121,7 @@ const AdminNavbar = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              to={"/Ticket/Admin/AdminPassword"}
+                              to={"/Ticket/AdminPassword"}
                               className={
                                 "block px-4 py-2 text-sm text-gray-700" +
                                 (active ? " bg-gray-100" : "")
@@ -190,7 +190,7 @@ const AdminNavbar = () => {
                 </div>
 
                 <span className="sr-only">View notifications</span>
-                <Link to={"/Ticket/Admin/AdminNotifications"}>
+                <Link to={"/Ticket/AdminNotifications"}>
                   {" "}
                   <BellIcon className="h-6 w-6" />
                 </Link>
@@ -198,7 +198,7 @@ const AdminNavbar = () => {
 
               <div className="space-y-1">
                 <Link
-                  to={"/Ticket/Admin/AdminProfile"}
+                  to={"/Ticket/AdminProfile"}
                   className="block  py-2 text-sm text-gray-700"
                 >
                   <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
@@ -206,7 +206,7 @@ const AdminNavbar = () => {
                   </Disclosure.Button>
                 </Link>
                 <Link
-                  to={"/Ticket/Admin/AdminPassword"}
+                  to={"/Ticket/AdminPassword"}
                   className="block  py-2 text-sm text-gray-700"
                 >
                   <Disclosure.Button className="w-full px-4 py-2 text-left text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
