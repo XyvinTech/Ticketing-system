@@ -373,7 +373,7 @@ const AdminAddUser = () => {
                         )}
                       </>
                     )}
-                    // rules={{ required: "Project name is required" }}
+                    rules={{ required: "Project name is required" }}
                   />
                 </>
               )}
