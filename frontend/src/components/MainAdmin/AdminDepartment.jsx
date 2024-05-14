@@ -41,6 +41,7 @@ const AdminDepartment = () => {
   useEffect(() => {
     fetchDepartment();
   }, [isChange]);
+  console.log("dp", departments);
   useEffect(() => {
     let filter = {};
     filter.inLead = true;
@@ -77,7 +78,6 @@ const AdminDepartment = () => {
   const onSubmit = async (data) => {
     try {
       if (editedDepartment) {
-        
         // console.log("updated data", data);
         await editDepartment(editedDepartment._id, data);
         toast.success("Updated successfully!");
@@ -151,7 +151,7 @@ const AdminDepartment = () => {
                 {errors.departmentName.message}
               </span>
             )}
-               {/* <h1 className="mt-4 mb-1 text-xs font-semibold leading-4 text-slate-500">
+            {/* <h1 className="mt-4 mb-1 text-xs font-semibold leading-4 text-slate-500">
                Manager
             </h1>
             <Controller
@@ -191,7 +191,7 @@ const AdminDepartment = () => {
               render={({ field }) => <StyledText field={field} />}
               rules={{ required: "Description is required" }}
             />
-         
+
             <div className="flex mt-12  justify-start gap-4">
               <button
                 className="font-semibold  mt-3"
@@ -239,8 +239,11 @@ const AdminDepartment = () => {
                         {user?.departmentName}
                       </td>
                       <td className="px-2 py-2 text-sm text-gray-900 text-left">
-                      {user?.departmentManager?.userName}
-                       </td>
+                        {user?.departmentManager
+                          .map((manager) => manager.userName)
+                          .join(", ")}
+                      </td>
+
                       <td className="text-sm text-gray-900">
                         <div className="flex flex-wrap">
                           {user?.members &&

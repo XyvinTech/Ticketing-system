@@ -7,53 +7,64 @@ const Project = require("../models/project");
 breakdown of what it does: */
 
 exports.addUser = async function (req, res) {
-  const { email, userName, department, usertype } = req.body;
-  // if (usertype === "member") {
-  //   console.log("usertye", usertype);
-  // }
-  // if (!projectId) return res.status(409).json({ message: "Project Id is required" });
+  try {
+    const { email, userName, department, usertype } = req.body;
 
-  const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
-  if (existingUser) {
-    return res
-      .status(409)
-      .json({ message: "User already exists with this email or username" });
-  }
-
-  const newUser = await User.create(req.body);
-  if (department) {
-    const targetDepartment = await Department.findById(department);
-
-    if (targetDepartment) {
-      targetDepartment.departmentManager = newUser._id; // Assuming departmentManager is a reference to the user
-      await targetDepartment.save();
-    } else {
-      console.error(`Department ${department} not found.`);
+    // Check if a user with the same email or username already exists
+    const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ message: "User already exists with this email or username" });
     }
+
+    // Create the new user
+    const newUser = await User.create(req.body);
+
+    // If a department is specified, update the department manager array
+    if (department) {
+      const targetDepartment = await Department.findById(department);
+      if (!targetDepartment) {
+        return res.status(404).json({ message: "Department not found" });
+      }
+      
+      // Add the new user ID to the departmentManager array
+      targetDepartment.departmentManager.push(newUser._id);
+      await targetDepartment.save();
+    }
+
+    res.status(201).json({ status: true, message: "User added successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
-  res.status(201).json({ status: true, message: "User added successfully" });
 };
+
 
 /* The `exports.deleteUser` function is responsible for deleting a user from the system based on the
 provided user ID. Here's a breakdown of what it does: */
 exports.deleteUser = async function (req, res) {
-  const UserId = req.params.id;
-  const isDepartmentManager = await Department.find({ departmentManager: UserId });
-  // console.log("isDepartmentManager",isDepartmentManager)
-  if(isDepartmentManager){
-    await Department.updateOne(
-      { departmentManager: UserId },
-      { $unset: { departmentManager: "" } }
-    );
-  }
-  const deletedAdmin = await User.findByIdAndDelete(UserId);
 
-  if (!deletedAdmin) {
-    throw createError(404, "User not found");
-  }
+    const UserId = req.params.id;
+    
+    const departments = await Department.find({ departmentManager: UserId });
 
-  res.status(200).json({ status: true, message: "User deleted successfully" });
+    await Promise.all(departments.map(async (department) => {
+      department.departmentManager = department.departmentManager.filter(id => id.toString() !== UserId);
+      await department.save();
+    }));
+
+    // Delete the user
+    const deletedAdmin = await User.findByIdAndDelete(UserId);
+
+    if (!deletedAdmin) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ status: true, message: "User deleted successfully" });
+
 };
+
 
 exports.getUsers = async function (req, res) {
   const { usertype, searchQuery, withOutClient, inManager, inLead } = req.query;
@@ -130,24 +141,35 @@ exports.getUsers = async function (req, res) {
 //   }
 // };
 exports.updateAdminUser = async function (req, res) {
-  const userId = req.params.id;
-  const update = req.body;
-
-  const isDepartmentManager = await Department.exists({
-    departmentManager: userId,
-  });
  
-  if (isDepartmentManager) {
-    return res
-      .status(400)
-      .json({ status: false, message: "User is already a department manager" });
-  }
+    const userId = req.params.id;
+    const update = req.body;
+    const { department } = update;
 
-  const updatedUser = await User.findByIdAndUpdate(userId, update, {
-    new: true,
-  });
-  if (!updatedUser) {
-    throw createError(404, "User not found");
-  }
-  res.status(200).json({ status: true, message: "User updated successfully" });
+    // Find and update the user
+    const updatedUser = await User.findByIdAndUpdate(userId, update, {
+      new: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // If a department is specified, update the department manager array
+    if (department) {
+      const targetDepartment = await Department.findById(department);
+
+      if (targetDepartment) {
+        // Add the updated user ID to the departmentManager array
+        if (!targetDepartment.departmentManager.includes(updatedUser._id)) {
+          targetDepartment.departmentManager.push(updatedUser._id);
+        }
+        await targetDepartment.save();
+      } else {
+        console.error(`Department ${department} not found.`);
+      }
+    }
+
+    res.status(200).json({ status: true, message: "User updated successfully" });
+
 };

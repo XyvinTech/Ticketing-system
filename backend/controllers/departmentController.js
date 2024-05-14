@@ -52,7 +52,7 @@ exports.editDepartmentMember = async function (req, res) {
 };
 
 exports.getDepartments = async function (req, res) {
-  const { withDep } = req.query;
+  // const { withDep } = req.query;
   // console.log("withDep", withDep);
   const query = {};
 
@@ -61,9 +61,9 @@ exports.getDepartments = async function (req, res) {
 
     query.departmentManager = req.user;
   }
-  if(withDep==="manager"){
-    query.departmentManager=null
-  }
+  // if(withDep==="manager"){
+  //   query.departmentManager=null
+  // }
   const data = await Department.find(query)
     .populate("departmentManager")
     .populate({

@@ -19,10 +19,10 @@ const departmentSchema = new Schema(
       },
       
     ],
-    departmentManager: {
+    departmentManager: [{
       type: Schema.Types.ObjectId,
       ref: "users",
-    }
+    },],
   },
   { timestamps: true }
 );

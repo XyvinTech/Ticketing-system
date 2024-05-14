@@ -58,12 +58,14 @@ const AdminAddUser = () => {
   }, [dep]);
   // console.log("selectedUserType", selectedUserType);
   useEffect(() => {
-    let filter = {};
-    if (selectedUserType) {
-      filter.withDep = selectedUserType;
-    }
-    fetchDepartment(filter);
-  }, [selectedUserType]);
+    // let filter = {};
+    // if (selectedUserType) {
+    //   filter.withDep = selectedUserType;
+    // }
+    fetchDepartment();
+  }, [
+    // selectedUserType
+  ]);
 
   useEffect(() => {
     if (editedUser) {
