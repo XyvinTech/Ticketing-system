@@ -1,5 +1,4 @@
 import axiosInstance from "./axiosintercepter";
-
 export const uploadImage = async (files) => {
   const config = {
     headers: {
@@ -8,16 +7,29 @@ export const uploadImage = async (files) => {
   };
   try {
     let formData = new FormData();
+    let totalFileSize = 0;
+
+    // Calculate total file size
     if (Array.isArray(files)) {
       files.forEach((file) => {
         formData.append(`attachments`, file);
+        totalFileSize += file.size;
       });
     } else {
       formData.append("attachments", files);
+      totalFileSize += files.size;
     }
-    const response = await axiosInstance.post("/upload",formData, config);
+
+    // Check if total file size exceeds 30 MB
+    if (totalFileSize > 30 * 1024 * 1024) {
+      
+      return ("error"); // Exit function early
+    }
+
+    const response = await axiosInstance.post("/upload", formData, config);
     return response.data;
   } catch (error) {
-    console.error("Error caught:", error);
+    throw error;
+    // toast.error("File size exceeds 30 MB limit");
   }
 };
