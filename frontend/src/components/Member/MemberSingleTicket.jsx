@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TableInfo from "../../ui/TableInfo";
 
 import { ReactComponent as PaperIcon } from "../../assets/icons/PaperIcon.svg";
-
+import { ReactComponent as PdfIcon } from "../../assets/icons/PdfIcon.svg";
 import { useTicketStore } from "../../store/TicketStore";
 import { useParams } from "react-router-dom";
 import { useConversationStore } from "../../store/ConversationStore";
@@ -21,6 +21,48 @@ const MemberSingleTicket = () => {
   useEffect(() => {
     fetchConversationById(id);
   }, [isChange]);
+  const handleAttachmentClick = (url) => {
+    window.open(url, "_blank");
+  };
+  const renderAttachment = (item, index) => {
+    const isPdf = item.endsWith(".pdf");
+    const isVideo =
+      item.endsWith(".mp4") || item.endsWith(".webm") || item.endsWith(".ogg");
+    if (isPdf) {
+      return (
+        <div
+          key={index}
+          className="h-20 w-20 border rounded-lg flex items-center justify-center bg-gray-200 cursor-pointer"
+          onClick={() => handleAttachmentClick(item)}
+        >
+          <PdfIcon className="h-8 w-8 text-red-500" /> {/* Display PDF icon */}
+        </div>
+      );
+    } else if (isVideo) {
+      return (
+        <video
+          key={index}
+          controls
+          className="h-20 w-20 rounded-lg border object-cover"
+        >
+          <source src={item} type="video/mp4" />
+          <source src={item} type="video/webm" />
+          <source src={item} type="video/ogg" />
+          Your browser does not support the video tag.
+        </video>
+      );
+    } else {
+      return (
+        <img
+          key={index}
+          src={item}
+          alt={`Attachment ${index}`}
+          className="h-20 w-20 rounded-lg border object-cover cursor-pointer"
+          onClick={() => handleAttachmentClick(item)}
+        />
+      );
+    }
+  };
   return (
     <>
       <div className="py-6 px-4 sm:p-6  lg:pb-8 space-y-6">
@@ -58,7 +100,9 @@ const MemberSingleTicket = () => {
                         : ""
                     }`}
                     >
-                      {tickets?.status === "completed" ? "Closed" : tickets?.status}
+                      {tickets?.status === "completed"
+                        ? "Closed"
+                        : tickets?.status}
                     </span>
                   </div>
                 </div>
@@ -70,22 +114,18 @@ const MemberSingleTicket = () => {
                 ></div>
               </div>
               {tickets?.attachment && tickets.attachment.length > 0 && (
-              <div className="py-3 pr-3 pl-3">
-                <div className="flex items-center gap-1 font-semibold text-gray-500">
-                  <PaperIcon className="h-4 w-4" />
-                  <h2>Attachments</h2>
+                <div className="py-3 pr-3 pl-3">
+                  <div className="flex items-center gap-1 font-semibold text-gray-500">
+                    <PaperIcon className="h-4 w-4" />
+                    <h2>Attachments</h2>
+                  </div>
+                  <div className="px-4 mt-3 flex flex-wrap gap-3">
+                    {tickets?.attachment?.map((item, index) =>
+                      renderAttachment(item, index)
+                    )}
+                  </div>
                 </div>
-                <div className="px-4 mt-3 flex flex-wrap gap-3">
-                  {tickets?.attachment?.map((item, index) => (
-                    <img
-                      key={index}
-                      src={item}
-                      alt={`Attachment ${index}`}
-                      className="h-20 w-20 rounded-lg border object-cover"
-                    />
-                  ))}
-                </div>
-              </div> )}
+              )}
             </div>
             {conversations?.map((item, index) => (
               <div
@@ -122,21 +162,23 @@ const MemberSingleTicket = () => {
                             : "justify-start"
                         }`}
                       >
-                        {item.attachment.map((i, index) => (
-                          <img
-                            key={index}
-                            src={i}
-                            alt={`Attachment ${index}`}
-                            className="h-20 w-20 rounded-lg border object-cover"
-                          />
-                        ))}
+                        {item.attachment.map((i, index) =>
+                          renderAttachment(i, index)
+                        )}
                       </div>
                     </div>
                   )}
-                  <div className={`text-gray-500 text-sm ${
-                  item?.senderId?._id === user?._id ? "text-left" : "text-right"
-                }`}> {formatDate(item.createdAt)}</div>
-                </div> 
+                  <div
+                    className={`text-gray-500 text-sm ${
+                      item?.senderId?._id === user?._id
+                        ? "text-left"
+                        : "text-right"
+                    }`}
+                  >
+                    {" "}
+                    {formatDate(item.createdAt)}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -159,7 +201,7 @@ const MemberSingleTicket = () => {
       hour: "2-digit",
       minute: "2-digit",
     };
-    return date.toLocaleString("en-US", options).replace(',', '');
+    return date.toLocaleString("en-US", options).replace(",", "");
   }
 };
 

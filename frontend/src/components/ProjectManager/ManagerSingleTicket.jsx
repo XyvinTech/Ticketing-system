@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TableInfo from "../../ui/TableInfo";
 import { ReactComponent as PaperIcon } from "../../assets/icons/PaperIcon.svg";
+import { ReactComponent as PdfIcon } from "../../assets/icons/PdfIcon.svg";
 import ManagerConversation from "./ManagerConversation";
 import { useTicketStore } from "../../store/TicketStore";
 import { useParams } from "react-router-dom";
@@ -32,7 +33,48 @@ const ManagerSingleTicket = () => {
     setRefresh(!refresh);
     setShowConfirmation(false); // Hide confirmation dialog after confirmation
   };
-
+  const handleAttachmentClick = (url) => {
+    window.open(url, "_blank");
+  };
+  const renderAttachment = (item, index) => {
+    const isPdf = item.endsWith(".pdf");
+    const isVideo =
+      item.endsWith(".mp4") || item.endsWith(".webm") || item.endsWith(".ogg");
+    if (isPdf) {
+      return (
+        <div
+          key={index}
+          className="h-20 w-20 border rounded-lg flex items-center justify-center bg-gray-200 cursor-pointer"
+          onClick={() => handleAttachmentClick(item)}
+        >
+          <PdfIcon className="h-8 w-8 text-red-500" /> {/* Display PDF icon */}
+        </div>
+      );
+    } else if (isVideo) {
+      return (
+        <video
+          key={index}
+          controls
+          className="h-20 w-20 rounded-lg border object-cover"
+        >
+          <source src={item} type="video/mp4" />
+          <source src={item} type="video/webm" />
+          <source src={item} type="video/ogg" />
+          Your browser does not support the video tag.
+        </video>
+      );
+    } else {
+      return (
+        <img
+          key={index}
+          src={item}
+          alt={`Attachment ${index}`}
+          className="h-20 w-20 rounded-lg border object-cover cursor-pointer"
+          onClick={() => handleAttachmentClick(item)}
+        />
+      );
+    }
+  };
   return (
     <>
       <div className="py-6 px-4 sm:p-6 lg:pb-8 space-y-6">
@@ -69,7 +111,9 @@ const ManagerSingleTicket = () => {
                         : ""
                     }`}
                     >
-                    {tickets?.status === "completed" ? "Closed" : tickets?.status}
+                      {tickets?.status === "completed"
+                        ? "Closed"
+                        : tickets?.status}
                     </span>
                   </div>
                 </div>
@@ -87,14 +131,9 @@ const ManagerSingleTicket = () => {
                     <h2>Attachments</h2>
                   </div>
                   <div className="px-4 mt-3 flex flex-wrap gap-3">
-                    {tickets?.attachment?.map((item, index) => (
-                      <img
-                        key={index}
-                        src={item}
-                        alt={`Attachment ${index}`}
-                        className="h-20 w-20 rounded-lg border object-cover"
-                      />
-                    ))}
+                    {tickets?.attachment?.map((item, index) =>
+                      renderAttachment(item, index)
+                    )}
                   </div>
                 </div>
               )}
@@ -138,14 +177,9 @@ const ManagerSingleTicket = () => {
                             : "justify-start"
                         }`}
                       >
-                        {item.attachment.map((i, index) => (
-                          <img
-                            key={index}
-                            src={i}
-                            alt={`Attachment ${index}`}
-                            className="h-20 w-20 rounded-lg border object-cover"
-                          />
-                        ))}
+                        {item.attachment.map((i, index) =>
+                          renderAttachment(i, index)
+                        )}
                       </div>
                     </div>
                   )}
