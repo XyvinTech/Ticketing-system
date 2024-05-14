@@ -10,7 +10,9 @@ const sendMail = async (receiverMail, ticketObject, role) => {
         pass: PASSWORD,
       },
     });
-
+    const trackTicketUrl = role === 'admin'
+    ? `https://support.acuteangle.io/Support/SingleTicket/${ticketObject._id}`
+    : `https://support.acuteangle.io/${role}/SingleTicket/${ticketObject._id}`;
     const mailOptions = {
       from: EMAIL_ID,
       to: receiverMail,
@@ -43,12 +45,7 @@ const sendMail = async (receiverMail, ticketObject, role) => {
               </p>
             </div>
             <a
-              href=${
-                "http://localhost:3000/" +
-                role +
-                "/SingleTicket/" +
-                ticketObject._id
-              }
+            href="${trackTicketUrl}"
               target="_blank"
               style="
                 background-color: #9d46d9;
