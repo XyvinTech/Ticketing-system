@@ -57,15 +57,18 @@ const AdminAddUser = () => {
     fetchProject(filter);
   }, [dep]);
   // console.log("selectedUserType", selectedUserType);
-  useEffect(() => {
-    // let filter = {};
-    // if (selectedUserType) {
-    //   filter.withDep = selectedUserType;
-    // }
-    fetchDepartment();
-  }, [
-    // selectedUserType
-  ]);
+  useEffect(
+    () => {
+      // let filter = {};
+      // if (selectedUserType) {
+      //   filter.withDep = selectedUserType;
+      // }
+      fetchDepartment();
+    },
+    [
+      // selectedUserType
+    ]
+  );
 
   useEffect(() => {
     if (editedUser) {
@@ -117,7 +120,22 @@ const AdminAddUser = () => {
           toast.success("Updated successfully!");
         }
       } else {
-        await addUser(data);
+        const formData = {
+          userName: data.userName,
+          email: data.email,
+          password: data.password,
+          phoneNumber: data.phoneNumber,
+          usertype:data.usertype
+        };
+        
+        if (data.department !== '') {
+          formData.department = data.department;
+        }
+        if (data.projectId !== '') {
+          formData.projectId = data.projectId;
+        }
+        
+        await addUser(formData);
         reset();
       }
 
@@ -162,10 +180,14 @@ const AdminAddUser = () => {
 
       <div className="mb-4 pr-5 flex justify-between items-center">
         <div className="flex mt-5 gap-3 divide-x divide-dashed text-sm text-gray-500">
-          <div className="font-semibold"> All(
-            {Array.isArray(users) &&
-              users.filter((user) => user.usertype !== "admin").length}
-            )</div>
+          <div className="font-semibold">
+            {" "}
+            All(
+            {Array.isArray(users)
+              ? users.filter((user) => user && user.usertype !== "admin").length
+              : 0}
+            )
+          </div>
         </div>
         <StyledButton text="Add User" onClick={() => setIsModalOpen(true)} />
       </div>
@@ -307,7 +329,7 @@ const AdminAddUser = () => {
               rules={{ required: "UserType is required" }}
             />
 
-            { selectedUserType === "manager" ? (
+            {selectedUserType === "manager" ? (
               <>
                 <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
                   Department
@@ -346,47 +368,40 @@ const AdminAddUser = () => {
                 />
               </>
             ) : null}
-            {selectOptions.length > 0 &&
-              (dep || selectedUserType !== "manager") && (
-                <>
-                  <h1 className="mt-5 mb-1 text-xs font-semibold leading-4 text-slate-500">
-                    Project Name
-                  </h1>
-                  <Controller
-                    name="projectId"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                      <>
-                        <StyledMultipleSelection
-                          options={selectOptions}
-                          initialValues={
-                            editedUser
-                              ? editedUser.projectId.map((project) => ({
-                                  value: project._id,
-                                  label: project.projectName,
-                                }))
-                              : []
-                          }
-                          {...field}
-                        />
 
-                        {errors.projectId && (
-                          <span className="text-red-500">
-                            {errors.projectId.message}
-                          </span>
-                        )}
-                      </>
+            <>
+              <h1 className="mt-5 mb-1 text-xs font-semibold leading-4 text-slate-500">
+                Project Name
+              </h1>
+              <Controller
+                name="projectId"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <>
+                    <StyledMultipleSelection
+                      options={selectOptions}
+                      initialValues={
+                        editedUser
+                          ? editedUser.projectId.map((project) => ({
+                              value: project._id,
+                              label: project.projectName,
+                            }))
+                          : []
+                      }
+                      {...field}
+                    />
+
+                    {errors.projectId && (
+                      <span className="text-red-500">
+                        {errors.projectId.message}
+                      </span>
                     )}
-                    rules={{ required: "Project name is required" }}
-                  />
-                </>
-              )}
-      {(!selectOptions.length && (dep || selectedUserType !== "manager")) && (
-  <p className="text-red-500">This department currently has no projects.</p>
-)}
-
-
+                  </>
+                )}
+                // rules={{ required: "Project name is required" }}
+              />
+            </>
 
             <div className="flex  justify-end gap-4">
               <button
