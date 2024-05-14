@@ -47,7 +47,8 @@ const ManagerTicket = () => {
   useEffect(() => {
     let filter = {};
     filter.inManager = true;
-    getUserByProject(project,filter);
+    filter.projectId=project
+    getUserByProject(filter);
   }, [project]);
   const sortedTickets = tickets && Array.isArray(tickets)
   ? [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))

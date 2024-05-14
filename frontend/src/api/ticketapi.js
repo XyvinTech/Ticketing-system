@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosintercepter";
 
 export const fetchTickets = async (filter) => {
-  console.log(axiosInstance)
+  // console.log(axiosInstance)
   try {
     const response = await axiosInstance.get("/ticket/get",{
       params: filter

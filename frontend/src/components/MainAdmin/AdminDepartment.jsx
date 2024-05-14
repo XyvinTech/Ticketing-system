@@ -41,7 +41,7 @@ const AdminDepartment = () => {
   useEffect(() => {
     fetchDepartment();
   }, [isChange]);
-  console.log("dp", departments);
+  // console.log("dp", departments);
   useEffect(() => {
     let filter = {};
     filter.inLead = true;

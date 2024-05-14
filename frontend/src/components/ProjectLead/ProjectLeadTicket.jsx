@@ -45,7 +45,8 @@ const ManagerTicket = () => {
   useEffect(() => {
     let filter = {};
     filter.inLead = true;
-    getUserByProject(project, filter);
+    filter.projectId=project
+    getUserByProject(filter);
   }, [project]);
   const sortedTickets =
     tickets && Array.isArray(tickets)
