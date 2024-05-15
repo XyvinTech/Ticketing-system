@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DOMPurify from 'dompurify';
-import TableInfo from "../../ui/TableInfo";
+import DOMPurify from "dompurify";
 import { ReactComponent as PaperIcon } from "../../assets/icons/PaperIcon.svg";
 import { ReactComponent as PdfIcon } from "../../assets/icons/PdfIcon.svg";
 import AdminConversation from "./AdminConversation";
@@ -9,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { useConversationStore } from "../../store/ConversationStore";
 import { useAdminStore } from "../../store/AdminStore";
 import { updateTicket } from "../../api/ticketapi";
+import SingleTicketInfo from "../../ui/SingleTicketInfo";
 
 const AdminSingleTicket = () => {
   const { id } = useParams();
@@ -27,7 +27,6 @@ const AdminSingleTicket = () => {
   useEffect(() => {
     fetchConversationById(id);
   }, [isChange]);
-  const sanitizedContent = DOMPurify.sanitize(tickets?.description);
   const confirmMarkAsSolved = async () => {
     setMarkedAsSolved(true);
     await updateTicket(id, { status: "completed" });
@@ -88,7 +87,7 @@ const AdminSingleTicket = () => {
                     <h1 className="mb-6 text-xl font-semibold">
                       {tickets?.subject}
                     </h1>
-                    <TableInfo
+                    <SingleTicketInfo
                       className="overflow-x-auto whitespace-nowrap"
                       reference={tickets?.ticket_Id}
                       priority={tickets?.priority}
@@ -120,7 +119,12 @@ const AdminSingleTicket = () => {
                 </div>
               </div>
               <div className="px-3 py-5">
-              <div className=" prose" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tickets?.description) }}></div>
+                <div
+                  className=" prose"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(tickets?.description)
+                  }}
+                ></div>
               </div>
               {tickets?.attachment && tickets.attachment.length > 0 && (
                 <div className="py-3 pr-3 pl-3">
@@ -151,9 +155,9 @@ const AdminSingleTicket = () => {
             {conversations?.map((item, index) => (
               <div
                 key={item?._id}
-                className={`divide-y border shadow bg-gray-50 ${
-                  item?.senderId?._id === user?._id ? "text-right" : ""
-                } ${index !== conversations.length - 1 ? "mb-4" : ""}`}
+                className={`divide-y border shadow bg-gray-50  ${
+                  index !== conversations.length - 1 ? "mb-4" : ""
+                }`}
                 style={{ borderRadius: "10px" }}
               >
                 <div className="px-3 py-5">
@@ -161,20 +165,14 @@ const AdminSingleTicket = () => {
                     {item?.senderId?.userName}
                   </h1>
                   <div
-                    className="text-gray-700 max-md:max-w-full"
-                    dangerouslySetInnerHTML={{
-                      __html: item.message ? item.message : "",
-                    }}
-                  ></div>
+                  className=" prose"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(item?.message)
+                  }}
+                ></div>
                   {item?.attachment && item.attachment.length > 0 && (
                     <div className="py-3 pr-3 pl-3">
-                      <div
-                        className={` mt-3 flex flex-wrap gap-3 ${
-                          item?.senderId?._id === user?._id
-                            ? "justify-end"
-                            : "justify-start"
-                        }`}
-                      >
+                      <div className={` mt-3 flex flex-wrap gap-3 `}>
                         {item.attachment.map((i, index) =>
                           renderAttachment(i, index)
                         )}
@@ -182,13 +180,8 @@ const AdminSingleTicket = () => {
                     </div>
                   )}
                   <div
-                    className={`text-gray-500 text-sm ${
-                      item?.senderId?._id === user?._id
-                        ? "text-left"
-                        : "text-right"
-                    }`}
+                    className={`text-gray-500 text-sm text-right`}
                   >
-                    {" "}
                     {formatDate(item.createdAt)}
                   </div>
                 </div>

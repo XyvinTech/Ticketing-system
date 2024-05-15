@@ -9,15 +9,18 @@ exports.createProject = async function (req, res) {
 };
 //get all project
 exports.getAll = async function (req, res) {
-  const { searchQuery, inDep } = req.query;
+  const { searchQuery, inDep, dep } = req.query;
 
   const query = {};
   if (inDep) {
     query.departmentId = inDep;
   }
-  // if (inMem==="projectLead") {
-  //   query.projectLead = { $exists: false };
-  // }
+  if (dep) {
+    const authUser = await User.findById(req.user);
+    if (authUser && authUser.departmentId) {
+      query.departmentId = authUser.departmentId;
+    }
+  }
   if (searchQuery) {
     query.$or = [
       { projectName: { $regex: searchQuery, $options: "i" } },

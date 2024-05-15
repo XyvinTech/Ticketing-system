@@ -15,6 +15,7 @@ import StyledMultipleSelection from "../../ui/StyledMultipleSelection";
 import { useProjectStore } from "../../store/projectStore";
 import { useUserStore } from "../../store/UserStore";
 import { Menu } from "@headlessui/react";
+import { useAdminStore } from "../../store/AdminStore";
 
 const AddPeople = () => {
   const {
@@ -27,11 +28,12 @@ const AddPeople = () => {
   const { projects, fetchProject } = useProjectStore();
   const { users, fetchUser, addUser, deleteUser, updateUser } = useUserStore();
   const [isChange, setIsChange] = useState(false);
-
+  const { user } = useAdminStore();
   const [search, setSearch] = useState();
   const [role, setRole] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedUser, setEditedUser] = useState(null);
+  
   useEffect(() => {
     let filter = {};
 
@@ -46,7 +48,9 @@ const AddPeople = () => {
     fetchUser(filter);
   }, [isChange, search, role]);
   useEffect(() => {
-    fetchProject();
+    let filter={}
+    filter.dep=true
+    fetchProject(filter);
   }, []);
   useEffect(() => {
     if (editedUser) {
@@ -76,13 +80,27 @@ const AddPeople = () => {
   const onSubmit = async (data) => {
     try {
       if (editedUser) {
-        // console.log("updated data", data);
+      
         const res = await updateUser(editedUser._id, data);
         if (res) {
           toast.success("Updated successfully!");
         }
       } else {
-        await addUser(data);
+        const formData = {
+          userName: data.userName,
+          email: data.email,
+          password: data.password,
+          phoneNumber: data.phoneNumber,
+          usertype:data.usertype
+        };
+        
+          formData.departmentId = user.departmentId;
+        
+        if (data.projectId !== '') {
+          formData.projectId = data.projectId;
+        }
+        
+        await addUser(formData);
       }
       setIsChange(!isChange);
       setIsModalOpen(false);
@@ -120,7 +138,11 @@ const AddPeople = () => {
           }}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
-            <h1 className="flex-auto font-semibold">Add User</h1>
+          <h1 className="flex-auto font-semibold">
+              {" "}
+              {editedUser ? "Edit User" : "Add User"}
+            </h1>
+
 
             <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
               User Name
@@ -221,6 +243,7 @@ const AddPeople = () => {
                   <StyledSelectionList
                     listname="User Type"
                     options={Roles}
+                    selectedOption={editedUser ? { value: editedUser.usertype, name: editedUser.usertype } : null}
                     {...field}
                   />
                   {errors.usertype && (
@@ -261,7 +284,7 @@ const AddPeople = () => {
                   )}
                 </>
               )}
-              rules={{ required: "Project name is required" }}
+              // rules={{ required: "Project name is required" }}
             />
             <div className="flex  justify-end gap-4">
               <button
@@ -273,7 +296,10 @@ const AddPeople = () => {
               >
                 Cancel
               </button>
-              <StyledButton text="Add" type="submit" />
+              <StyledButton
+                text={editedUser ? "Update" : "Add"}
+                type="submit"
+              />
             </div>
           </form>
         </Modal>

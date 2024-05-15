@@ -38,6 +38,12 @@ const userSchema = new Schema(
         ref: "projects",
       },
     ],
+    departmentId:
+      {
+        type: Schema.Types.ObjectId,
+        ref: "departments",
+      }
+    
   },
   { timestamps: true }
 );

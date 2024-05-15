@@ -15,6 +15,7 @@ import StyledMultipleSelection from "../../ui/StyledMultipleSelection";
 import { useProjectStore } from "../../store/projectStore";
 import { useUserStore } from "../../store/UserStore";
 import { Menu } from "@headlessui/react";
+import { useAdminStore } from "../../store/AdminStore";
 
 const ProjectLeadAddPeople = () => {
   const {
@@ -27,7 +28,7 @@ const ProjectLeadAddPeople = () => {
   const { projects, fetchProject } = useProjectStore();
   const { users, fetchUser, addUser, deleteUser, updateUser } = useUserStore();
   const [isChange, setIsChange] = useState(false);
-
+  const { user } = useAdminStore();
   const [search, setSearch] = useState();
   const [role, setRole] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,7 +47,9 @@ const ProjectLeadAddPeople = () => {
     fetchUser(filter);
   }, [isChange, search, role]);
   useEffect(() => {
-    fetchProject();
+    let filter={}
+    filter.dep=true
+    fetchProject(filter);
   }, []);
   useEffect(() => {
     if (editedUser) {
@@ -78,7 +81,21 @@ const ProjectLeadAddPeople = () => {
           toast.success("Updated successfully!");
         }
       } else {
-        await addUser(data);
+        const formData = {
+          userName: data.userName,
+          email: data.email,
+          password: data.password,
+          phoneNumber: data.phoneNumber,
+          usertype:data.usertype
+        };
+        
+          formData.departmentId = user.departmentId;
+        
+        if (data.projectId !== '') {
+          formData.projectId = data.projectId;
+        }
+        
+        await addUser(formData);
       }
       setIsChange(!isChange);
       setIsModalOpen(false);
@@ -219,6 +236,7 @@ const ProjectLeadAddPeople = () => {
                   <StyledSelectionList
                     listname="User Type"
                     options={Roles}
+                    selectedOption={editedUser ? { value: editedUser.usertype, name: editedUser.usertype } : null}
                     {...field}
                   />
                   {errors.usertype && (
@@ -259,7 +277,7 @@ const ProjectLeadAddPeople = () => {
                   )}
                 </>
               )}
-              rules={{ required: "Project name is required" }}
+              // rules={{ required: "Project name is required" }}
             />
             <div className="flex  justify-end gap-4">
               <button

@@ -72,18 +72,14 @@ const AdminAddUser = () => {
 
   useEffect(() => {
     if (editedUser) {
-      if (editedUser.usertype === "manager") {
-        setSelectedUserType("manager");
-        setDep(editedUser.department[0]);
-      } else {
-        setSelectedUserType("");
-      }
-
       setValue("userName", editedUser.userName);
       setValue("email", editedUser.email);
       setValue("phoneNumber", editedUser.phoneNumber);
       setValue("usertype", editedUser.usertype);
-      setValue("department", editedUser.department[0]?.departmentName);
+      setValue(
+        "departmentId",
+        editedUser.departmentId._id
+      );
       setValue(
         "projectId",
         editedUser.projectId.map((project) => project._id)
@@ -128,8 +124,8 @@ const AdminAddUser = () => {
           usertype:data.usertype
         };
         
-        if (data.department !== '') {
-          formData.department = data.department;
+        if (data.departmentId !== '') {
+          formData.departmentId = data.departmentId;
         }
         if (data.projectId !== '') {
           formData.projectId = data.projectId;
@@ -165,13 +161,6 @@ const AdminAddUser = () => {
       console.error("Error deleting user:", error);
     }
   };
-  useEffect(() => {
-    if (selectedUserType === "manager") {
-      setDep(editedUser ? editedUser.department[0] : "");
-    } else {
-      setDep("");
-    }
-  }, [selectedUserType, editedUser]);
 
   // console.log("Dep", selectedUserType);
   return (
@@ -305,14 +294,7 @@ const AdminAddUser = () => {
                   <StyledSelectionList
                     listname="User Type"
                     options={Roles}
-                    selectedOption={
-                      editedUser
-                        ? {
-                            value: editedUser.usertype,
-                            name: editedUser.usertype,
-                          }
-                        : null
-                    }
+                    selectedOption={editedUser ? { value: editedUser.usertype, name: editedUser.usertype } : null}
                     {...field}
                     onChange={(value) => {
                       setSelectedUserType(value);
@@ -329,13 +311,13 @@ const AdminAddUser = () => {
               rules={{ required: "UserType is required" }}
             />
 
-            {selectedUserType === "manager" ? (
+          
               <>
                 <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
                   Department
                 </h1>
                 <Controller
-                  name="department"
+                  name="departmentId"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
@@ -343,23 +325,16 @@ const AdminAddUser = () => {
                       <StyledSelectionList
                         listname="Department"
                         options={options}
-                        selectedOption={
-                          editedUser
-                            ? {
-                                value: editedUser?.department[0]?._id,
-                                name: editedUser?.department[0]?.departmentName,
-                              }
-                            : {}
-                        }
+                        selectedOption={editedUser ? { value: editedUser.departmentId._id, name: editedUser.departmentId.departmentName} : null}
                         {...field}
                         onChange={(value) => {
                           setDep(value); // Set selected user type inline
                           field.onChange(value);
                         }}
                       />
-                      {errors.department && (
+                      {errors.departmentId && (
                         <span className="text-red-500">
-                          {errors.department.message}
+                          {errors.departmentId.message}
                         </span>
                       )}
                     </>
@@ -367,7 +342,7 @@ const AdminAddUser = () => {
                   rules={{ required: "Department is required" }}
                 />
               </>
-            ) : null}
+          
 
             <>
               <h1 className="mt-5 mb-1 text-xs font-semibold leading-4 text-slate-500">

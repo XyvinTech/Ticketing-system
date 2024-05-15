@@ -122,28 +122,35 @@ const ManagerNewTicket = () => {
                   />
                 </div>
               </div>
-              <div>
-                <Controller
-                  name="projectId"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <>
-                      <StyledSelectionList
-                        label="Project"
-                        options={Project}
-                        {...field}
-                      />
-                      {errors.project && (
-                        <span className="text-red-500">
-                          {errors.project.message}
-                        </span>
-                      )}
-                    </>
-                  )}
-                  rules={{ required: "Project is required" }}
-                />
-              </div>
+              {Project.length > 0 ? (
+                <div>
+                  <Controller
+                    name="projectId"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <>
+                        <StyledSelectionList
+                        
+                          label="Project"
+                          options={Project}
+                          {...field}
+                        />
+                        {errors.project && (
+                          <span className="text-red-500">
+                            {errors.project.message}
+                          </span>
+                        )}
+                      </>
+                    )}
+                    rules={{ required: "Project is required" }}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <span className="text-red-500">No Projects available</span>
+                </div>
+              )}
               <div>
                 <Controller
                   name="subject"

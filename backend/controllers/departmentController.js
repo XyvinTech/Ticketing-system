@@ -52,31 +52,29 @@ exports.editDepartmentMember = async function (req, res) {
 };
 
 exports.getDepartments = async function (req, res) {
-  // const { withDep } = req.query;
-  // console.log("withDep", withDep);
-  const query = {};
-
-  const user = await User.findById(req.user);
-  if (user.usertype === "manager") {
-
-    query.departmentManager = req.user;
-  }
-  // if(withDep==="manager"){
-  //   query.departmentManager=null
-  // }
-  const data = await Department.find(query)
-    .populate("departmentManager")
-    .populate({
-      path: "members",
-      select: "-password",
-      populate: {
-        path: "projectId",
-        select: "projectName",
+  const data = await Department.aggregate([
+    {
+      $lookup: {
+        from: "users", // The collection to join with
+        localField: "_id", // The field from the Department collection
+        foreignField: "departmentId", // The field from the User collection
+        as: "depUser", // The field to store the joined documents
       },
-    });
+    },
+    {
+      $lookup: {
+        from: "users", // The collection to join with
+        localField: "members", // The field from the Department collection
+        foreignField: "_id", // The field from the User collection
+        as: "members", // The field to store the joined documents
+      },
+    },
+  ]);
 
   res.status(200).json({ status: true, message: "Departments list", data });
 };
+
+
 exports.deleteDepartment = async function (req, res) {
   const depId = req.params.id;
   const deleteDep = await Department.findByIdAndDelete(depId);

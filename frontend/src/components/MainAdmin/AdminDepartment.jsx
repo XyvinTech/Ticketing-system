@@ -239,11 +239,11 @@ const AdminDepartment = () => {
                         {user?.departmentName}
                       </td>
                       <td className="px-2 py-2 text-sm text-gray-900 text-left">
-                        {user?.departmentManager
-                          ? user.departmentManager
-                              .map((manager) => manager.userName)
-                              .join(", ")
-                          : ""}
+                        {user?.depUser &&
+                          user.depUser
+                            .filter((manager) => manager.usertype === "manager")
+                            .map((manager) => manager.userName)
+                            .join(", ")}
                       </td>
 
                       <td className="text-sm text-gray-900">

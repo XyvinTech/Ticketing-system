@@ -8,7 +8,7 @@ breakdown of what it does: */
 
 exports.addUser = async function (req, res) {
   try {
-    const { email, userName, department } = req.body;
+    const { email, userName } = req.body;
 
     // Check if a user with the same email or username already exists
     const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
@@ -18,20 +18,8 @@ exports.addUser = async function (req, res) {
         .json({ message: "User already exists with this email or username" });
     }
 
-    // Create the new user
-    const newUser = await User.create(req.body);
+    await User.create(req.body);
 
-    // If a department is specified, update the department manager array
-    if (department) {
-      const targetDepartment = await Department.findById(department);
-      if (!targetDepartment) {
-        return res.status(404).json({ message: "Department not found" });
-      }
-      
-      // Add the new user ID to the departmentManager array
-      targetDepartment.departmentManager.push(newUser._id);
-      await targetDepartment.save();
-    }
 
     res.status(201).json({ status: true, message: "User added successfully" });
   } catch (error) {
@@ -46,13 +34,7 @@ provided user ID. Here's a breakdown of what it does: */
 exports.deleteUser = async function (req, res) {
 
     const UserId = req.params.id;
-    
-    const departments = await Department.find({ departmentManager: UserId });
 
-    await Promise.all(departments.map(async (department) => {
-      department.departmentManager = department.departmentManager.filter(id => id.toString() !== UserId);
-      await department.save();
-    }));
 
     // Delete the user
     const deletedAdmin = await User.findByIdAndDelete(UserId);
@@ -69,24 +51,33 @@ exports.deleteUser = async function (req, res) {
 exports.getUsers = async function (req, res) {
   const { usertype, searchQuery, withOutClient, inManager, inLead } = req.query;
 
-  const matchStage = {};
+  console.log("data",inManager)
+  const query = {};
 
   if (usertype) {
-    matchStage.usertype = usertype;
+    query.usertype = usertype;
   }
 
   if (withOutClient) {
-    matchStage.usertype = { $nin: ["client", "admin"] };
+    query.usertype = { $nin: ["client", "admin"] };
   }
 
   if (inManager) {
-    matchStage.usertype = { $nin: ["client", "admin", "manager"] };
+    const authUser = await User.findById(req.user);
+    if (authUser && authUser.departmentId) {
+      query.departmentId = authUser.departmentId;
+      query.usertype = { $nin: ["client", "admin", "manager"] };
+    }
   }
+  
 
   if (inLead) {
-    matchStage.usertype = {
+    const authUser = await User.findById(req.user);
+    if (authUser && authUser.departmentId) {
+      query.departmentId = authUser.departmentId;
+    query.usertype = {
       $nin: ["client", "admin", "manager", "projectLead"],
-    };
+    };}
   }
 
   if (searchQuery) {
@@ -96,33 +87,11 @@ exports.getUsers = async function (req, res) {
     ];
   }
 
-  const users = await User.aggregate([
-    { $match: matchStage },
-    {
-      $lookup: {
-        from: "projects",
-        localField: "projectId",
-        foreignField: "_id",
-        as: "projectId",
-      },
-    },
-    {
-      $lookup: {
-        from: "departments",
-        localField: "_id",
-        foreignField: "departmentManager",
-        as: "department",
-      },
-    },
-    // ,{
-    //   $project:{
-    //     _id:1,
-    //     departmentName:"$department.departmentName"
-    //   }
-    // }
-  ]);
 
-  res.status(200).json({ status: true, message: "Users list", data: users });
+  const data = await User.find(query).select("-password").populate("projectId").populate("departmentId")
+
+
+  res.status(200).json({ status: true, message: "Users list", data });
 };
 
 // exports.updatePassword = async function (req, res) {
@@ -144,7 +113,7 @@ exports.updateAdminUser = async function (req, res) {
  
     const userId = req.params.id;
     const update = req.body;
-    const { department } = update;
+   
 
     // Find and update the user
     const updatedUser = await User.findByIdAndUpdate(userId, update, {
@@ -153,21 +122,6 @@ exports.updateAdminUser = async function (req, res) {
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
-    }
-
-    // If a department is specified, update the department manager array
-    if (department) {
-      const targetDepartment = await Department.findById(department);
-
-      if (targetDepartment) {
-        // Add the updated user ID to the departmentManager array
-        if (!targetDepartment.departmentManager.includes(updatedUser._id)) {
-          targetDepartment.departmentManager.push(updatedUser._id);
-        }
-        await targetDepartment.save();
-      } else {
-        console.error(`Department ${department} not found.`);
-      }
     }
 
     res.status(200).json({ status: true, message: "User updated successfully" });

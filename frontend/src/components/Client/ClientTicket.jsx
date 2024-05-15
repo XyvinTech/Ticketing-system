@@ -155,7 +155,7 @@ const ClientTicket = () => {
             <td colSpan="2" className="px-3 py-4">
               <Pagination
                 currentPage={currentPage}
-                totalItems={tickets.length}
+                totalItems={tickets?.length}
                 itemsPerPage={itemsPerPage}
                 paginate={paginate}
                 goToPreviousPage={goToPreviousPage}
