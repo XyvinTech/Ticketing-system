@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TableInfo from "../../ui/TableInfo";
-
+import DOMPurify from 'dompurify';
 import { ReactComponent as PaperIcon } from "../../assets/icons/PaperIcon.svg";
 import { ReactComponent as PdfIcon } from "../../assets/icons/PdfIcon.svg";
 import { useTicketStore } from "../../store/TicketStore";
@@ -106,10 +106,7 @@ const SingleTicket = () => {
                 </div>
               </div>
               <div className="px-3 py-5">
-                <div
-                  className="justify-center  text-base leading-7 text-gray-700 max-w-[890px] max-md:pr-5 max-md:max-w-full"
-                  dangerouslySetInnerHTML={{ __html: tickets?.description }}
-                ></div>
+              <div className=" prose" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tickets?.description) }}></div>
               </div>
               {tickets?.attachment && tickets.attachment.length > 0 && (
                 <div className="py-3 pr-3 pl-3">

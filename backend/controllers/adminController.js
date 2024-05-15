@@ -8,7 +8,7 @@ breakdown of what it does: */
 
 exports.addUser = async function (req, res) {
   try {
-    const { email, userName, department, usertype } = req.body;
+    const { email, userName, department } = req.body;
 
     // Check if a user with the same email or username already exists
     const existingUser = await User.findOne({ $or: [{ email }, { userName }] });

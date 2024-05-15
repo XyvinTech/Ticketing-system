@@ -2,14 +2,16 @@ import React, { useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { ReactComponent as MenuIcon } from "../assets/icons/MenuIcon.svg";
 import { ReactComponent as BellIcon } from "../assets/icons/BellIcon.svg";
-import { ReactComponent as SearchIcon } from "../assets/icons/SearchIcon.svg";
+import { ReactComponent as TicketIcon } from "../assets/icons/TicketIcon.svg";
 import Logo from "../assets/Logo.png";
 import { Link, useLocation } from "react-router-dom";
 import { useAdminStore } from "../store/AdminStore";
 import { useNotificationStore } from "../store/NotificationStore";
 
 const navigation = [{ name: "Tickets", to: "Member/Ticket", current: true }];
-
+const subNavigation = [
+  { name: "Tickets", to: "Member/Ticket", icon: TicketIcon }
+];
 const MemberNavbar = () => {
   const { user, fetchLogin, isChange } = useAdminStore();
   const { notification, fetchNotification, change } = useNotificationStore();
@@ -154,21 +156,25 @@ const MemberNavbar = () => {
           </div>
           <Disclosure.Panel className="lg:hidden">
             <div className="space-y-1 pt-2 pb-3">
-              {navigation.map((item) => (
-                <Disclosure.Button
-                  key={item.name}
-                  as="a"
-                  href={item.href}
-                  className={
-                    "block w-full text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 py-2 pl-3 pr-4 text-left text-base font-medium" +
-                    (item.current
-                      ? " border-l-4 border-l-purple-500 bg-purple-50 text-puurple-700  "
-                      : "")
-                  }
-                  aria-current={item.current ? "page" : undefined}
+            {subNavigation.map((item, index) => (
+                <Link
+                  key={index}
+                  to={`/${item.to}`}
+                  className={`group flex items-center border-l-4 px-3 py-2 text-sm font-medium ${
+                    location.pathname === `/${item.to}`
+                      ? "border-purple-500 bg-purple-50 text-purple-700 hover:bg-purple-50 hover:text-purple-700"
+                      : "border-transparent text-gray-900 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
                 >
-                  {item.name}
-                </Disclosure.Button>
+                  <div className="flex items-center">
+                    {item.icon && <item.icon className={`-ml-1 h-6 w-6 flex-shrink-0 mr-6 ${
+                    location.pathname === `/${item.to}`
+                      ? "text-purple-500 group-hover:text-purple-500"
+                      : "text-gray-400 group-hover:text-gray-500"
+                  }`} />}
+                    {item.name}
+                  </div>
+                </Link>
               ))}
             </div>
 

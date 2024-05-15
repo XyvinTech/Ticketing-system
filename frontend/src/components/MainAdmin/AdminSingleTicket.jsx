@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import DOMPurify from 'dompurify';
 import TableInfo from "../../ui/TableInfo";
 import { ReactComponent as PaperIcon } from "../../assets/icons/PaperIcon.svg";
 import { ReactComponent as PdfIcon } from "../../assets/icons/PdfIcon.svg";
@@ -26,7 +27,7 @@ const AdminSingleTicket = () => {
   useEffect(() => {
     fetchConversationById(id);
   }, [isChange]);
-
+  const sanitizedContent = DOMPurify.sanitize(tickets?.description);
   const confirmMarkAsSolved = async () => {
     setMarkedAsSolved(true);
     await updateTicket(id, { status: "completed" });
@@ -47,7 +48,7 @@ const AdminSingleTicket = () => {
           className="h-20 w-20 border rounded-lg flex items-center justify-center bg-gray-200 cursor-pointer"
           onClick={() => handleAttachmentClick(item)}
         >
-          <PdfIcon className="h-8 w-8 text-red-500" /> {/* Display PDF icon */}
+          <PdfIcon className="h-8 w-8 text-red-500" />
         </div>
       );
     } else if (isVideo) {
@@ -119,10 +120,7 @@ const AdminSingleTicket = () => {
                 </div>
               </div>
               <div className="px-3 py-5">
-                <div
-                  className="justify-center text-base leading-7 text-gray-700 max-w-[890px] max-md:pr-5 max-md:max-w-full"
-                  dangerouslySetInnerHTML={{ __html: tickets?.description }}
-                ></div>
+              <div className=" prose" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tickets?.description) }}></div>
               </div>
               {tickets?.attachment && tickets.attachment.length > 0 && (
                 <div className="py-3 pr-3 pl-3">

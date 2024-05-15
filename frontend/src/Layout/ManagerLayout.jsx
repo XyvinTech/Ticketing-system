@@ -52,7 +52,7 @@ const ManagerLayout = ({ children }) => {
         <div className="mx-auto max-w-8xl px-9">
           <div className="rounded-lg border bg-white shadow">
             <div className="divide-y divide-gray-200 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x ">
-              <aside className="py-6 lg:col-span-2">
+            <aside className="py-6 lg:col-span-2 hidden lg:block">
                 <SubNavigation />
               </aside>
               <div className="divide-y divide-gray-200 lg:col-span-10">

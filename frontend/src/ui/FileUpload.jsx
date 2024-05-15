@@ -20,6 +20,8 @@ const FileUpload = ({ onChange }) => {
       <FilePond
         allowMultiple={true}
         onupdatefiles={handleFileChange} 
+        imagePreviewMaxHeight={150} // Max height for image previews
+        imagePreviewMaxWidth={150} // Max width for image previews
       />
     </div>
   );
