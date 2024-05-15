@@ -76,10 +76,7 @@ const AdminAddUser = () => {
       setValue("email", editedUser.email);
       setValue("phoneNumber", editedUser.phoneNumber);
       setValue("usertype", editedUser.usertype);
-      setValue(
-        "departmentId",
-        editedUser.departmentId._id
-      );
+      setValue("departmentId", editedUser.departmentId._id);
       setValue(
         "projectId",
         editedUser.projectId.map((project) => project._id)
@@ -121,16 +118,16 @@ const AdminAddUser = () => {
           email: data.email,
           password: data.password,
           phoneNumber: data.phoneNumber,
-          usertype:data.usertype
+          usertype: data.usertype,
         };
-        
-        if (data.departmentId !== '') {
+
+        if (data.departmentId !== "") {
           formData.departmentId = data.departmentId;
         }
-        if (data.projectId !== '') {
+        if (data.projectId !== "") {
           formData.projectId = data.projectId;
         }
-        
+
         await addUser(formData);
         reset();
       }
@@ -294,7 +291,14 @@ const AdminAddUser = () => {
                   <StyledSelectionList
                     listname="User Type"
                     options={Roles}
-                    selectedOption={editedUser ? { value: editedUser.usertype, name: editedUser.usertype } : null}
+                    selectedOption={
+                      editedUser
+                        ? {
+                            value: editedUser.usertype,
+                            name: editedUser.usertype,
+                          }
+                        : null
+                    }
                     {...field}
                     onChange={(value) => {
                       setSelectedUserType(value);
@@ -311,7 +315,7 @@ const AdminAddUser = () => {
               rules={{ required: "UserType is required" }}
             />
 
-          
+            {selectedUserType !== "client" && (
               <>
                 <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
                   Department
@@ -325,7 +329,14 @@ const AdminAddUser = () => {
                       <StyledSelectionList
                         listname="Department"
                         options={options}
-                        selectedOption={editedUser ? { value: editedUser.departmentId._id, name: editedUser.departmentId.departmentName} : null}
+                        selectedOption={
+                          editedUser
+                            ? {
+                                value: editedUser.departmentId._id,
+                                name: editedUser.departmentId.departmentName,
+                              }
+                            : null
+                        }
                         {...field}
                         onChange={(value) => {
                           setDep(value); // Set selected user type inline
@@ -342,7 +353,7 @@ const AdminAddUser = () => {
                   rules={{ required: "Department is required" }}
                 />
               </>
-          
+            )}
 
             <>
               <h1 className="mt-5 mb-1 text-xs font-semibold leading-4 text-slate-500">
