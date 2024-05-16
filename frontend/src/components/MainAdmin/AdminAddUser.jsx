@@ -189,6 +189,7 @@ const AdminAddUser = () => {
             setEditedUser(null);
             setIsModalOpen(false);
             setSelectedUserType(null);
+            setDep(null)
           }}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -401,6 +402,7 @@ const AdminAddUser = () => {
                   setEditedUser(null);
                   setIsModalOpen(false);
                   setSelectedUserType(null);
+                  setDep(null)
                 }}
               >
                 Cancel

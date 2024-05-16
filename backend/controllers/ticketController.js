@@ -103,7 +103,8 @@ exports.getAll = async function (req, res) {
       .populate("assignedTo");
 
     res.status(200).json({ status: true, data: tickets });
-  } else if (user.usertype === "member") {
+  } 
+  else if (user.usertype === "member") {
     const query = {
       assignedTo: req.user,
       status: { $ne: "deleted" },
@@ -143,9 +144,12 @@ exports.getAll = async function (req, res) {
     const projectIds = user.projectId.map((id) => id.toString());
 
     const query = {
-      projectId: { $in: projectIds },
-      status: { $ne: "deleted" },
-    };
+      $or: [
+          { projectId: { $in: projectIds } },
+          { assignedTo: req.user }
+      ],
+      status: { $ne: "deleted" }
+  };
     if (inDep) {
       if (inDep === "myticket") {
         query.reporter = req.user;
@@ -163,7 +167,7 @@ exports.getAll = async function (req, res) {
       .populate("department", "departmentName")
       .populate("projectId")
       .populate("assignedTo");
-
+console.log("tick",tickets)
     res.status(200).json({ status: true, data: tickets });
   }
 };

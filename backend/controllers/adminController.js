@@ -49,7 +49,7 @@ exports.deleteUser = async function (req, res) {
 
 
 exports.getUsers = async function (req, res) {
-  const { usertype, searchQuery, withOutClient, inManager, inLead } = req.query;
+  const { usertype, searchQuery, withOutClient, inManager, inLead,managerUsers } = req.query;
 
   console.log("data",inManager)
   const query = {};
@@ -57,7 +57,11 @@ exports.getUsers = async function (req, res) {
   if (usertype) {
     query.usertype = usertype;
   }
-
+  if (managerUsers) {
+    query.usertype = "manager";
+    // Exclude the current authenticated user
+    query._id = { $ne: req.user };
+  }
   if (withOutClient) {
     query.usertype = { $nin: ["client", "admin"] };
   }

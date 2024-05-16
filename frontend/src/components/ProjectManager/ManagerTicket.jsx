@@ -13,7 +13,7 @@ import { useTicketStore } from "../../store/TicketStore";
 import { useUserStore } from "../../store/UserStore";
 import { Controller, useForm } from "react-hook-form";
 import StyledSearch from "../../ui/StyledSearch";
-
+import { fetchUsers } from "../../api/userapi";
 
 const ManagerTicket = () => {
   const {
@@ -30,6 +30,7 @@ const ManagerTicket = () => {
   const [status, setStatus] = useState();
   const [dep, setDep] = useState();
   const [project, setProject] = useState();
+  const [manager, setManager] = useState();
   useEffect(() => {
     let filter = {};
     if (status && status !== "all") {
@@ -41,22 +42,38 @@ const ManagerTicket = () => {
     if (search) {
       filter.searchQuery = search;
     }
+
+   
+
     fetchTickets(filter);
-  }, [isChange, search, status,dep]);
+  }, [isChange, search, status, dep]);
   // console.log("dep",dep)
   useEffect(() => {
     let filter = {};
     filter.inManager = true;
-    filter.projectId=project
+    filter.projectId = project;
     getUserByProject(filter);
   }, [project]);
-  const sortedTickets = tickets && Array.isArray(tickets)
-  ? [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  : [];
+  useEffect(() => {
+    const fetchData = async () => {
+      let filter = {};
+      filter.managerUsers = true;
+      const fetchedUsers = await fetchUsers(filter);
+      setManager(fetchedUsers.data);
+    };
+
+    fetchData();
+  }, []);
+  const sortedTickets =
+    tickets && Array.isArray(tickets)
+      ? [...tickets].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        )
+      : [];
   let pendingCount = 0;
   let progressCount = 0;
   let completedCount = 0;
-  
+
   if (Array.isArray(sortedTickets)) {
     sortedTickets.forEach((ticket) => {
       if (ticket.status === "pending") {
@@ -68,23 +85,29 @@ const ManagerTicket = () => {
       }
     });
   }
-  
-  
+
   const items = [
     { name: "Total", count: sortedTickets?.length },
     { name: "Pending", count: pendingCount },
     { name: "Progress", count: progressCount },
-    { name: "Closed", count: completedCount},
+    { name: "Closed", count: completedCount },
   ];
   const selectOptions =
     users && Array.isArray(users)
       ? users.map((user) => ({
           value: user?._id,
           label: user?.email,
-          userType: user?.usertype 
+          userType: user?.usertype,
         }))
       : [];
-
+  const managers =
+    manager && Array.isArray(manager)
+      ? manager.map((user) => ({
+          value: user?._id,
+          label: user?.email,
+          userType: user?.departmentId?.departmentName,
+        }))
+      : [];
   const headers = ["Ticket", "Assigned To", "Status", "Assign"];
 
   // Pagination state
@@ -165,8 +188,7 @@ const ManagerTicket = () => {
               />
             </div>
           </div>
-        </div>
-       {" "}
+        </div>{" "}
         {isModalOpen && (
           <Modal closeModal={() => setIsModalOpen(false)}>
             <form onSubmit={handleSubmit((data) => onSubmit(data, ticketId))}>
@@ -192,7 +214,27 @@ const ManagerTicket = () => {
                   </>
                 )}
               />
-
+              <div className="flex items-center justify-center my-4">
+                <span className="text-sm font-semibold text-slate-500">or</span>
+              </div>
+              <h1 className="mt-4 text-xs font-semibold leading-4 text-slate-500">
+                Assign to Department
+              </h1>
+              <Controller
+                name="assignedTo"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <>
+                    <StyledSearch options={managers} {...field} />
+                    {errors.assignedTo && (
+                      <span className="text-red-500">
+                        {errors.assignedTo.message}
+                      </span>
+                    )}
+                  </>
+                )}
+              />
               <div className="flex  justify-end gap-4">
                 <button
                   className="font-semibold  mt-3"
@@ -205,36 +247,33 @@ const ManagerTicket = () => {
             </form>
           </Modal>
         )}
-       
-          <StyledTable header={headers}>
-            {item?.map((tickets) => (
-              <tr key={tickets?._id}>
-                <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
-                  {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
-                  <Link
-                    to={`/Manager/SingleTicket/${tickets?._id}`}
-                    className="text-lg font-semibold text-purple-600 hover:text-purple-800"
-                  >
-                    {tickets?.subject}
-                  </Link>
-                  <TableInfo
-                    reference={tickets?.ticket_Id}
-                    priority={tickets?.priority}
-                    createdAt={tickets?.createdAt}
-                    category={tickets?.department?.departmentName}
-                    // last_reply_on={i.replies[0]?.created_at}
-                    projectName={tickets?.projectId?.projectName}
-                  />
-                </td>
-                <td className="whitespace-nowrap text-sm text-left text-gray-500">
-                
-                    {tickets?.assignedTo?.email}
-                  
-                </td>
+        <StyledTable header={headers}>
+          {item?.map((tickets) => (
+            <tr key={tickets?._id}>
+              <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
+                {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
+                <Link
+                  to={`/Manager/SingleTicket/${tickets?._id}`}
+                  className="text-lg font-semibold text-purple-600 hover:text-purple-800"
+                >
+                  {tickets?.subject}
+                </Link>
+                <TableInfo
+                  reference={tickets?.ticket_Id}
+                  priority={tickets?.priority}
+                  createdAt={tickets?.createdAt}
+                  category={tickets?.department?.departmentName}
+                  // last_reply_on={i.replies[0]?.created_at}
+                  projectName={tickets?.projectId?.projectName}
+                />
+              </td>
+              <td className="whitespace-nowrap text-sm text-left text-gray-500">
+                {tickets?.assignedTo?.email}
+              </td>
 
-                <td className="whitespace-nowrap text-sm text-left text-gray-500 ">
-                  <span
-                    className={`rounded-full px-3 py-px text-sm
+              <td className="whitespace-nowrap text-sm text-left text-gray-500 ">
+                <span
+                  className={`rounded-full px-3 py-px text-sm
                       ${
                         tickets?.status === "progress"
                           ? "bg-indigo-100 text-indigo-800"
@@ -246,37 +285,37 @@ const ManagerTicket = () => {
                           ? "bg-green-100 text-green-800"
                           : ""
                       }`}
-                  >
-                    {tickets?.status === "completed" ? "Closed" : tickets?.status}
-                  </span>
-                </td>
-                <td>
+                >
+                  {tickets?.status === "completed" ? "Closed" : tickets?.status}
+                </span>
+              </td>
+              <td>
                 {tickets.status !== "completed" && (
                   <StyledButton
-                   text={tickets?.assignedTo?.email ? "Reassign" : "Assign"}
+                    text={tickets?.assignedTo?.email ? "Reassign" : "Assign"}
                     onClick={() => {
                       setIsModalOpen(true);
                       setTicketId(tickets?._id);
                       setProject(tickets?.projectId._id);
                     }}
-                  />)}
-                </td>
-              </tr>
-            ))}
-            <tr>
-              <td colSpan="2" className="px-4 py-2">
-                <Pagination
-                  currentPage={currentPage}
-                  totalItems={tickets?.length}
-                  itemsPerPage={itemsPerPage}
-                  paginate={paginate}
-                  goToPreviousPage={goToPreviousPage}
-                  goToNextPage={goToNextPage}
-                />
+                  />
+                )}
               </td>
             </tr>
-          </StyledTable>
-       
+          ))}
+          <tr>
+            <td colSpan="2" className="px-4 py-2">
+              <Pagination
+                currentPage={currentPage}
+                totalItems={tickets?.length}
+                itemsPerPage={itemsPerPage}
+                paginate={paginate}
+                goToPreviousPage={goToPreviousPage}
+                goToNextPage={goToNextPage}
+              />
+            </td>
+          </tr>
+        </StyledTable>
       </section>
     </div>
   );
