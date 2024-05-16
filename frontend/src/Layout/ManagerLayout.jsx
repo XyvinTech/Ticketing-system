@@ -48,8 +48,8 @@ const ManagerLayout = ({ children }) => {
   return (
     <div className="flex min-h-screen flex-col bg-gray-100">
       <ManagerNavbar/>
-      <div className="my-6 flex-1">
-        <div className="mx-auto max-w-8xl px-9">
+      <div className="lg:my-6 lg:flex-1">
+        <div className="lg:mx-auto lg:max-w-8xl lg:px-9">
         <div className="rounded-lg border  shadow sm:bg-gray-300 lg:bg-white">
             <div className="divide-y divide-gray-200 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x ">
             <aside className="py-6 lg:col-span-2 hidden lg:block">

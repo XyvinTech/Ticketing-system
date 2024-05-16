@@ -143,25 +143,33 @@ const ManagerTicket = () => {
         <div className="mb-6 grid grid-cols-2 gap-6 md:grid-cols-5">
           <TicketGrid item={items} />
         </div>
-        <div className="flex flex-col sm:flex-row justify-between gap-3 pb-4 flex-wrap">
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
-            <StyledInput
-              placeholder="Search"
-              Icon={SearchIcon}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <div className="flex flex-row sm:flex-row gap-3">
-              {" "}
-              {/* Changed flex-col to flex-row */}
+        <div className="pb-4 lg:flex lg:justify-start lg:gap-4">
+          {/* First Row */}
+          <div className="row mb-4">
+            <div className="col">
+              <StyledInput
+                placeholder="Search"
+                Icon={SearchIcon}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-100"
+              />
+            </div>
+          </div>
+          <div class="flex lg:gap-4">
+            <div class="w-1/2 pr-1 lg:w-44">
               <DropDown
                 label="All"
                 options={Manager}
                 onChange={(value) => setDep(value)}
+                className="w-100"
               />
+            </div>
+            <div class="w-1/2">
               <DropDown
                 label="Status"
                 options={Status}
                 onChange={(value) => setStatus(value)}
+                className="w-100"
               />
             </div>
           </div>

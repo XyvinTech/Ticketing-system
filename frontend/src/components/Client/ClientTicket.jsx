@@ -25,13 +25,16 @@ const ClientTicket = () => {
   }, [search, status]);
 
   const headers = ["Ticket", "Status"];
-  const sortedTickets = tickets && Array.isArray(tickets)
-  ? [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  : [];
+  const sortedTickets =
+    tickets && Array.isArray(tickets)
+      ? [...tickets].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        )
+      : [];
   let pendingCount = 0;
   let progressCount = 0;
   let completedCount = 0;
-  
+
   if (Array.isArray(sortedTickets)) {
     sortedTickets.forEach((ticket) => {
       if (ticket.status === "pending") {
@@ -70,7 +73,7 @@ const ClientTicket = () => {
       setCurrentPage(currentPage + 1);
     }
   };
- 
+
   const items = [
     { name: "Total", count: sortedTickets?.length },
     { name: "Pending", count: pendingCount },
@@ -90,25 +93,25 @@ const ClientTicket = () => {
         <div className="mb-6 grid grid-cols-2 gap-6 md:grid-cols-5">
           <TicketGrid item={items} />
         </div>
-        <div className="flex gap-0 justify-between max-md:flex-wrap">
-          <div className="mt-4 flex flex-col md:flex-row items-center gap-3 md:items-center md:flex">
-            <StyledInput
-              placeholder="Search"
-              Icon={SearchIcon}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+        <div className="pb-4 lg:flex lg:justify-start lg:gap-4">
+          {/* First Row */}
+          <div className="row mb-4">
+            <div className="col">
+              <StyledInput
+                placeholder="Search"
+                Icon={SearchIcon}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-100"
+              />
+            </div>
+          </div>
 
-            <DropDown
-              label="Status"
-              options={Status}
-              onChange={(value) => setStatus(value)}
-            />
-          </div>
-          <div className="flex gap-0 justify-center pb-4 text-sm font-medium leading-5 text-white whitespace-nowrap rounded-md shadow-sm">
-            <Link to={"/Client/Ticket/ClientNewTicket"}>
-              <StyledButton text="New Ticket" />
-            </Link>
-          </div>
+          <DropDown
+            label="Status"
+            options={Status}
+            onChange={(value) => setStatus(value)}
+            className="w-100"
+          />
         </div>
 
         <StyledTable header={headers}>
@@ -146,7 +149,7 @@ const ClientTicket = () => {
                       : ""
                   }`}
                 >
-               {tickets?.status === "completed" ? "Closed" : tickets?.status}
+                  {tickets?.status === "completed" ? "Closed" : tickets?.status}
                 </span>
               </td>
             </tr>

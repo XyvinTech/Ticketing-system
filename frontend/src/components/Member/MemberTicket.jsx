@@ -24,13 +24,16 @@ const MemberTicket = () => {
     }
     fetchTickets(filter);
   }, [search, status]);
-  const sortedTickets = tickets && Array.isArray(tickets)
-  ? [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  : [];
+  const sortedTickets =
+    tickets && Array.isArray(tickets)
+      ? [...tickets].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        )
+      : [];
   let pendingCount = 0;
   let progressCount = 0;
   let completedCount = 0;
-  
+
   if (Array.isArray(sortedTickets)) {
     sortedTickets.forEach((ticket) => {
       if (ticket.status === "pending") {
@@ -43,7 +46,7 @@ const MemberTicket = () => {
     });
   }
   const items = [
-    { name: "Total", count: sortedTickets?.length  },
+    { name: "Total", count: sortedTickets?.length },
     { name: "Pending", count: pendingCount },
     { name: "Progress", count: progressCount },
     { name: "Closed", count: completedCount },
@@ -59,8 +62,8 @@ const MemberTicket = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = Array.isArray(sortedTickets)
-  ? sortedTickets.slice(indexOfFirstItem, indexOfLastItem)
-  : [];
+    ? sortedTickets.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -95,20 +98,25 @@ const MemberTicket = () => {
         <div className="mb-6 grid grid-cols-2 gap-6 md:grid-cols-5">
           <TicketGrid item={items} />
         </div>
-        <div className="flex flex-col md:flex-row justify-between gap-3 pb-4 max-md:flex-wrap">
-          <div className="mt-4 flex flex-col md:flex-row items-center gap-3 md:items-center md:flex">
-            <StyledInput
-              placeholder="Search"
-              Icon={SearchIcon}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-
-            <DropDown
-              label="Status"
-              options={Status}
-              onChange={(value) => setStatus(value)}
-            />
+        <div className="pb-4 lg:flex lg:justify-start lg:gap-4">
+          {/* First Row */}
+          <div className="row mb-4">
+            <div className="col">
+              <StyledInput
+                placeholder="Search"
+                Icon={SearchIcon}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-100"
+              />
+            </div>
           </div>
+
+          <DropDown
+            label="Status"
+            options={Status}
+            onChange={(value) => setStatus(value)}
+            className="w-100"
+          />
         </div>
 
         <StyledTable header={headers}>
