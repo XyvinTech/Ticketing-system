@@ -47,15 +47,18 @@ const AdminTicket = () => {
   useEffect(() => {
     let filter = {};
     filter.withOutClient = true;
-    filter.projectId=project
-    getUserByProject( filter);
+    filter.projectId = project;
+    getUserByProject(filter);
   }, [project]);
   useEffect(() => {
     fetchDepartment();
   }, []);
-const sortedTickets = tickets && Array.isArray(tickets)
-  ? [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  : [];
+  const sortedTickets =
+    tickets && Array.isArray(tickets)
+      ? [...tickets].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        )
+      : [];
 
   let pendingCount = 0;
   let progressCount = 0;
@@ -76,14 +79,14 @@ const sortedTickets = tickets && Array.isArray(tickets)
     { name: "Total", count: sortedTickets?.length },
     { name: "Pending", count: pendingCount },
     { name: "Progress", count: progressCount },
-    { name: "Closed",  count: completedCount},
+    { name: "Closed", count: completedCount },
   ];
   const selectOptions =
     users && Array.isArray(users)
       ? users.map((user) => ({
           value: user?._id,
           label: user?.email,
-          userType:user?.usertype
+          userType: user?.usertype,
         }))
       : [];
 
@@ -146,28 +149,33 @@ const sortedTickets = tickets && Array.isArray(tickets)
     <div>
       <section className="py-6 px-4 sm:p-6 lg:pb-8">
         <h1 className="mb-6 text-xl font-semibold">Tickets</h1>
-        <div className="mb-6 grid grid-cols-2 gap-6 md:grid-cols-5">
+        <div className="mb-6 grid grid-cols-2 gap-6 md:grid-cols-5 ">
           <TicketGrid item={items} />
         </div>
-        <div className="flex flex-col md:flex-row justify-between gap-3 pb-4 max-md:flex-wrap">
-          <div className="mt-4 flex flex-col md:flex-row items-center gap-3 md:items-center md:flex">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 pb-4 flex-wrap">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
             <StyledInput
               placeholder="Search"
               Icon={SearchIcon}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <DropDown
-              label="All"
-              options={options}
-              onChange={(value) => setDep(value)}
-            />
-            <DropDown
-              label="Status"
-              options={Status}
-              onChange={(value) => setStatus(value)}
-            />
+            <div className="flex flex-row sm:flex-row gap-3">
+              {" "}
+              {/* Changed flex-col to flex-row */}
+              <DropDown
+                label="All"
+                options={options}
+                onChange={(value) => setDep(value)}
+              />
+              <DropDown
+                label="Status"
+                options={Status}
+                onChange={(value) => setStatus(value)}
+              />
+            </div>
           </div>
         </div>
+
         {/* {showAdminBoard && <AdminBoard />}{" "} */}
         {isModalOpen && (
           <Modal closeModal={() => setIsModalOpen(false)}>
@@ -245,7 +253,7 @@ const sortedTickets = tickets && Array.isArray(tickets)
                           : ""
                       }`}
                 >
-                 {tickets?.status === "completed" ? "Closed" : tickets?.status}
+                  {tickets?.status === "completed" ? "Closed" : tickets?.status}
                 </span>
               </td>
               <td>

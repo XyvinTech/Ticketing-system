@@ -72,11 +72,16 @@ const AdminAddUser = () => {
 
   useEffect(() => {
     if (editedUser) {
+      if (editedUser.usertype === "client") {
+        setSelectedUserType("client")
+      } else {
+        setSelectedUserType("");
+      }
       setValue("userName", editedUser.userName);
       setValue("email", editedUser.email);
       setValue("phoneNumber", editedUser.phoneNumber);
       setValue("usertype", editedUser.usertype);
-      setValue("departmentId", editedUser.departmentId._id);
+      setValue("departmentId", editedUser?.departmentId?._id);
       setValue(
         "projectId",
         editedUser.projectId.map((project) => project._id)
@@ -315,7 +320,7 @@ const AdminAddUser = () => {
               rules={{ required: "UserType is required" }}
             />
 
-            {selectedUserType !== "client" && (
+            {selectedUserType !== "client"  &&(
               <>
                 <h1 className="mt-5 text-xs font-semibold leading-4 text-slate-500">
                   Department
@@ -332,8 +337,8 @@ const AdminAddUser = () => {
                         selectedOption={
                           editedUser
                             ? {
-                                value: editedUser.departmentId._id,
-                                name: editedUser.departmentId.departmentName,
+                                value: editedUser.departmentId?._id,
+                                name: editedUser.departmentId?.departmentName,
                               }
                             : null
                         }

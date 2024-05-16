@@ -47,7 +47,7 @@ const MemberLayout = ({ children }) => {
       <MemberNavbar/>
       <div className="my-6 flex-1">
         <div className="mx-auto max-w-8xl px-9">
-          <div className="rounded-lg border bg-white shadow">
+        <div className="rounded-lg border  shadow sm:bg-gray-300 lg:bg-white">
             <div className="divide-y divide-gray-200 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x ">
             <aside className="py-6 lg:col-span-2 hidden lg:block">
                 <SubNavigation />

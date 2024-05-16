@@ -14,7 +14,8 @@ const DropDown= ({ options, label, onChange = () => {}}) => {
     <Listbox value={selected} onChange={handleChange}>
       <div className="flex flex-col">
         <div className="relative mt-1">
-        <Listbox.Button className="relative w-44 cursor-default rounded-md border bg-white py-2 pl-10 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500">
+        <Listbox.Button className="relative w-full sm:w-36 cursor-default rounded-md border bg-white py-2 pl-10 pr-3 text-left shadow-sm focus:outline-none focus:ring-1 sm:text-sm border-gray-300 text-gray-900 focus:border-purple-300 focus:ring-purple-500">
+
   <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
     <FilterIcon className="h-5 w-5 text-gray-400" />
   </span>
