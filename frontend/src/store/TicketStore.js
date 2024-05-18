@@ -4,6 +4,7 @@ import {
   fetchTicketById,
   addTicket,
   updateTicket,
+  deleteTicket,
 } from "../api/ticketapi";
 
 const useTicketStore = create((set) => ({
@@ -32,6 +33,9 @@ const useTicketStore = create((set) => ({
       ),
     }));
   },
+  deleteTicket:async(ticektId)=>{
+    await deleteTicket(ticektId);
+},
 }));
 
 export { useTicketStore };

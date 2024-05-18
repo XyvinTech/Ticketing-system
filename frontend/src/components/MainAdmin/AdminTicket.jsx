@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TicketGrid from "../../ui/TicketGrid";
 import StyledInput from "../../ui/StyledInput";
-import StyledTable from "../../ui/StyledTable";
 import StyledButton from "../../ui/StyledButton";
 import TableInfo from "../../ui/TableInfo";
 import { Link } from "react-router-dom";
@@ -14,6 +13,7 @@ import { useUserStore } from "../../store/UserStore";
 import { Controller, useForm } from "react-hook-form";
 import StyledSearch from "../../ui/StyledSearch";
 import { useDepartmentStore } from "../../store/DepartmentStore";
+import AdminTable from "../../ui/AdminTable";
 
 const AdminTicket = () => {
   const {
@@ -21,7 +21,8 @@ const AdminTicket = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { tickets, fetchTickets, updateTicket } = useTicketStore();
+  const { tickets, fetchTickets, updateTicket, deleteTicket } =
+    useTicketStore();
   const { users, getUserByProject } = useUserStore();
   const { departments, fetchDepartment } = useDepartmentStore();
   const [ticketId, setTicketId] = useState();
@@ -31,6 +32,24 @@ const AdminTicket = () => {
   const [status, setStatus] = useState();
   const [dep, setDep] = useState();
   const [project, setProject] = useState();
+  const [selectAll, setSelectAll] = useState(false);
+  const [selectedTickets, setSelectedTickets] = useState([]);
+  const handleCheckboxChange = (ticketId) => {
+    if (selectedTickets.includes(ticketId)) {
+      setSelectedTickets(selectedTickets.filter((id) => id !== ticketId));
+    } else {
+      setSelectedTickets([...selectedTickets, ticketId]);
+    }
+  };
+  const handleSelectAllTickets = () => {
+    const allTicketIds = sortedTickets.map((ticket) => ticket._id);
+    if (selectAll) {
+      setSelectedTickets([]);
+    } else {
+      setSelectedTickets(allTicketIds);
+    }
+    setSelectAll(!selectAll);
+  };
   useEffect(() => {
     let filter = {};
     if (status && status !== "all") {
@@ -135,7 +154,17 @@ const AdminTicket = () => {
     { value: "progress", name: "progress" },
     { value: "completed", name: "completed" },
   ];
+  const handleDeleteSelectedTickets = async () => {
+    try {
+      await deleteTicket(selectedTickets);
 
+      setIsChange(!isChange);
+
+      setSelectedTickets([]);
+    } catch (error) {
+      console.error("Error deleting selected tickets:", error);
+    }
+  };
   const onSubmit = async (data, ticketId) => {
     try {
       await updateTicket(ticketId, data);
@@ -145,6 +174,7 @@ const AdminTicket = () => {
       console.error("Error adding :", error);
     }
   };
+
   return (
     <div>
       <section className="py-6 px-4 sm:p-6 lg:pb-8">
@@ -164,8 +194,10 @@ const AdminTicket = () => {
               />
             </div>
           </div>
-          <div class="flex lg:gap-4">
-            <div class="w-1/2 pr-1 lg:w-44">
+          <div className="flex lg:gap-4 sm:mb-8">
+            <div className="w-1/2 pr-1 lg:w-44 mb-4 lg:mb-0">
+              {" "}
+              {/* Adjusted margin-bottom */}
               <DropDown
                 label="All"
                 options={options}
@@ -173,7 +205,9 @@ const AdminTicket = () => {
                 className="w-100"
               />
             </div>
-            <div class="w-1/2">
+            <div className="w-1/2 mb-4 lg:mb-0">
+              {" "}
+              {/* Adjusted margin-bottom */}
               <DropDown
                 label="Status"
                 options={Status}
@@ -182,6 +216,25 @@ const AdminTicket = () => {
               />
             </div>
           </div>
+          {selectedTickets?.length > 0 && (
+            <div className="row mb-4 sm:mb-0 sm:mt-20 lg:mt-1">
+              <div className="col sm:mb-0">
+                {" "}
+                {/* Remove the margin bottom in small screens */}
+                <button
+                  className="bg-white border border-gray-300 text-gray-800 font-semibold py-2 px-3 rounded inline-flex items-center"
+                  onClick={handleDeleteSelectedTickets}
+                  disabled={selectedTickets.length === 0}
+                >
+                  Delete
+                </button>
+                {/* Display selected tickets count */}
+                <span className="ml-2 text-gray-600">
+                  {selectedTickets?.length} Selected
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* {showAdminBoard && <AdminBoard />}{" "} */}
@@ -222,11 +275,20 @@ const AdminTicket = () => {
           </Modal>
         )}
 
-        <StyledTable header={headers}>
+        <AdminTable
+          header={headers}
+          selectAll={selectAll}
+          onHeaderCheckboxChange={handleSelectAllTickets}
+        >
           {item?.map((tickets) => (
             <tr key={tickets?._id}>
               <td className="whitespace-nowrap text-sm text-gray-500 px-3 py-4">
-                {/* <input type="checkbox" class="mr-2  accent-purple-500" /> */}
+                <input
+                  type="checkbox"
+                  class="mr-2  accent-purple-500"
+                  checked={selectedTickets.includes(tickets?._id)}
+                  onChange={() => handleCheckboxChange(tickets?._id)}
+                />
                 <Link
                   to={`/Support/SingleTicket/${tickets?._id}`}
                   className="text-lg font-semibold text-purple-600 hover:text-purple-800"
@@ -290,7 +352,7 @@ const AdminTicket = () => {
               />
             </td>
           </tr>
-        </StyledTable>
+        </AdminTable>
       </section>
     </div>
   );

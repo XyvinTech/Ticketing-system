@@ -103,8 +103,7 @@ exports.getAll = async function (req, res) {
       .populate("assignedTo");
 
     res.status(200).json({ status: true, data: tickets });
-  } 
-  else if (user.usertype === "member") {
+  } else if (user.usertype === "member") {
     const query = {
       assignedTo: req.user,
       status: { $ne: "deleted" },
@@ -144,12 +143,9 @@ exports.getAll = async function (req, res) {
     const projectIds = user.projectId.map((id) => id.toString());
 
     const query = {
-      $or: [
-          { projectId: { $in: projectIds } },
-          { assignedTo: req.user }
-      ],
-      status: { $ne: "deleted" }
-  };
+      $or: [{ projectId: { $in: projectIds } }, { assignedTo: req.user }],
+      status: { $ne: "deleted" },
+    };
     if (inDep) {
       if (inDep === "myticket") {
         query.reporter = req.user;
@@ -167,7 +163,7 @@ exports.getAll = async function (req, res) {
       .populate("department", "departmentName")
       .populate("projectId")
       .populate("assignedTo");
-console.log("tick",tickets)
+    console.log("tick", tickets);
     res.status(200).json({ status: true, data: tickets });
   }
 };
@@ -224,19 +220,20 @@ exports.updateTicket = async function (req, res) {
   }
   const findUser = await User.find({
     $and: [
-      { _id: { $ne: req.user } },{
-    $or: [
-      { usertype: "admin" }, // Find admin users
+      { _id: { $ne: req.user } },
       {
-        $and: [
-          { usertype: { $in: ["projectLead", "manager"] } }, // Find projectLead and manager users
-          { projectId: req.body.projectId }, // Filter by the projectId of the sender
+        $or: [
+          { usertype: "admin" }, // Find admin users
+          {
+            $and: [
+              { usertype: { $in: ["projectLead", "manager"] } }, // Find projectLead and manager users
+              { projectId: req.body.projectId }, // Filter by the projectId of the sender
+            ],
+          },
         ],
       },
     ],
-  },
-],
-});
+  });
 
   console.log("notusers", findUser);
   findUser.forEach(async (user) => {
@@ -252,14 +249,13 @@ exports.updateTicket = async function (req, res) {
 
 //delete Ticket
 exports.deleteTicket = async function (req, res) {
-  const ticketId = req.params.id;
-  const deletedTicket = await Ticket.findByIdAndUpdate(ticketId, {
-    status: "deleted",
-    new: true,
-  });
-  if (!deletedTicket) {
-    throw createError(404, "Ticket  not found");
-  }
+  console.log(req.body);
+  const { ticketIds } = req.body;
+  const deleteResult = await Ticket.deleteMany({ _id: { $in: ticketIds } });
 
-  res.status(200).json({ status: true, message: "ok" });
+  if (deleteResult.deletedCount > 0) {
+    res.status(200).json({ message: "Tickets deleted successfully" });
+  } else {
+    res.status(404).json({ message: "No tickets found with the provided IDs" });
+  }
 };
