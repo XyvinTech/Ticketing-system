@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useDepartmentStore } from "../../store/DepartmentStore";
 import { useProjectStore } from "../../store/projectStore";
 import { uploadImage } from "../../api/uploadapi";
+import Spinner from "../../ui/Spinner";
 const ProjectLeadNewTicket = () => {
   const navigate = useNavigate();
   const {
@@ -23,6 +24,7 @@ const ProjectLeadNewTicket = () => {
   const { departments, fetchDepartment } = useDepartmentStore();
   const { projects, fetchProjectById } = useProjectStore();
   const [dep, setDep] = useState();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => {
     fetchDepartment();
   }, []);
@@ -47,6 +49,7 @@ const ProjectLeadNewTicket = () => {
     name: dep.departmentName,
   }));
   const onSubmit = async (data) => {
+    setIsSubmitting(true);
     if (data.attachment.length > 0) {
       const imageUrl = await uploadImage(data.attachment);
 
@@ -62,6 +65,9 @@ const ProjectLeadNewTicket = () => {
     } catch (error) {
       console.error("Error adding ticket:", error);
       toast.error("Error!");
+    }
+    finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -196,7 +202,11 @@ const ProjectLeadNewTicket = () => {
             </div>
           </div>
           <div className="flex justify-end bg-gray-50 pb-4 sm:px-6">
-            <StyledButton text="Create" type="submit" />
+          <StyledButton
+              text={isSubmitting ? <Spinner /> : "Create"}
+              type="submit"
+              disabled={isSubmitting}
+            />
           </div>
         </form>
       </div>

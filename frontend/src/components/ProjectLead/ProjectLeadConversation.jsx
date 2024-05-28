@@ -1,5 +1,5 @@
 import { Disclosure } from "@headlessui/react";
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import { ReactComponent as UpIcon } from "../../assets/icons/Upicon.svg";
@@ -8,10 +8,13 @@ import FileUpload from "../../ui/FileUpload";
 import StyledButton from "../../ui/StyledButton";
 import { useConversationStore } from "../../store/ConversationStore";
 import { uploadImage } from "../../api/uploadapi";
+import Spinner from "../../ui/Spinner";
 const ProjectLeadConversation = ({ ticketId, isChange, setIsChange }) => {
   const { control, handleSubmit, reset } = useForm();
   const { addConversation } = useConversationStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const onSubmit = async (data) => {
+    setIsSubmitting(true);
     data.ticketId = ticketId;
 
     if (data.attachment.length > 0) {
@@ -26,6 +29,9 @@ const ProjectLeadConversation = ({ ticketId, isChange, setIsChange }) => {
     } catch (error) {
       console.error("Error", error);
       toast.error("Error!");
+    }
+    finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -70,7 +76,11 @@ const ProjectLeadConversation = ({ ticketId, isChange, setIsChange }) => {
                   </div>
 
                   <div className="flex justify-end">
-                    <StyledButton text="Add" type="submit" />
+                    <StyledButton
+                      text={isSubmitting ? <Spinner /> : "Add"}
+                      type="submit"
+                      disabled={isSubmitting}
+                    />
                   </div>
                 </div>
               </form>
