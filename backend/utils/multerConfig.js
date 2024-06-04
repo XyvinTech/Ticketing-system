@@ -1,5 +1,5 @@
 const multer = require("multer");
-const fileSizeLimit = 30 * 1024 * 1024; // 30 MB in bytes
+const fileSizeLimit = 500 * 1024 * 1024; 
 
 // Define a storage strategy for multer
 const storage = multer.memoryStorage();

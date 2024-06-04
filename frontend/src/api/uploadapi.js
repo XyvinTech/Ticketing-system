@@ -21,7 +21,7 @@ export const uploadImage = async (files) => {
     }
 
     // Check if total file size exceeds 30 MB
-    if (totalFileSize > 30 * 1024 * 1024) {
+    if (totalFileSize > 500 * 1024 * 1024) {
       
       return ("error"); 
     }
