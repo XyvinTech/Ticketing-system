@@ -23,13 +23,14 @@ export const uploadImage = async (files) => {
     // Check if total file size exceeds 30 MB
     if (totalFileSize > 30 * 1024 * 1024) {
       
-      return ("error"); // Exit function early
+      return ("error"); 
     }
 
     const response = await axiosInstance.post("/upload", formData, config);
+  
     return response.data;
   } catch (error) {
     throw error;
-    // toast.error("File size exceeds 30 MB limit");
+   
   }
 };

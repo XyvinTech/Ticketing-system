@@ -19,7 +19,14 @@ const AdminConversation = ({ ticketId, isChange, setIsChange }) => {
 
     if (data.attachment.length > 0) {
       const imageUrl = await uploadImage(data.attachment);
-      data.attachment = imageUrl.data.map((dataUrl) => dataUrl.url);
+      if (imageUrl == "error") {
+        toast.error("File size exceed");
+        return;
+      }
+      else{
+        data.attachment = imageUrl.data.map((dataUrl) => dataUrl.url);
+      }
+    
     }
 
     try {

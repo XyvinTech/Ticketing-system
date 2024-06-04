@@ -6,6 +6,7 @@ import {
   updateTicket,
   deleteTicket,
 } from "../api/ticketapi";
+import { toast } from "react-toastify";
 
 const useTicketStore = create((set) => ({
   tickets: [],
@@ -15,16 +16,22 @@ const useTicketStore = create((set) => ({
   },
   fetchTicketById: async (ticketId) => {
     const ticketByid = await fetchTicketById(ticketId);
-
-    set({ tickets: ticketByid.data });
+    if (ticketByid && ticketByid.data) {
+      set({ tickets: ticketByid.data });
+    } else {
+      toast.error("Ticket not found");
+      set({ tickets: [] });
+    }
   },
   addTicket: async (ticketData) => {
     const addTickets = await addTicket(ticketData); // Assuming addTicket returns a promise
-    set((state) => ({ 
-      tickets: Array.isArray(state.tickets) ? [...state.tickets, addTickets] : [addTickets] 
+    set((state) => ({
+      tickets: Array.isArray(state.tickets)
+        ? [...state.tickets, addTickets]
+        : [addTickets],
     }));
   },
-  
+
   updateTicket: async (ticketId, updateData) => {
     const updateTickets = updateTicket(ticketId, updateData);
     set((state) => ({
@@ -33,9 +40,9 @@ const useTicketStore = create((set) => ({
       ),
     }));
   },
-  deleteTicket:async(ticektId)=>{
+  deleteTicket: async (ticektId) => {
     await deleteTicket(ticektId);
-},
+  },
 }));
 
 export { useTicketStore };

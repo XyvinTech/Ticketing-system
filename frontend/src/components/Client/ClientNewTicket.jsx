@@ -52,11 +52,14 @@ const ClientNewTicket = () => {
     setIsSubmitting(true);
     if (data.attachment.length > 0) {
       const imageUrl = await uploadImage(data.attachment);
-
-      data.attachment = [];
-      imageUrl.data.map((dataUrl) => data.attachment.push(dataUrl.url));
+      if (imageUrl == "error") {
+        toast.error("File size exceed");
+        return;
+      } else {
+        data.attachment = [];
+        imageUrl.data.map((dataUrl) => data.attachment.push(dataUrl.url));
+      }
     }
-
     try {
       await addTicket(data);
       toast.success("Ticket created successfully!");

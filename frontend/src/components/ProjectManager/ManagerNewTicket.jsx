@@ -52,9 +52,13 @@ const ManagerNewTicket = () => {
     setIsSubmitting(true);
     if (data.attachment.length > 0) {
       const imageUrl = await uploadImage(data.attachment);
-
-      data.attachment = [];
-      imageUrl.data.map((dataUrl) => data.attachment.push(dataUrl.url));
+      if (imageUrl == "error") {
+        toast.error("File size exceed");
+        return;
+      } else {
+        data.attachment = [];
+        imageUrl.data.map((dataUrl) => data.attachment.push(dataUrl.url));
+      }
     }
 
     try {
@@ -65,8 +69,7 @@ const ManagerNewTicket = () => {
     } catch (error) {
       console.error("Error adding ticket:", error);
       toast.error("Error!");
-    }
-    finally {
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -137,7 +140,6 @@ const ManagerNewTicket = () => {
                     render={({ field }) => (
                       <>
                         <StyledSelectionList
-                        
                           label="Project"
                           options={Project}
                           {...field}
@@ -203,7 +205,7 @@ const ManagerNewTicket = () => {
             </div>
           </div>
           <div className="flex justify-end bg-gray-50 pb-4 sm:px-6">
-          <StyledButton
+            <StyledButton
               text={isSubmitting ? <Spinner /> : "Create"}
               type="submit"
               disabled={isSubmitting}

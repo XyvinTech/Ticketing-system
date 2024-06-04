@@ -52,13 +52,14 @@ const AdminNewTicket = () => {
     setIsSubmitting(true); 
     if (data.attachment.length > 0) {
       const imageUrl = await uploadImage(data.attachment);
-      if (imageUrl === "error") {
-        toast.error("File size exceeds 30 MB limit");
+      if (imageUrl == "error") {
+        toast.error("File size exceed");
         return;
       }
-      //  console.log("imageUrl",imageUrl)
-      data.attachment = [];
-      imageUrl.data.map((dataUrl) => data.attachment.push(dataUrl.url));
+      else {
+        data.attachment = [];
+        imageUrl.data.map((dataUrl) => data.attachment.push(dataUrl.url));
+      }
     }
 
     try {

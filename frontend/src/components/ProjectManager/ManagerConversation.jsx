@@ -19,7 +19,12 @@ const ManagerConversation = ({ ticketId, isChange, setIsChange }) => {
 
     if (data.attachment.length > 0) {
       const imageUrl = await uploadImage(data.attachment);
-      data.attachment = imageUrl.data.map((dataUrl) => dataUrl.url);
+      if (imageUrl == "error") {
+        toast.error("File size exceed");
+        return;
+      } else {
+        data.attachment = imageUrl.data.map((dataUrl) => dataUrl.url);
+      }
     }
 
     try {
@@ -29,8 +34,7 @@ const ManagerConversation = ({ ticketId, isChange, setIsChange }) => {
     } catch (error) {
       console.error("Error", error);
       toast.error("Error!");
-    }
-    finally {
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -76,11 +80,11 @@ const ManagerConversation = ({ ticketId, isChange, setIsChange }) => {
                   </div>
 
                   <div className="flex justify-end">
-                  <StyledButton
-              text={isSubmitting ? <Spinner /> : "Add"}
-              type="submit"
-              disabled={isSubmitting}
-            />
+                    <StyledButton
+                      text={isSubmitting ? <Spinner /> : "Add"}
+                      type="submit"
+                      disabled={isSubmitting}
+                    />
                   </div>
                 </div>
               </form>
