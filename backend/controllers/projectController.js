@@ -37,6 +37,7 @@ exports.getProject = async function (req, res) {
 
   const user = await User.findById(req.user);
   const projectIds = user.projectId.map((id) => id.toString());
+  console.log("projects", projectIds);
   const query = {
     _id: { $in: projectIds },
   };
@@ -44,7 +45,7 @@ exports.getProject = async function (req, res) {
     query.departmentId = inDep;
   }
   const project = await Project.find(query);
-
+  console.log("projects", project);
   if (!project) {
     throw createError(404, "Project not found");
   }

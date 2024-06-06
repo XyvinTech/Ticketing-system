@@ -22,7 +22,7 @@ const ManagerNewTicket = () => {
   } = useForm();
   const { addTicket } = useTicketStore();
   const { departments, fetchDepartment } = useDepartmentStore();
-  const { projects, fetchProjectById } = useProjectStore();
+  const { projects, fetchProject } = useProjectStore();
   const [dep, setDep] = useState();
   const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => {
@@ -33,7 +33,7 @@ const ManagerNewTicket = () => {
     if (dep) {
       filter.inDep = dep;
     }
-    fetchProjectById(filter);
+    fetchProject(filter);
   }, [dep]);
   const Priority = [
     { value: "low", name: "Low" },
