@@ -121,7 +121,8 @@ exports.getAll = async function (req, res) {
       .populate("assignedTo");
 
     res.status(200).json({ status: true, data: tickets });
-  } else if (user.usertype === "client") {
+  } 
+  else if (user.usertype === "client") {
     const query = {
       reporter: req.user,
       status: { $ne: "deleted" },
@@ -139,7 +140,35 @@ exports.getAll = async function (req, res) {
       .populate("assignedTo");
 
     res.status(200).json({ status: true, data: tickets });
-  } else {
+  } 
+  else  if (user.usertype === "manager") {
+
+
+    const query = {
+      
+      status: { $ne: "deleted" },
+    };
+    if (inDep) {
+      if (inDep === "myticket") {
+        query.reporter = req.user;
+      }
+    }
+    if (inStatus) {
+      query.status = inStatus;
+    }
+
+    if (searchQuery) {
+      query.$or = [{ subject: { $regex: searchQuery, $options: "i" } }];
+    }
+
+    const tickets = await Ticket.find(query)
+      .populate("department", "departmentName")
+      .populate("projectId")
+      .populate("assignedTo");
+    console.log("tick", tickets);
+    res.status(200).json({ status: true, data: tickets });
+  }
+  else {
     const projectIds = user.projectId.map((id) => id.toString());
 
     const query = {

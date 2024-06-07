@@ -85,11 +85,11 @@ const AdminTicket = () => {
 
   if (Array.isArray(sortedTickets)) {
     sortedTickets.forEach((ticket) => {
-      if (ticket.status === "pending") {
+      if (ticket?.status === "pending") {
         pendingCount++;
-      } else if (ticket.status === "progress") {
+      } else if (ticket?.status === "progress") {
         progressCount++;
-      } else if (ticket.status === "completed") {
+      } else if (ticket?.status === "completed") {
         completedCount++;
       }
     });
